@@ -9,3 +9,7 @@ editor_options:
 ---
 
 Welcome to my research website.
+
+## Summary statistics of fit statistics
+
+*[Summary statistics of fit statistics](summary_stats_boxplots.html)

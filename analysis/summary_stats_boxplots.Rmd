@@ -1,0 +1,1588 @@
+---
+title: "Descriptive Statistics, Tables and Boxplots"
+author: "noah-padgett"
+date: "2019-05-07"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+<!-- % 
+%% ============================================= #
+%%               Padgettt                
+%% ============================================= #
+%% Data Created: 2019-02-20
+%% Date Modified: 2019-02-26
+%% By: R. Noah Padgett                   
+%% ============================================= #
+%% MA Thesis Project                     
+%% ============================================= #
+%% Purpose:
+%% This R script is for 
+%%   1. creating simple descriptive statistics 
+%%     across conditions
+%%   2. Generating tables of those stats
+%%   3. Create simple boxplots for trends
+%%   4. Creating publication boxplots
+%%
+%% The output is numerous .eps files (figures)
+%% and code for tables in latex
+%% ============================================= # -->
+
+
+Purpose of this file:
+
+   1. creating simple descriptive statistics across conditions
+   2. Generating tables of those stats
+   3. Create simple boxplots for trends
+   4. Creating publication boxplots
+
+The output is numerous .eps files (figures) and code for tables in latex
+
+# Packages and Set-Up
+
+```{r set-up, tidy=T}
+##Chunk iptions
+knitr::opts_chunk$set(out.width = "225%")
+
+#setwd('C:/Users/noahp/Dropbox/MCFA Thesis/Code Results')
+
+## Packages
+## General Packages
+library(tidyverse)
+# Formatting and Tables
+library(kableExtra)
+library(xtable)
+# For plotting
+library(ggplot2)
+theme_set(theme_bw())
+# Data manipulating
+library(dplyr)
+# ROC Analysis
+library(pROC)
+
+## One global parameter for printing figures
+save.fig <- F
+
+```
+
+
+# Data Management
+
+```{r data, tidy=T}
+
+sim_results <- as_tibble(read.table('data/compiled_fit_results.txt', header=T,sep='\t'))
+
+## Next, turn condition into a factor for plotting
+sim_results$Condition <- as.factor(sim_results$Condition)
+
+## Next, since TLI is non-normed, any value greater than 1 needs to be rescaled to 1.
+sim_results$TLI <- ifelse(sim_results$TLI > 1, 1, sim_results$TLI)
+sim_results$TLI <- ifelse(sim_results$TLI < 0, 0, sim_results$TLI)
+## Next, summarize the results of the chi-square test of model fit. This is done simply by comparing the p-value to alpha (0.05) and indicating whether the model was flagged as fitting or not.
+# Note: if  p < 0.05 then this variable is flagged as 0, and 1 otherwise
+sim_results$Chi2_pvalue_decision <- ifelse(sim_results$chisqu_pvalue < 0.05, 0, 1)
+# 0 = rejected that these data fit this model
+# 1 = failed to reject that these data fit this model
+```
+
+## Adding Labels to Conditions
+
+Currently, each condition is kind of like a hidden id that we don't know what the actual factor is. 
+So, first thing isto create meaningful labels for us to use.
+Remember, the 72 conditions for the this study were
+
+  1. Level-1 sample size (5, 10, 30)
+  2. Level-2 sample size (30, 50, 100, 200)
+  3. Observed indicator ICC (.1, .3, .5)
+  4. Latent variable ICC (.1, .5)
+  
+```{r}
+## level-1 Sample size
+ss_l1 <- c(5, 10, 30) ## 6 conditions each
+ss_l2 <- c(30, 50, 100, 200) ## 18 condition each
+icc_ov <- c(.1, .3, .5) ## 2 conditions each
+icc_lv <- c(.1, .5) ## every other condition
+nCon <- 72 # number of conditions
+nRep <- 500 # number of replications per condition
+nMod <- 12 ## numberof estimated models per conditions
+## Total number of rows: 432,000
+ss_l2 <- c(rep(ss_l2[1], 18*nRep*nMod), rep(ss_l2[2], 18*nRep*nMod), 
+           rep(ss_l2[3], 18*nRep*nMod), rep(ss_l2[4], 18*nRep*nMod))
+ss_l1 <- rep(c(rep(ss_l1[1],6*nRep*nMod), rep(ss_l1[2],6*nRep*nMod), rep(ss_l1[3],6*nRep*nMod)), 4)
+icc_ov <- rep(c(rep(icc_ov[1], 2*nRep*nMod), rep(icc_ov[2], 2*nRep*nMod), rep(icc_ov[3], 2*nRep*nMod)), 12)
+icc_lv <- rep(c(rep(icc_lv[1], nRep*nMod), rep(icc_lv[2], nRep*nMod)), 36)
+## Force these vectors to be column vectors
+ss_l1 <- matrix(ss_l1, ncol=1)
+ss_l2 <- matrix(ss_l2, ncol=1)
+icc_ov <- matrix(icc_ov, ncol=1)
+icc_lv <- matrix(icc_lv, ncol=1)
+## Add the labels to the results data frame
+sim_results <- sim_results[order(sim_results$Condition),]
+sim_results <- cbind(sim_results, ss_l1, ss_l2, icc_ov, icc_lv)
+
+## Force the conditions to be factors
+sim_results$ss_l1 <- as.factor(sim_results$ss_l1)
+sim_results$ss_l2 <- as.factor(sim_results$ss_l2)
+sim_results$icc_ov <- as.factor(sim_results$icc_ov)
+sim_results$icc_lv <- as.factor(sim_results$icc_lv)
+sim_results$Model <- factor(sim_results$Model, levels = c('C','M1','M2','M12'), ordered = T)
+## Set up iterators for remainder of script
+mods <- c('C', 'M1', 'M2', 'M12')
+ests <- c('MLR', 'ULSMV', 'WLSMV')
+```
+
+# Descriptive Statistcs
+
+For the descriptive statistics, I will use dplyr.
+From here I can easily create matrices that store the results so that I can easily print out the results for summarizing the results.
+Each will be printed out as a html table and a xtable (latex ready) table.
+
+## Convergence Summary
+
+Convergence will be broken out by Model (C, M1, M2, M12) and estimator (MLR, WLSMV, ULSMV). So, there will 12 tables piecemail tables and then one larger table.
+
+```{r tb-con, tidy=T}
+
+## first table summary table
+c <- sim_results %>%
+  group_by(Model, Estimator) %>%
+  summarise(Converge=mean(Converge))
+# Next make the columns the estimator factor
+c <- cbind(c[ c$Estimator == 'MLR', 'Converge'], 
+           c[ c$Estimator == 'ULSMV', 'Converge'], 
+           c[ c$Estimator == 'WLSMV', 'Converge'])
+colnames(c) <- c('MLR', 'ULSMV', 'WLSMV')
+rownames(c) <- c('C' ,'M1' ,'M2', 'M12')
+## Print results in a nice looking table in HTML
+kable(c, format='html') %>%
+    kable_styling(full_width = T)
+## Print out in tex
+print(xtable(c, digits = 3), booktabs = T, include.rownames = T)
+
+# 
+# ## Next, start the more descriptive tables across conditions
+# ## loop around these iterators
+# for(M in mods){
+#   for(E in ests){
+#     ### subset tothe model (M) and estimator (E)
+#     #M <- 'C'
+#     #E <- 'MLR'
+#     cat('\n\n ===============================\n')
+#     cat('\nModel:\t', M)
+#     cat('\nEstimator:\t', E, '\n')
+#     sub_dat <- sim_results[ sim_results$Model == M & sim_results$Estimator == E,]
+#     
+#     c <- sub_dat %>%
+#         group_by(ss_l1, ss_l2, icc_ov, icc_lv) %>%
+#         summarize(C = mean(Converge))
+#     ## Now, print out the unformatted table
+#       kable(c, format='html') %>%
+#         kable_styling(full_width = T)
+#       print(c)
+#     ## now, make the columns the ICC conditions
+#     c <- cbind(
+#       c[ c$icc_ov == 0.1 & c$icc_lv == .1, c('ss_l1','ss_l2','C')], 
+#       c[ c$icc_ov == 0.3 & c$icc_lv == .1, 'C'], 
+#       c[ c$icc_ov == 0.5 & c$icc_lv == .1, 'C'], 
+#       c[ c$icc_ov == 0.1 & c$icc_lv == .5, 'C'], 
+#       c[ c$icc_ov == 0.3 & c$icc_lv == .5, 'C'], 
+#       c[ c$icc_ov == 0.5 & c$icc_lv == .5, 'C']
+#     ) ## End cbind()
+#     colnames(c) <- c('ss_l1','ss_l2', '.1' ,'.3', '.5', '.1' ,'.3', '.5')
+#     ## Print results in a nice looking table
+#       kable(c, format='html') %>%
+#         kable_styling(full_width = T) %>%
+#         add_header_above(c(' ' = 2, 'LV ICC = .10' = 3, 'LV ICC = .50'=3))
+#     
+#     print(xtable(c, digits = 3), booktabs = T, include.rownames = F)
+#   }
+# }
+# 
+# 
+# ## For a longtable instead
+# c <-sim_results %>%
+#       group_by(Model, Estimator, ss_l1, ss_l2, icc_ov, icc_lv) %>%
+#       summarize(C = mean(Converge))
+#     ## Now, print out the unformatted table
+#       kable(c, format='html') %>%
+#         kable_styling(full_width = T)
+#       
+#     ## now, make the columns the ICC conditions
+#     c <- cbind(
+#       c[ c$icc_ov == 0.1 & c$icc_lv == .1, c('Model', 'Estimator', 'ss_l1','ss_l2','C')], 
+#       c[ c$icc_ov == 0.3 & c$icc_lv == .1, 'C'], 
+#       c[ c$icc_ov == 0.5 & c$icc_lv == .1, 'C'], 
+#       c[ c$icc_ov == 0.1 & c$icc_lv == .5, 'C'], 
+#       c[ c$icc_ov == 0.3 & c$icc_lv == .5, 'C'], 
+#       c[ c$icc_ov == 0.5 & c$icc_lv == .5, 'C']
+#     ) ## End cbind()
+#     colnames(c) <- c('Model', 'Estimator', 'ss_l1','ss_l2', '.1' ,'.3', '.5', '.1' ,'.3', '.5')
+#     ## Print results in a nice looking table
+#       kable(c, format='html') %>%
+#         kable_styling(full_width = T) %>%
+#         add_header_above(c(' ' = 4, 'LV ICC = .10' = 3, 'LV ICC = .50'=3))
+#     
+#     print(xtable(c, digits = 3), booktabs = T, include.rownames = F)
+
+```
+
+<!-- ## Admissibility Summary -->
+
+<!-- Admissibility is checked in basically the exact same way. The only difference is that now I need to subset prior to making tables to models that converged. -->
+
+<!-- ```{r tb-admiss, tidy=T} -->
+<!-- ## Subset fo converged -->
+<!-- con_results <- filter(sim_results, Converge == 1) -->
+
+<!-- ## first table summary table -->
+<!-- a <- con_results %>% -->
+<!--   group_by(Model, Estimator) %>% -->
+<!--   summarise(A=mean(Admissible)) -->
+<!-- # Next make the columns the estimator factor -->
+<!-- a <- cbind(a[ a$Estimator == 'MLR', 'A'],  -->
+<!--            a[ a$Estimator == 'ULSMV', 'A'],  -->
+<!--            a[ a$Estimator == 'WLSMV', 'A']) -->
+<!-- colnames(a) <- c('MLR', 'ULSMV', 'WLSMV') -->
+<!-- rownames(a) <- c('C' ,'M1' ,'M2', 'M12') -->
+<!-- ## Print results in a nice looking table in HTML -->
+<!-- kable(a, format='html') %>% -->
+<!--     kable_styling(full_width = T) -->
+<!-- ## Print out in tex -->
+<!-- print(xtable(a, digits = 3), booktabs = T, include.rownames = T) -->
+
+
+<!-- ## Next, start the more descriptive tables across conditions -->
+<!-- ## loop around these iterators -->
+<!-- for(M in mods){ -->
+<!--   for(E in ests){ -->
+<!--     ### subset tothe model (M) and estimator (E) -->
+<!--     #M <- 'C' -->
+<!--     #E <- 'MLR' -->
+<!--     cat('\n\n ===============================\n') -->
+<!--     cat('\nModel:\t', M) -->
+<!--     cat('\nEstimator:\t', E, '\n') -->
+<!--     sub_dat <- con_results[ con_results$Model == M & con_results$Estimator == E,] -->
+
+<!--     a <- sub_dat %>% -->
+<!--         group_by(ss_l1, ss_l2, icc_ov, icc_lv) %>% -->
+<!--         summarize(C = mean(Admissible)) -->
+<!--     ## Now, print out the unformatted table -->
+<!--     kable(a, format='html') %>% -->
+<!--         kable_styling(full_width = T) -->
+<!--     print(a) -->
+
+<!--     ## now, make the columns the ICC conditions -->
+<!--     a <- cbind( -->
+<!--       a[ a$icc_ov == 0.1 & a$icc_lv == .1, c('ss_l1','ss_l2','C')],  -->
+<!--       a[ a$icc_ov == 0.3 & a$icc_lv == .1, 'C'],  -->
+<!--       a[ a$icc_ov == 0.5 & a$icc_lv == .1, 'C'],  -->
+<!--       a[ a$icc_ov == 0.1 & a$icc_lv == .5, 'C'],  -->
+<!--       a[ a$icc_ov == 0.3 & a$icc_lv == .5, 'C'],  -->
+<!--       a[ a$icc_ov == 0.5 & a$icc_lv == .5, 'C'] -->
+<!--     ) ## End cbind() -->
+<!--     colnames(a) <- c('ss_l1','ss_l2', '.1' ,'.3', '.5', '.1' ,'.3', '.5') -->
+<!--     ## Print results in a nice looking table -->
+<!--     kable(a, format='html') %>% -->
+<!--         kable_styling(full_width = T) %>% -->
+<!--         add_header_above(c(' ' = 2, 'LV ICC = .10' = 3, 'LV ICC = .50'=3)) -->
+
+<!--     print(xtable(a, digits = 3), booktabs = T, include.rownames = F) -->
+<!--   } -->
+<!-- } -->
+
+
+<!-- ## For a longtable.. -->
+<!-- c <-con_results %>% -->
+<!--       group_by(Model, Estimator, ss_l1, ss_l2, icc_ov, icc_lv) %>% -->
+<!--       summarize(C = mean(Admissible)) -->
+<!--     ## Now, print out the unformatted table -->
+<!--       kable(c, format='html') %>% -->
+<!--         kable_styling(full_width = T) -->
+
+<!--     ## now, make the columns the ICC conditions -->
+<!--     c <- cbind( -->
+<!--       c[ c$icc_ov == 0.1 & c$icc_lv == .1, c('Model', 'Estimator', 'ss_l1','ss_l2','C')],  -->
+<!--       c[ c$icc_ov == 0.3 & c$icc_lv == .1, 'C'],  -->
+<!--       c[ c$icc_ov == 0.5 & c$icc_lv == .1, 'C'],  -->
+<!--       c[ c$icc_ov == 0.1 & c$icc_lv == .5, 'C'],  -->
+<!--       c[ c$icc_ov == 0.3 & c$icc_lv == .5, 'C'],  -->
+<!--       c[ c$icc_ov == 0.5 & c$icc_lv == .5, 'C'] -->
+<!--     ) ## End cbind() -->
+<!--     colnames(c) <- c('Model', 'Estimator', 'ss_l1','ss_l2', '.1' ,'.3', '.5', '.1' ,'.3', '.5') -->
+<!--     ## Print results in a nice looking table -->
+<!--       kable(c, format='html') %>% -->
+<!--         kable_styling(full_width = T) %>% -->
+<!--         add_header_above(c(' ' = 4, 'LV ICC = .10' = 3, 'LV ICC = .50'=3)) -->
+
+<!--     print(xtable(c, digits = 3), booktabs = T, include.rownames = F) -->
+<!-- ``` -->
+
+
+<!-- Make figure for the defense of the converged and admissible summary. -->
+
+<!-- ```{r} -->
+
+<!-- c <- sim_results %>% -->
+<!--   group_by(Model, Estimator) %>% -->
+<!--   summarise(Converge=mean(Converge)) -->
+
+<!-- ## Subset fo converged -->
+<!-- con_results <- filter(sim_results, Converge == 1) -->
+
+<!-- ## first table summary table -->
+<!-- a <- con_results %>% -->
+<!--   group_by(Model, Estimator) %>% -->
+<!--   summarise(A=mean(Admissible)) -->
+
+<!-- c$c <- rep('Converge', 12) -->
+<!-- a$a <- rep('Admissible', 12) -->
+<!-- colnames(c) <- colnames(a) <- c('Model', 'Estimator', 'Prop', 'Type') -->
+
+<!-- ca_dat <- rbind(c, a) -->
+<!-- ca_dat$Type <- as.factor(ca_dat$Type) -->
+<!-- ca_dat -->
+
+<!-- # Figure -------------------- -->
+
+<!-- ggplot(ca_dat, aes(x = Model, y = Prop, color = Type, group = Estimator)) + -->
+<!--   geom_line() -->
+
+<!-- ``` -->
+
+
+
+<!-- ## Descriptive Statistics of Fit Indices -->
+
+<!-- Now for the long process of making tables for the MANY conditions for the descriptive statistics. -->
+<!-- For this, we need to do this is steps so that all the information gets outputted in the correct manor for table.  -->
+<!-- For each statistic under each condition, model, and estimator, the code below create a table that contains the average value and the standard deviation. -->
+<!-- Again, just like the descriptives above, a summary table was made to start. -->
+
+<!-- These tables are made based only on the 1) converged models and 2) the admissible solutions. -->
+
+<!-- The fit indices included are: -->
+
+<!--   1. Chi-square p-value summary, i.e. proportion of tims the p-value was greater than 0.05. No SD is reported here. -->
+<!--   2. CFI with mean and sd -->
+<!--   3. TLI with mean and sd -->
+<!--   4. RMSEA with mean and sd -->
+<!--   5. SRMRW with mean and sd -->
+<!--   6. SRMRB with mean and sd -->
+
+<!-- ```{r fit-sum} -->
+
+<!-- mydata <- filter(sim_results, Converge == 1 & Admissible == 1) -->
+
+<!-- ## first table summary table -->
+<!-- a <- mydata %>% -->
+<!--   group_by(Model, Estimator) %>% -->
+<!--   summarise( -->
+<!--     chi2=mean(Chi2_pvalue_decision, na.rm = T), -->
+<!--     CFI.m =mean(CFI, na.rm = T), CFI.sd =sd(CFI, na.rm = T), -->
+<!--     TLI.m =mean(TLI, na.rm = T), TLI.sd =sd(TLI, na.rm = T), -->
+<!--     RMSEA.m =mean(RMSEA, na.rm = T), RMSEA.sd =sd(RMSEA, na.rm = T), -->
+<!--     SRMRW.m =mean(SRMRW, na.rm = T), SRMRW.sd =sd(SRMRW, na.rm = T), -->
+<!--     SRMRB.m =mean(SRMRB, na.rm = T), SRMRB.sd =sd(SRMRB, na.rm = T) -->
+<!--   ) -->
+<!-- ## Print results in a nice looking table in HTML -->
+<!-- kable(a, format='html') %>% -->
+<!--     kable_styling(full_width = T) -->
+
+<!-- ## make a copy of a to print into -->
+<!-- a1 <- as_tibble(as.data.frame(matrix(NA, ncol=8,nrow=nrow(a)))) -->
+<!-- colnames(a1) <- c('Model', 'Estimator', "chi2", "CFI",'TLI', 'RMSEA', 'SRMRW', 'SRMRB') -->
+<!-- i <- 1 -->
+<!-- for(i in 1:nrow(a)){ -->
+<!--   a1[i,3:8] <- unlist(c( -->
+<!--     round(a[i,3],3),  -->
+<!--   paste0(round(a[i,4],3), ' (', round(a[i,5],2), ')'), -->
+<!--   paste0(round(a[i,6],3), ' (', round(a[i,7],2), ')'), -->
+<!--   paste0(round(a[i,8],3), ' (', round(a[i,9],2), ')'), -->
+<!--   paste0(round(a[i,10],3), ' (', round(a[i,11],2), ')'), -->
+<!--   paste0(round(a[i,12],3), ' (', round(a[i,12],2), ')') -->
+<!--   )) -->
+<!-- } -->
+<!-- a1[,1:2] <- a[,1:2]## add factors back -->
+<!-- ## Print out in tex -->
+<!-- print(xtable(a1, digits = 3), booktabs = T, include.rownames = F) -->
+
+<!-- ## Now, create MANY subset tables to breakdown these relationships -->
+<!-- ## loop around these iterators -->
+<!-- for(M in mods){ -->
+<!--   for(E in ests){ -->
+<!--     ### subset tothe model (M) and estimator (E) -->
+<!--     #M <- 'C' -->
+<!--     #E <- 'MLR' -->
+<!--     cat('\n\n ===============================\n') -->
+<!--     cat('\nModel:\t', M) -->
+<!--     cat('\nEstimator:\t', E, '\n') -->
+<!--     sub_dat <- mydata[ mydata$Model == M & mydata$Estimator == E,] -->
+
+<!--     a <- sub_dat %>% -->
+<!--         group_by(ss_l1, ss_l2, icc_ov, icc_lv) %>% -->
+<!--         summarise( -->
+<!--           chi2=mean(Chi2_pvalue_decision, na.rm = T), -->
+<!--           CFI.m =mean(CFI, na.rm = T), CFI.sd =sd(CFI, na.rm = T), -->
+<!--           TLI.m =mean(TLI, na.rm = T), TLI.sd =sd(TLI, na.rm = T), -->
+<!--           RMSEA.m =mean(RMSEA, na.rm = T), RMSEA.sd =sd(RMSEA, na.rm = T), -->
+<!--           SRMRW.m =mean(SRMRW, na.rm = T), SRMRW.sd =sd(SRMRW, na.rm = T), -->
+<!--           SRMRB.m =mean(SRMRB, na.rm = T), SRMRB.sd =sd(SRMRB, na.rm = T) -->
+<!--         ) -->
+<!--     ## Print results in a nice looking table -->
+<!--     kable(a, format='html') %>% -->
+<!--         kable_styling(full_width = T) -->
+
+<!--     ## Now, create subsets of this results matrix for outputting into small(ish) tables -->
+<!--     ## Subset by ICC conditions -->
+<!--     ICCO <- unique(a$icc_ov) -->
+<!--     ICCL <- unique(a$icc_lv) -->
+<!--     icco <- ICCO[1] -->
+<!--     iccl <- ICCL[1] -->
+<!--     for(icco in ICCO){ -->
+<!--       for(iccl in ICCL){ -->
+<!--         ### subset tothe model (M) and estimator (E) -->
+<!--         #M <- 'C' -->
+<!--         #E <- 'MLR' -->
+<!--         cat('\n\n ===============================\n') -->
+<!--         cat('\nModel:\t', M) -->
+<!--         cat('\nEstimator:\t', E) -->
+<!--         cat('\nICC Obs. Var.:\t', icco) -->
+<!--         cat('\nICC Lat. Var.:\t', iccl,'\n') -->
+<!--         a_s <- filter(a, icc_ov == icco, icc_lv == iccl) -->
+<!--         ## make a copy of a to print into -->
+<!--         a1 <- as_tibble(as.data.frame(matrix(NA, ncol=8,nrow=nrow(a_s)))) -->
+<!--         colnames(a1) <- c('N2', 'N1', "chi2", "CFI",'TLI', 'RMSEA', 'SRMRW', 'SRMRB') -->
+<!--         i <- 1 -->
+<!--         for(i in 1:nrow(a_s)){ -->
+<!--           a1[i,3:8] <- unlist(c( -->
+<!--             round(a_s[i,5],2),  -->
+<!--           paste0(round(a_s[i,6],2), '(', round(a_s[i,7],2), ')'), -->
+<!--           paste0(round(a_s[i,8],2), '(', round(a_s[i,9],2), ')'), -->
+<!--           paste0(round(a_s[i,10],2), '(', round(a_s[i,11],2), ')'), -->
+<!--           paste0(round(a_s[i,12],2), '(', round(a_s[i,13],2), ')'), -->
+<!--           paste0(round(a_s[i,14],2), '(', round(a_s[i,15],2), ')') -->
+<!--           )) -->
+<!--         } -->
+<!--         a1[,1:2] <- a_s[,c(2,1)]## add factors back with diff. order -->
+<!--         ## Print out in tex -->
+<!--         print(xtable(a1, -->
+<!--                      caption = paste0('Summary of Fit Statistics Across Conditions: Model ',M,', Estimator ',E,', ICC_O ',icco,' and ICC_L ', iccl)), booktabs = T, include.rownames = F) -->
+<!--       } -->
+<!--     }## End subset table printing -->
+<!--   } -->
+<!-- } ## End loops.. -->
+
+<!-- ``` -->
+
+<!-- # Boxplots -->
+
+<!-- One of the best ways to visualize the results of the distribution of fit statistics across conditions is to use boxplots. -->
+<!-- In the section, I create three sets of boxplots. -->
+<!-- First, the boxplots are large and give a very course overview of  the results across conditions, but can be difficult to make sense of because of how large they are. -->
+<!-- Secondly, the boxplots are made with facets by model and estimator from the larger set of data so that more concise plots can be made for easier viewing. -->
+<!-- Third, subsets based on Model and estimator are made to create a "smaller" plot that is easier to handle. -->
+<!-- Most of these latter plots are  included in my thesis document. -->
+
+<!-- For all graphs, I haved placed a dashed line where the commonly used cut-off for these fit statistics lies. -->
+
+
+<!-- ```{r box-dat} -->
+
+<!-- mydata <- filter(sim_results, Converge == 1 & Admissible == 1) -->
+
+<!-- ``` -->
+
+
+<!-- ## Large General Boxplots -->
+
+<!-- For these larger Boxplots, there are two sets. -->
+
+<!--   1. Coarse distributions of each fit statistic -->
+
+<!--   2. Marginal Plots of Condition (ss\_l1, ss\_l2, icc\_ov, icc\_lv) -->
+
+<!-- ### Coarse Boxplots  -->
+
+<!-- ```{r gen-box-1} -->
+
+<!-- ## Set 1 Coarse distributions of each fit statistic -->
+<!-- p <- ggplot(mydata, aes(x=Condition, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0,  -->
+<!--                 linetype='dashed', color = 'red') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_all_conditions.pdf",plot = p, width=12, height=6, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=Condition, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0,  -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_all_conditions.pdf",plot = p, width=12, height=6, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=Condition, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0,  -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_all_conditions.pdf",plot = p, width=12, height=6, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=Condition, y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0,  -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_all_conditions.pdf",plot = p, width=12, height=6, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=Condition, y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0,  -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_all_conditions.pdf",plot = p, width=12, height=6, units='in') -->
+
+<!-- ``` -->
+
+<!-- ### Marginal Plots of Conditions -->
+
+<!-- #### CFI -->
+
+<!-- ```{r gen-box-cfi} -->
+<!-- p <- ggplot(mydata, aes(x=Model, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=Estimator, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_ssl1.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_ss_l2.pdf",plot = p,width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     labs(title = 'CFI by Obs. Var. ICC') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_icc_ov.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_icc_lv.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- ``` -->
+
+<!-- #### TLI -->
+
+<!-- ```{r gen-box-tli} -->
+<!-- p <- ggplot(mydata, aes(x=Model, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_model.pdf",plot = p, width=6, height=4, units='in') -->
+<!-- p <- ggplot(mydata, aes(x=Estimator, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_estimator.pdf",plot = p,width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_ss_l1.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_ss_l2.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_icc_ov.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_icc_lv.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- ``` -->
+
+<!-- #### RMSEA -->
+
+<!-- ```{r gen-box-rmsea} -->
+<!-- p <- ggplot(mydata, aes(x=Model, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=Estimator, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_ss_l1.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_ss_l2.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_icc_ov.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_icc_lv.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- ``` -->
+
+<!-- #### SRMRW -->
+
+<!-- ```{r gen-box-srmrw} -->
+
+<!-- p <- ggplot(mydata, aes(x=Model, y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=Estimator, y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_ss_l1.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2,  y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_ss_l2.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov,  y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     labs(title = 'SRMRW by Obs. Var. ICC') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_icc_ov.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_icc_lv.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- ``` -->
+
+<!-- #### SRMRB -->
+
+<!-- ```{r gen-box-srmrb} -->
+
+<!-- p <- ggplot(mydata, aes(x=Model, y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red')+ -->
+<!--     lims(y=c(0,1))  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=Estimator, y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red')+ -->
+<!--     lims(y=c(0,1))  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     lims(y=c(0,1))  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_ss_l1.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2,  y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     labs(title = 'SRMRB by Level-2 Sample Size') + -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_ss_l2.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov,  y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_icc_ov.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_icc_lv.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- ``` -->
+
+<!-- ## Facetted Boxplots -->
+
+<!-- For the facetted boxplots, these will also be created in multiple sets. -->
+
+<!--   1. Full Results by conditions faetted by Model and estimator -->
+<!--   2.  Marginal Plots of Condition (ss\_l1, ss\_l2, icc\_ov, icc\_lv) Facetted by Est. -->
+<!--   3.  Marginal Plots of Condition (ss\_l1, ss\_l2, icc\_ov, icc\_lv) Facetted by Model -->
+<!--   4.  Marginal Plots of Condition (ss\_l1, ss\_l2, icc\_ov, icc\_lv) Facetted by Est. and Model -->
+
+<!-- So, that is a lot of plots and onyl a select few will make it into the final document and publication manuscript. -->
+
+<!-- ### Faceted Coarse Boxplots -->
+
+<!-- ```{r fac-box-1} -->
+<!-- ## Set 1: Large boxplot figures faceted by Model and Estimator -->
+<!-- p <- ggplot(mydata, aes(x=Condition, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_all_condition_facet.pdf",plot = p, width=16, height=12, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=Condition, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_all_condition_facet.pdf",plot = p, width=16, height=12, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=Condition, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_all_condition_facet.pdf",plot = p, width=16, height=12, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=Condition, y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_all_condition_facet.pdf",plot = p, width=16, height=12, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=Condition, y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) + -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_all_condition_facet.pdf",plot = p, width=16, height=12, units='in') -->
+<!-- ``` -->
+
+
+<!-- ### Marginal Plots of Conditions Facetted by Estimator -->
+
+<!-- #### CFI -->
+
+<!-- ```{r fac-e-box-cfi} -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_ssl1_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator)+ -->
+<!--     labs(title = 'CFI by Level-2 Sample Size') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_ss_l2_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_icc_ov_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_icc_lv_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- ``` -->
+
+<!-- #### TLI -->
+
+<!-- ```{r fac-e-box-tli} -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_ss_l1_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_ss_l2_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_icc_ov_facet_estimator.pdf",plot = p, scale=1) -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_icc_lv_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- ``` -->
+
+<!-- #### RMSEA -->
+
+<!-- ```{r fac-e-box-rmsea} -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_ss_l1_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_ss_l2_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_icc_ov_facet_estimator.pdf",plot = p,width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_icc_lv_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- ``` -->
+
+<!-- #### SRMRW -->
+
+<!-- ```{r fac-e-box-srmrw} -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_ss_l1_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2,  y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_ss_l2_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov,  y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_icc_ov_facet_estimator.pdf",plot = p,width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_icc_lv_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- ``` -->
+
+<!-- #### SRMRB -->
+
+<!-- ```{r fac-e-box-srmrb} -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) + -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_ss_l1_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2,  y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator) + -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_ss_l2_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov,  y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator)+ -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_icc_ov_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Estimator)+ -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_icc_lv_facet_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- ``` -->
+
+
+<!-- ### Marginal Plots of Conditions Facetted by Model -->
+
+<!-- #### CFI -->
+
+<!-- ```{r fac-m-box-cfi} -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_ssl1_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_ss_l2_facet_model.pdf",plot = p,width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_icc_ov_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_icc_lv_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- ``` -->
+
+<!-- #### TLI -->
+
+<!-- ```{r fac-m-box-tli} -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_ss_l1_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model)+ -->
+<!--     labs(title = 'TLI by Level-2 Sample Size') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_ss_l2_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_icc_ov_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_icc_lv_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- ``` -->
+
+<!-- #### RMSEA -->
+
+<!-- ```{r fac-m-box-rmsea} -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_ss_l1_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_ss_l2_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_icc_ov_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_icc_lv_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- ``` -->
+
+<!-- #### SRMRW -->
+
+<!-- ```{r fac-m-box-srmrw} -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_ss_l1_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2,  y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_ss_l2_facet_model.pdf",plot = p, scale=1) -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov,  y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_icc_ov_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_icc_lv_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- ``` -->
+
+<!-- #### SRMRB -->
+
+<!-- ```{r fac-m-box-srmrb} -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model)+ -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_ss_l1_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2,  y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model)+ -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_ss_l2_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov,  y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model)+ -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_icc_ov_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(.~Model)+ -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_icc_lv_facet_model.pdf",plot = p, width=6, height=4, units='in') -->
+
+<!-- ``` -->
+
+
+<!-- ### Marginal Plots of Conditions Facetted by Estimator and Model -->
+
+<!-- #### CFI -->
+
+<!-- ```{r fac-em-box-cfi} -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_ssl1_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_ss_l2_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_icc_ov_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_icc_lv_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+
+<!-- ``` -->
+
+<!-- #### TLI -->
+
+<!-- ```{r fac-em-box-tli} -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_ss_l1_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_ss_l2_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_icc_ov_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_icc_lv_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+
+<!-- ``` -->
+
+<!-- #### RMSEA -->
+
+<!-- ```{r fac-em-box-rmsea} -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_ss_l1_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_ss_l2_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_icc_ov_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_icc_lv_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+
+<!-- ``` -->
+
+<!-- #### SRMRW -->
+
+<!-- ```{r fac-em-box-srmrw} -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_ss_l1_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2,  y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_ss_l2_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov,  y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_icc_ov_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_icc_lv_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+<!-- ``` -->
+
+<!-- #### SRMRB -->
+
+<!-- ```{r fac-em-box-srmrb} -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l1, y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator)+ -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_ss_l1_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2,  y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator)+ -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_ss_l2_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_ov,  y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator)+ -->
+<!--     labs(title = 'SRMRB by Obs. Var. ICC')+ -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_icc_ov_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in') -->
+
+<!-- p <- ggplot(mydata, aes(x=icc_lv, y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red') + -->
+<!--     facet_grid(Model~Estimator)+ -->
+<!--     lims(y=c(0,1)) -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_icc_lv_facet_estimator_model.pdf",plot = p,width=9, height=6, units='in') -->
+
+<!-- ``` -->
+
+
+<!-- ## Fit distribution by Model and Estimator only -->
+
+
+<!-- ```{r box-est-model-thing} -->
+<!-- p <- ggplot(mydata, aes(x=Model, y=CFI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     facet_grid(.~Estimator) + -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("cfi_marginal_model_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=Model, y=TLI))+ -->
+<!--     geom_boxplot()+ -->
+<!--     facet_grid(.~Estimator) + -->
+<!--     geom_abline(intercept = .95, slope=0, -->
+<!--                 linetype='dashed', color = 'red') -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("tli_marginal_model_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+
+<!-- p <- ggplot(mydata, aes(x=Model, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     facet_grid(.~Estimator) + -->
+<!--     geom_abline(intercept = .06, slope=0, -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("rmsea_marginal_model_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+
+<!-- p <- ggplot(mydata, aes(x=Model, y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     facet_grid(.~Estimator) + -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red')  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrw_marginal_model_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- p <- ggplot(mydata, aes(x=Model, y=SRMRB))+ -->
+<!--     geom_boxplot()+ -->
+<!--     geom_abline(intercept = .08, slope=0, -->
+<!--                 linetype='dashed', color = 'red')+ -->
+<!--     facet_grid(.~Estimator) + -->
+<!--     lims(y=c(0,1))  -->
+<!-- p -->
+<!-- if(save.fig == T) ggsave("srmrb_marginal_model_estimator.pdf",plot = p, width=6, height=4, units='in') -->
+
+
+<!-- ``` -->
+
+
+<!-- ## interaction between Estimator and number of groups -->
+
+<!-- ```{r} -->
+
+<!-- p <- ggplot(mydata, aes(x=ss_l2, y=RMSEA))+ -->
+<!--     geom_boxplot()+ -->
+<!--     facet_grid(.~Estimator) -->
+<!-- p -->
+
+<!-- with(mydata, { -->
+<!--   interaction.plot(ss_l2, Estimator, RMSEA,  -->
+<!--                    fun = function(x) mean(x, na.rm = TRUE), -->
+<!--                    main = "RMSEA Interaction Plot") -->
+<!-- }) -->
+<!-- ``` -->
+
+<!-- ## Interaction between Estimator and Latent ICC for SRMRW -->
+
+<!-- ```{r} -->
+
+<!-- p <- ggplot(mydata, aes(x=Estimator, y=SRMRW))+ -->
+<!--     geom_boxplot()+ -->
+<!--     facet_grid(.~icc_lv) -->
+<!-- p -->
+
+<!-- with(mydata, { -->
+<!--   interaction.plot(icc_lv, Estimator, SRMRW,  -->
+<!--                    fun = function(x) mean(x, na.rm = TRUE), -->
+<!--                    main = "SRMRW Interaction Plot", ylab="SRMRW") -->
+<!-- }) -->
+<!-- ``` -->

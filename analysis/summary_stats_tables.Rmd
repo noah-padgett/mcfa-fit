@@ -6,28 +6,6 @@ editor_options:
   chunk_output_type: console
 ---
 
-<!-- % 
-%% ============================================= #
-%%               Padgettt                
-%% ============================================= #
-%% Data Created: 2019-02-20
-%% Date Modified: 2019-02-26
-%% By: R. Noah Padgett                   
-%% ============================================= #
-%% MA Thesis Project                     
-%% ============================================= #
-%% Purpose:
-%% This R script is for 
-%%   1. creating simple descriptive statistics 
-%%     across conditions
-%%   2. Generating tables of those stats
-%%   3. Create simple boxplots for trends
-%%   4. Creating publication boxplots
-%%
-%% The output is numerous .eps files (figures)
-%% and code for tables in latex
-%% ============================================= # -->
-
 
 Purpose of this file:
 
@@ -267,7 +245,7 @@ c1 <- cbind(c[ c$Model == 'C', c('Estimator', 'ss_l1', 'ss_l2', 'Admissible')],
            c[ c$Model == 'M1', 'Admissible'], 
            c[ c$Model == 'M2', 'Admissible'], 
            c[ c$Model == 'M12', 'Admissible'])
-colnames(c1) <- c('Estimator', 'SS Level-1', 'SS Level-2', 'C' ,'M1' ,'M2', 'M12')
+colnames(c1) <- c('Estimation', 'SS Level-1', 'SS Level-2', 'C' ,'M1' ,'M2', 'M12')
 
 ## Print results in a nice looking table in HTML
 kable(c1, format='html') %>%
@@ -350,7 +328,7 @@ kable(a, format='html') %>%
 
 ## make a copy of a to print into
 a1 <- as_tibble(as.data.frame(matrix(NA, ncol=8,nrow=nrow(a))))
-colnames(a1) <- c('Model', 'Estimator', "chi2", "CFI",'TLI', 'RMSEA', 'SRMRW', 'SRMRB')
+colnames(a1) <- c('Model', 'Estimation', "chi2", "CFI",'TLI', 'RMSEA', 'SRMRW', 'SRMRB')
 i <- 1
 for(i in 1:nrow(a)){
   a1[i,3:8] <- unlist(c(
@@ -363,6 +341,54 @@ for(i in 1:nrow(a)){
   ))
 }
 a1[,1:2] <- a[,1:2]## add factors back
+## Print out in tex
+print(xtable(a1, digits = 3), booktabs = T, include.rownames = F)
+
+```
+
+## Fit statistics by Model, Estimation Method, and Sample Size Conditions
+
+An interesting additonal column is added called Prop.Use, which is the total proportion of usable replications for each marginal cell of the design. 
+Each row of the following table represents the marginal distribution of each fit statistic over the ICC conditions. 
+The total number of possible replications is 3000 (500 rep. $\times$6 conditions).
+This gives a rough account of the admissibility of the estimation method across sample sizes. 
+
+```{r}
+
+
+mydata <- filter(sim_results, Converge == 1 & Admissible == 1)
+
+## first table summary table
+a <- mydata %>%
+  group_by(Model, Estimator, ss_l2, ss_l1) %>%
+  summarise(
+    Prop.Use=n()/3000,
+    chi2=mean(Chi2_pvalue_decision, na.rm = T),
+    CFI.m =mean(CFI, na.rm = T), CFI.sd =sd(CFI, na.rm = T),
+    TLI.m =mean(TLI, na.rm = T), TLI.sd =sd(TLI, na.rm = T),
+    RMSEA.m =mean(RMSEA, na.rm = T), RMSEA.sd =sd(RMSEA, na.rm = T),
+    SRMRW.m =mean(SRMRW, na.rm = T), SRMRW.sd =sd(SRMRW, na.rm = T),
+    SRMRB.m =mean(SRMRB, na.rm = T), SRMRB.sd =sd(SRMRB, na.rm = T)
+  )
+## Print results in a nice looking table in HTML
+kable(a, format='html') %>%
+    kable_styling(full_width = T)
+
+## make a copy of a to print into
+a1 <- as_tibble(as.data.frame(matrix(NA, ncol=11,nrow=nrow(a))))
+colnames(a1) <- c('Model', 'Estimation', "N2", "N1", "Prop.Use", "chi2", "CFI",'TLI', 'RMSEA', 'SRMRW', 'SRMRB')
+i <- 1
+for(i in 1:nrow(a)){
+  a1[i,5:11] <- unlist(c(
+  round(a[i,5],3), round(a[i,6],3),
+  paste0(round(a[i,7],3), ' (', round(a[i,8],2), ')'),
+  paste0(round(a[i,9],3), ' (', round(a[i,10],2), ')'),
+  paste0(round(a[i,11],3), ' (', round(a[i,12],2), ')'),
+  paste0(round(a[i,13],3), ' (', round(a[i,14],2), ')'),
+  paste0(round(a[i,15],3), ' (', round(a[i,16],2), ')')
+  ))
+}
+a1[,1:4] <- a[,1:4]## add factors back
 ## Print out in tex
 print(xtable(a1, digits = 3), booktabs = T, include.rownames = F)
 

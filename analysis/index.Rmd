@@ -3,13 +3,20 @@ title: "Home"
 site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
-    toc: true
+    toc: false
 editor_options:
   chunk_output_type: console
 ---
 
-Welcome to my research website.
+Welcome to our research website.
+This site contains the results of our Monte Carlo simulation study that compares fit statistics across robust estimation methods in multilevel confirmatory factor analysis (MCFA) models.
+There are few studies that have examined these complex models and even fewer that have focused on the performance of fit staitistcs.
 
-## Summary statistics of fit statistics
+Below contains various pages for the different aspects of the output. 
+The pages are broken up into what we considered logical sections of the results.
+Not all of the results shown here are reported in the manuscript.
+This limitation is mostly due to space restrictions in the actual manuscript.
 
-*[Summary statistics of fit statistics](summary_stats_tables.html)
+*[Convergence, Admissibility, and Fit Descriptive Statistics](summary_stats_tables.html)
+
+*[Fit Statistic Distribution](fit_boxplots.Rmd)

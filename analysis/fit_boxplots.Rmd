@@ -1,0 +1,1232 @@
+---
+title: "Fit Statistic Boxplots"
+date: "2019-05-08"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+Purpose of this file:
+
+   1. Create simple boxplots for trends
+   2. Creating publication boxplots
+
+# Packages and Set-Up
+
+```{r set-up, tidy=T}
+##Chunk iptions
+knitr::opts_chunk$set(out.width = "225%")
+
+## Packages
+## General Packages
+library(tidyverse)
+# Formatting and Tables
+library(kableExtra)
+library(xtable)
+# For plotting
+library(ggplot2)
+theme_set(theme_bw())
+# Data manipulating
+library(dplyr)
+
+## One global parameter for printing figures
+save.fig <- F
+
+```
+
+# Data Management
+
+```{r data, tidy=T}
+
+sim_results <- as_tibble(read.table('data/compiled_fit_results.txt', header=T,sep='\t'))
+
+## Next, turn condition into a factor for plotting
+sim_results$Condition <- as.factor(sim_results$Condition)
+
+## Next, since TLI is non-normed, any value greater than 1 needs to be rescaled to 1.
+sim_results$TLI <- ifelse(sim_results$TLI > 1, 1, sim_results$TLI)
+sim_results$TLI <- ifelse(sim_results$TLI < 0, 0, sim_results$TLI)
+## Next, summarize the results of the chi-square test of model fit. This is done simply by comparing the p-value to alpha (0.05) and indicating whether the model was flagged as fitting or not.
+# Note: if  p < 0.05 then this variable is flagged as 0, and 1 otherwise
+sim_results$Chi2_pvalue_decision <- ifelse(sim_results$chisqu_pvalue < 0.05, 0, 1)
+# 0 = rejected that these data fit this model
+# 1 = failed to reject that these data fit this model
+```
+
+## Adding Labels to Conditions
+
+Currently, each condition is kind of like a hidden id that we don't know what the actual factor is. 
+So, first thing isto create meaningful labels for us to use.
+Remember, the 72 conditions for the this study were
+
+  1. Level-1 sample size (5, 10, 30)
+  2. Level-2 sample size (30, 50, 100, 200)
+  3. Observed indicator ICC (.1, .3, .5)
+  4. Latent variable ICC (.1, .5)
+  
+```{r}
+## level-1 Sample size
+ss_l1 <- c(5, 10, 30) ## 6 conditions each
+ss_l2 <- c(30, 50, 100, 200) ## 18 condition each
+icc_ov <- c(.1, .3, .5) ## 2 conditions each
+icc_lv <- c(.1, .5) ## every other condition
+nCon <- 72 # number of conditions
+nRep <- 500 # number of replications per condition
+nMod <- 12 ## numberof estimated models per conditions
+## Total number of rows: 432,000
+ss_l2 <- c(rep(ss_l2[1], 18*nRep*nMod), rep(ss_l2[2], 18*nRep*nMod), 
+           rep(ss_l2[3], 18*nRep*nMod), rep(ss_l2[4], 18*nRep*nMod))
+ss_l1 <- rep(c(rep(ss_l1[1],6*nRep*nMod), rep(ss_l1[2],6*nRep*nMod), rep(ss_l1[3],6*nRep*nMod)), 4)
+icc_ov <- rep(c(rep(icc_ov[1], 2*nRep*nMod), rep(icc_ov[2], 2*nRep*nMod), rep(icc_ov[3], 2*nRep*nMod)), 12)
+icc_lv <- rep(c(rep(icc_lv[1], nRep*nMod), rep(icc_lv[2], nRep*nMod)), 36)
+## Force these vectors to be column vectors
+ss_l1 <- matrix(ss_l1, ncol=1)
+ss_l2 <- matrix(ss_l2, ncol=1)
+icc_ov <- matrix(icc_ov, ncol=1)
+icc_lv <- matrix(icc_lv, ncol=1)
+## Add the labels to the results data frame
+sim_results <- sim_results[order(sim_results$Condition),]
+sim_results <- cbind(sim_results, ss_l1, ss_l2, icc_ov, icc_lv)
+
+## Force the conditions to be factors
+sim_results$ss_l1 <- as.factor(sim_results$ss_l1)
+sim_results$ss_l2 <- as.factor(sim_results$ss_l2)
+sim_results$icc_ov <- as.factor(sim_results$icc_ov)
+sim_results$icc_lv <- as.factor(sim_results$icc_lv)
+sim_results$Model <- factor(sim_results$Model, levels = c('C','M1','M2','M12'), ordered = T)
+## Set up iterators for remainder of script
+mods <- c('C', 'M1', 'M2', 'M12')
+ests <- c('MLR', 'ULSMV', 'WLSMV')
+```
+
+# Boxplots
+
+One of the best ways to visualize the results of the distribution of fit statistics across conditions is to use boxplots.
+In the section, we created three sets of boxplots.
+First, the boxplots are large and give a very course overview of  the results across conditions, but can be difficult to make sense of because of how large they are.
+Secondly, the boxplots are made with facets by model and estimator from the larger set of data so that more concise plots can be made for easier viewing.
+Third, subsets based on Model and estimator are made to create a "smaller" plot that is easier to handle.
+Most of these latter plots are  included in my thesis document.
+
+For all graphs, we haved placed a dashed line where the commonly used cut-off for these fit statistics lies.
+
+Hu and Bentler (1999) commonly reported cut-off criteria:
+
+* CFI > .95
+* TLI > .95
+* RMSEA < .06
+* SRMR < .08 
+    - Note: For SRMR, there are two versions SRMR-Within and SRMR-Between. The same commonly use cut-off is applied but is likely inappropriate for both.
+    
+First, filter the results to the converged and admissible replications/
+
+```{r}
+
+mydata <- filter(sim_results, Converge == 1 & Admissible == 1)
+
+```
+
+
+## Large General Boxplots
+
+For these larger Boxplots, there are two sets.
+
+  1. Coarse distributions of each fit statistic
+
+  2. Marginal Plots of Condition (ss\_l1, ss\_l2, icc\_ov, icc\_lv)
+  
+For outliers, we used alpha shading to limit the opacity. This was done to help show the relative differences in density of outliers across different conditions.
+This was recommended by Dr. Mandy Herring from the Baylor University Statistics Department during Noah Padgett's thesis defense. 
+We set the alpha shading to 0.10 (i.e., 10\% opacity). 
+
+### Coarse Boxplots
+
+```{r gen-box-1, warning=FALSE, message=FALSE, error=FALSE}
+
+## Set 1 Coarse distributions of each fit statistic
+p <- ggplot(mydata, aes(x=Condition, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("cfi_all_conditions.pdf",plot = p, width=12, height=6, units='in')
+
+p <- ggplot(mydata, aes(x=Condition, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("tli_all_conditions.pdf",plot = p, width=12, height=6, units='in')
+
+p <- ggplot(mydata, aes(x=Condition, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("rmsea_all_conditions.pdf",plot = p, width=12, height=6, units='in')
+
+p <- ggplot(mydata, aes(x=Condition, y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("srmrw_all_conditions.pdf",plot = p, width=12, height=6, units='in')
+
+p <- ggplot(mydata, aes(x=Condition, y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red')+
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_all_conditions.pdf",plot = p, width=12, height=6, units='in')
+
+## SRMRB without range restriction
+p <- ggplot(mydata, aes(x=Condition, y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red')
+p
+```
+
+### Marginal Plots of Conditions
+
+#### CFI
+
+```{r gen-box-cfi,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=Model, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("cfi_marginal_model.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=Estimator, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("cfi_marginal_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=ss_l1, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("cfi_marginal_ssl1.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("cfi_marginal_ss_l2.pdf",plot = p,width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_ov, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    labs(title = 'CFI by Obs. Var. ICC')
+p
+if(save.fig == T) ggsave("cfi_marginal_icc_ov.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_lv, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("cfi_marginal_icc_lv.pdf",plot = p, width=6, height=4, units='in')
+
+
+```
+
+#### TLI
+
+```{r gen-box-tli,  warning=FALSE, message=FALSE, error=FALSE}
+p <- ggplot(mydata, aes(x=Model, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("tli_marginal_model.pdf",plot = p, width=6, height=4, units='in')
+p <- ggplot(mydata, aes(x=Estimator, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("tli_marginal_estimator.pdf",plot = p,width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=ss_l1, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("tli_marginal_ss_l1.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("tli_marginal_ss_l2.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=icc_ov, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("tli_marginal_icc_ov.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=icc_lv, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("tli_marginal_icc_lv.pdf",plot = p, width=6, height=4, units='in')
+
+
+```
+
+#### RMSEA
+
+```{r gen-box-rmsea,  warning=FALSE, message=FALSE, error=FALSE}
+p <- ggplot(mydata, aes(x=Model, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("rmsea_marginal_model.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=Estimator, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("rmsea_marginal_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l1, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("rmsea_marginal_ss_l1.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("rmsea_marginal_ss_l2.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=icc_ov, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("rmsea_marginal_icc_ov.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_lv, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("rmsea_marginal_icc_lv.pdf",plot = p, width=6, height=4, units='in')
+
+
+```
+
+#### SRMRW
+
+```{r gen-box-srmrw,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=Model, y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("srmrw_marginal_model.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=Estimator, y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("srmrw_marginal_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l1, y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("srmrw_marginal_ss_l1.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2,  y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("srmrw_marginal_ss_l2.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_ov,  y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    labs(title = 'SRMRW by Obs. Var. ICC')
+p
+if(save.fig == T) ggsave("srmrw_marginal_icc_ov.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_lv, y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("srmrw_marginal_icc_lv.pdf",plot = p, width=6, height=4, units='in')
+
+```
+
+#### SRMRB
+
+```{r gen-box-srmrb,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=Model, y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red')+
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_model.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=Estimator, y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red')+
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l1, y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_ss_l1.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2,  y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    labs(title = 'SRMRB by Level-2 Sample Size') +
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_ss_l2.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=icc_ov,  y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_icc_ov.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=icc_lv, y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_icc_lv.pdf",plot = p, width=6, height=4, units='in')
+
+```
+
+## Facetted Boxplots
+
+For the facetted boxplots, these will also be created in multiple sets.
+
+  1. Full Results by conditions faetted by Model and estimator
+  2.  Marginal Plots of Condition (ss\_l1, ss\_l2, icc\_ov, icc\_lv) Facetted by Est.
+  3.  Marginal Plots of Condition (ss\_l1, ss\_l2, icc\_ov, icc\_lv) Facetted by Model
+  4.  Marginal Plots of Condition (ss\_l1, ss\_l2, icc\_ov, icc\_lv) Facetted by Est. and Model
+
+So, that is a lot of plots and onyl a select few will make it into the final document and publication manuscript.
+
+### Faceted Coarse Boxplots
+
+```{r fac-box-1, warning=FALSE, message=FALSE, error=FALSE}
+## Set 1: Large boxplot figures faceted by Model and Estimator
+p <- ggplot(mydata, aes(x=Condition, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("cfi_all_condition_facet.pdf",plot = p, width=16, height=12, units='in')
+
+p <- ggplot(mydata, aes(x=Condition, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("tli_all_condition_facet.pdf",plot = p, width=16, height=12, units='in')
+
+p <- ggplot(mydata, aes(x=Condition, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("rmsea_all_condition_facet.pdf",plot = p, width=16, height=12, units='in')
+
+
+p <- ggplot(mydata, aes(x=Condition, y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("srmrw_all_condition_facet.pdf",plot = p, width=16, height=12, units='in')
+
+p <- ggplot(mydata, aes(x=Condition, y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator) +
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_all_condition_facet.pdf",plot = p, width=16, height=12, units='in')
+```
+
+
+### Marginal Plots of Conditions Facetted by Estimator
+
+#### CFI
+
+```{r fac-e-box-cfi,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=ss_l1, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)
+p
+if(save.fig == T) ggsave("cfi_marginal_ssl1_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)+
+    labs(title = 'CFI by Level-2 Sample Size')
+p
+if(save.fig == T) ggsave("cfi_marginal_ss_l2_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_ov, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)
+p
+if(save.fig == T) ggsave("cfi_marginal_icc_ov_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_lv, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)
+p
+if(save.fig == T) ggsave("cfi_marginal_icc_lv_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+```
+
+#### TLI
+
+```{r fac-e-box-tli,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=ss_l1, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)
+p
+if(save.fig == T) ggsave("tli_marginal_ss_l1_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)
+p
+if(save.fig == T) ggsave("tli_marginal_ss_l2_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=icc_ov, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)
+p
+if(save.fig == T) ggsave("tli_marginal_icc_ov_facet_estimator.pdf",plot = p, scale=1)
+
+p <- ggplot(mydata, aes(x=icc_lv, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)
+p
+if(save.fig == T) ggsave("tli_marginal_icc_lv_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+```
+
+#### RMSEA
+
+```{r fac-e-box-rmsea,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=ss_l1, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)
+p
+if(save.fig == T) ggsave("rmsea_marginal_ss_l1_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)
+p
+if(save.fig == T) ggsave("rmsea_marginal_ss_l2_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=icc_ov, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)
+p
+if(save.fig == T) ggsave("rmsea_marginal_icc_ov_facet_estimator.pdf",plot = p,width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_lv, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)
+p
+if(save.fig == T) ggsave("rmsea_marginal_icc_lv_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+```
+
+#### SRMRW
+
+```{r fac-e-box-srmrw,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=ss_l1, y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)
+p
+if(save.fig == T) ggsave("srmrw_marginal_ss_l1_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2,  y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)
+p
+if(save.fig == T) ggsave("srmrw_marginal_ss_l2_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_ov,  y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)
+p
+if(save.fig == T) ggsave("srmrw_marginal_icc_ov_facet_estimator.pdf",plot = p,width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_lv, y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)
+p
+if(save.fig == T) ggsave("srmrw_marginal_icc_lv_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+```
+
+#### SRMRB
+
+```{r fac-e-box-srmrb,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=ss_l1, y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator) +
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_ss_l1_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2,  y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator) +
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_ss_l2_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=icc_ov,  y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)+
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_icc_ov_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=icc_lv, y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Estimator)+
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_icc_lv_facet_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+```
+
+
+### Marginal Plots of Conditions Facetted by Model
+
+#### CFI
+
+```{r fac-m-box-cfi,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=ss_l1, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)
+p
+if(save.fig == T) ggsave("cfi_marginal_ssl1_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)
+p
+if(save.fig == T) ggsave("cfi_marginal_ss_l2_facet_model.pdf",plot = p,width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_ov, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)
+p
+if(save.fig == T) ggsave("cfi_marginal_icc_ov_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_lv, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)
+p
+if(save.fig == T) ggsave("cfi_marginal_icc_lv_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+
+```
+
+#### TLI
+
+```{r fac-m-box-tli,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=ss_l1, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)
+p
+if(save.fig == T) ggsave("tli_marginal_ss_l1_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)+
+    labs(title = 'TLI by Level-2 Sample Size')
+p
+if(save.fig == T) ggsave("tli_marginal_ss_l2_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=icc_ov, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)
+p
+if(save.fig == T) ggsave("tli_marginal_icc_ov_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=icc_lv, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)
+p
+if(save.fig == T) ggsave("tli_marginal_icc_lv_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+
+```
+
+#### RMSEA
+
+```{r fac-m-box-rmsea,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=ss_l1, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)
+p
+if(save.fig == T) ggsave("rmsea_marginal_ss_l1_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)
+p
+if(save.fig == T) ggsave("rmsea_marginal_ss_l2_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=icc_ov, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)
+p
+if(save.fig == T) ggsave("rmsea_marginal_icc_ov_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_lv, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)
+p
+if(save.fig == T) ggsave("rmsea_marginal_icc_lv_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+
+```
+
+#### SRMRW
+
+```{r fac-m-box-srmrw,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=ss_l1, y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)
+p
+if(save.fig == T) ggsave("srmrw_marginal_ss_l1_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2,  y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)
+p
+if(save.fig == T) ggsave("srmrw_marginal_ss_l2_facet_model.pdf",plot = p, scale=1)
+
+
+p <- ggplot(mydata, aes(x=icc_ov,  y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)
+p
+if(save.fig == T) ggsave("srmrw_marginal_icc_ov_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_lv, y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)
+p
+if(save.fig == T) ggsave("srmrw_marginal_icc_lv_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+```
+
+#### SRMRB
+
+```{r fac-m-box-srmrb,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=ss_l1, y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)+
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_ss_l1_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2,  y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)+
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_ss_l2_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=icc_ov,  y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)+
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_icc_ov_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=icc_lv, y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~Model)+
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_icc_lv_facet_model.pdf",plot = p, width=6, height=4, units='in')
+
+```
+
+
+### Marginal Plots of Conditions Facetted by Estimator and Model
+
+#### CFI
+
+```{r fac-em-box-cfi,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=ss_l1, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("cfi_marginal_ssl1_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("cfi_marginal_ss_l2_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_ov, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("cfi_marginal_icc_ov_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_lv, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("cfi_marginal_icc_lv_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+
+```
+
+#### TLI
+
+```{r fac-em-box-tli,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=ss_l1, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("tli_marginal_ss_l1_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("tli_marginal_ss_l2_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+p <- ggplot(mydata, aes(x=icc_ov, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("tli_marginal_icc_ov_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+p <- ggplot(mydata, aes(x=icc_lv, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("tli_marginal_icc_lv_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+
+```
+
+#### RMSEA
+
+```{r fac-em-box-rmsea,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=ss_l1, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("rmsea_marginal_ss_l1_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("rmsea_marginal_ss_l2_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+p <- ggplot(mydata, aes(x=icc_ov, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("rmsea_marginal_icc_ov_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_lv, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("rmsea_marginal_icc_lv_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+
+```
+
+#### SRMRW
+
+```{r fac-em-box-srmrw,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=ss_l1, y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("srmrw_marginal_ss_l1_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2,  y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("srmrw_marginal_ss_l2_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_ov,  y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("srmrw_marginal_icc_ov_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+
+p <- ggplot(mydata, aes(x=icc_lv, y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)
+p
+if(save.fig == T) ggsave("srmrw_marginal_icc_lv_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+```
+
+#### SRMRB
+
+```{r fac-em-box-srmrb,  warning=FALSE, message=FALSE, error=FALSE}
+
+p <- ggplot(mydata, aes(x=ss_l1, y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)+
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_ss_l1_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+
+p <- ggplot(mydata, aes(x=ss_l2,  y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)+
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_ss_l2_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+p <- ggplot(mydata, aes(x=icc_ov,  y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)+
+    labs(title = 'SRMRB by Obs. Var. ICC')+
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_icc_ov_facet_estimator_model.pdf",plot = p, width=9, height=6, units='in')
+
+p <- ggplot(mydata, aes(x=icc_lv, y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(Model~Estimator)+
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_icc_lv_facet_estimator_model.pdf",plot = p,width=9, height=6, units='in')
+
+```
+
+
+## Fit distribution by Model and Estimator only
+
+
+```{r box-est-model-thing,  warning=FALSE, message=FALSE, error=FALSE}
+p <- ggplot(mydata, aes(x=Model, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    facet_grid(.~Estimator) +
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("cfi_marginal_model_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=Model, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    facet_grid(.~Estimator) +
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("tli_marginal_model_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+
+p <- ggplot(mydata, aes(x=Model, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    facet_grid(.~Estimator) +
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("rmsea_marginal_model_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+
+p <- ggplot(mydata, aes(x=Model, y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    facet_grid(.~Estimator) +
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("srmrw_marginal_model_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=Model, y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red')+
+    facet_grid(.~Estimator) +
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("srmrb_marginal_model_estimator.pdf",plot = p, width=6, height=4, units='in')
+
+
+```
+
+
+## interaction between Estimator and number of groups
+
+```{r}
+
+p <- ggplot(mydata, aes(x=ss_l2, y=RMSEA))+
+    geom_boxplot()+
+    facet_grid(.~Estimator)
+p
+
+with(mydata, {
+  interaction.plot(ss_l2, Estimator, RMSEA,
+                   fun = function(x) mean(x, na.rm = TRUE),
+                   main = "RMSEA Interaction Plot")
+})
+```
+
+## Interaction between Estimator and Latent ICC for SRMRW
+
+```{r}
+
+p <- ggplot(mydata, aes(x=Estimator, y=SRMRW))+
+    geom_boxplot()+
+    facet_grid(.~icc_lv)
+p
+
+with(mydata, {
+  interaction.plot(icc_lv, Estimator, SRMRW,
+                   fun = function(x) mean(x, na.rm = TRUE),
+                   main = "SRMRW Interaction Plot", ylab="SRMRW")
+})
+```

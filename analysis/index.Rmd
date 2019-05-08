@@ -12,4 +12,4 @@ Welcome to my research website.
 
 ## Summary statistics of fit statistics
 
-*[Summary statistics of fit statistics](summary_stats_boxplots.html)
+*[Summary statistics of fit statistics](summary_stats_tables.html)

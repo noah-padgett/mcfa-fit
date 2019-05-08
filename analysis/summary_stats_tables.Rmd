@@ -417,13 +417,14 @@ for(M in mods){
         colnames(a1) <- c('N2', 'N1', 'Num_Rep', "chi2", "CFI",'TLI', 'RMSEA', 'SRMRW', 'SRMRB')
         i <- 1
         for(i in 1:nrow(a_s)){
-          a1[i,4:9] <- unlist(c(
+          a1[i,3:9] <- unlist(c(
+            round(a_s[i,5],2),
             round(a_s[i,6],2),
-          paste0(round(a_s[i,7],2), '(', round(a_s[i,8],2), ')'),
-          paste0(round(a_s[i,9],2), '(', round(a_s[i,10],2), ')'),
-          paste0(round(a_s[i,11],2), '(', round(a_s[i,12],2), ')'),
-          paste0(round(a_s[i,13],2), '(', round(a_s[i,14],2), ')'),
-          paste0(round(a_s[i,15],2), '(', round(a_s[i,16],2), ')')
+            paste0(round(a_s[i,7],2), '(', round(a_s[i,8],2), ')'),
+            paste0(round(a_s[i,9],2), '(', round(a_s[i,10],2), ')'),
+            paste0(round(a_s[i,11],2), '(', round(a_s[i,12],2), ')'),
+            paste0(round(a_s[i,13],2), '(', round(a_s[i,14],2), ')'),
+            paste0(round(a_s[i,15],2), '(', round(a_s[i,16],2), ')')
           ))
         }
         a1[,1:2] <- a_s[,c(2,1)]## add factors back with diff. order

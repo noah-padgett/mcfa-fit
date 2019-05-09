@@ -19,4 +19,6 @@ This limitation is mostly due to space restrictions in the actual manuscript.
 
 *[Convergence, Admissibility, and Fit Descriptive Statistics](summary_stats_tables.html)
 
-*[Fit Statistic Distribution](fit_boxplots.Rmd)
+*[Fit Statistic Distribution](fit_boxplots.html)
+
+*[ANOVA Results](anova.html)

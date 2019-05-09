@@ -1,0 +1,587 @@
+---
+title: "ROC Analyses"
+date: "2019-05-09"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+Purpose of this file:
+
+   1. Conduct ROC Analysies
+   2. Create ROC Curves
+   3. Create Summary tables of ROC analyses
+
+# Packages and Set-Up
+
+```{r set-up, tidy=T}
+##Chunk iptions
+knitr::opts_chunk$set(out.width="225%")
+
+#setwd('C:/Users/noahp/Dropbox/MCFA Thesis/Code Results')
+
+## Packages
+## General Packages
+library(tidyverse)
+library(car)
+library(psych)
+# Formatting and Tables
+library(kableExtra)
+library(xtable)
+# For plotting
+library(ggplot2)
+theme_set(theme_bw())
+# Data manipulating
+library(dplyr)
+# ROC Analysis
+library(pROC)
+
+## One global parameter for printing figures
+save.fig <- F
+
+## Load up the functions needed for ANOVA and Assumption checking
+source('code/r_functions.R')
+
+```
+
+
+# Data Management
+
+```{r data, tidy=T}
+
+sim_results <- as_tibble(read.table('data/compiled_fit_results.txt', header=T,sep='\t'))
+
+## Next, turn condition into a factor for plotting
+sim_results$Condition <- as.factor(sim_results$Condition)
+
+## Next, since TLI is non-normed, any value greater than 1 needs to be rescaled to 1.
+sim_results$TLI <- ifelse(sim_results$TLI > 1, 1, sim_results$TLI)
+sim_results$TLI <- ifelse(sim_results$TLI < 0, 0, sim_results$TLI)
+## Next, summarize the results of the chi-square test of model fit. This is done simply by comparing the p-value to alpha (0.05) and indicating whether the model was flagged as fitting or not.
+# Note: if  p < 0.05 then this variable is flagged as 0, and 1 otherwise
+sim_results$Chi2_pvalue_decision <- ifelse(sim_results$chisqu_pvalue > 0.05, 1, 0)
+# 0 = rejected that these data fit this model
+# 1 = failed to reject that these data fit this model
+
+## Need to make codes for the ROC analyses outcomes
+# first, C vs. M1,M2,M12 - Perfect specification
+sim_results$C <- ifelse(sim_results$Model == 'C', 1, 0)
+# second, C vs. M1|M12- correct level 1 model
+sim_results$M1 <- ifelse(sim_results$Model == 'C' & sim_results$Model != 'M2', 1, 0)
+# third, C vs. M2|M12- correct level 2 model
+sim_results$M2 <- ifelse(sim_results$Model == 'C' & sim_results$Model != 'M1', 1, 0)
+```
+
+## Adding Labels to Conditions
+
+Currently, each condition is kind of like a hidden id that we don't know what the actual factor is. 
+So, first thing isto create meaningful labels for us to use.
+Remember, the 72 conditions for the this study were
+
+  1. Level-1 sample size (5, 10, 30)
+  2. Level-2 sample size (30, 50, 100, 200)
+  3. Observed indicator ICC (.1, .3, .5)
+  4. Latent variable ICC (.1, .5)
+  
+```{r}
+## level-1 Sample size
+ss_l1 <- c(5, 10, 30) ## 6 conditions each
+ss_l2 <- c(30, 50, 100, 200) ## 18 condition each
+icc_ov <- c(.1, .3, .5) ## 2 conditions each
+icc_lv <- c(.1, .5) ## every other condition
+nCon <- 72 # number of conditions
+nRep <- 500 # number of replications per condition
+nMod <- 12 ## numberof estimated models per conditions
+## Total number of rows: 432,000
+ss_l2 <- c(rep(ss_l2[1], 18*nRep*nMod), rep(ss_l2[2], 18*nRep*nMod), rep(ss_l2[3], 18*nRep*nMod), rep(ss_l2[4], 18*nRep*nMod))
+ss_l1 <- rep(c(rep(ss_l1[1],6*nRep*nMod), rep(ss_l1[2],6*nRep*nMod), rep(ss_l1[3],6*nRep*nMod)), 4)
+icc_ov <- rep(c(rep(icc_ov[1], 2*nRep*nMod), rep(icc_ov[2], 2*nRep*nMod), rep(icc_ov[3], 2*nRep*nMod)), 12)
+icc_lv <- rep(c(rep(icc_lv[1], nRep*nMod), rep(icc_lv[2], nRep*nMod)), 36)
+## Force these vectors to be column vectors
+ss_l1 <- matrix(ss_l1, ncol=1)
+ss_l2 <- matrix(ss_l2, ncol=1)
+icc_ov <- matrix(icc_ov, ncol=1)
+icc_lv <- matrix(icc_lv, ncol=1)
+## Add the labels to the results data frame
+sim_results <- sim_results[order(sim_results$Condition),]
+sim_results <- cbind(sim_results, ss_l1, ss_l2, icc_ov, icc_lv)
+
+## Force the conditions to be factors
+sim_results$ss_l1 <- as.factor(sim_results$ss_l1)
+sim_results$ss_l2 <- as.factor(sim_results$ss_l2)
+sim_results$icc_ov <- as.factor(sim_results$icc_ov)
+sim_results$icc_lv <- as.factor(sim_results$icc_lv)
+sim_results$Model <- factor(sim_results$Model, levels = c('C','M1','M2','M12'), ordered = T)
+
+## Subset to the usable cases
+sim_results <- filter(sim_results, Converge == 1 & Admissible == 1)
+```
+
+
+
+# Introduction to ROC Analysis
+
+ROC stands for Receiver Operating Curve.
+ROC analysis aims to detect the presense of signals in data by looking at how the ability to classify an outcome (usually binary) based on a continuous or ordinal indicator.
+ROC analyses was orginally used in wartime to help detect the presence of radar signals.
+However, now ROC analysis is used in many areas including medical and psychology research.
+It is commonly used as a tool to help make decisions about what tools or methods help classify objects or individuals into specific groups.
+
+In R, a package called pROC (Robin et al., 2011) was built that greatly enhancing the flexibility of using R for ROC analysis.
+For example, aside from just being able to conduct ROC analysis, one can compute confidences for this curve and conduct specific statistical tests comparing AUCs from the same data.
+One cool feature of this package is the ability to estimate partial-Area Under the Curve values for a specific range of specificities or sensitivities.
+This is very cool trick to be able to gain fine grained information about one end of the curve (i.e., if you are more interested in how well the classifier is performing when specificity is high, 90-100\%).
+
+For the ROC analyses, I conducted them in pieces to build more and more fine grained information about the classification quality of fit indices for detecting a simple type of misspecification.
+For misspecification, I broke up the ROC analyses into three major chunks.
+
+  1. Detecting any type of misspecification (i.e., C vs. M1-M2-M12),
+  2. Detecting misspecified level-1 model (i.e., C-M2 vs. M1-M12), and
+  3. Detecting misspecified level-2 model (i.e., C-M1 vs. M2-M12).
+
+Within each of these major chunks of analyses, I furhter investigated whether classification of correctly (ish) specified models was depended upon estimator.
+So, that means that three additional ROC analyses were conducted for each major type.
+One analysis for each estimator (MLR, ULSMV, WLSMV).
+
+There are intitally be MANY ROC curve figures. However, I only really care about 12 figures.
+These 12 are used in my thesis and manuscript.
+
+
+Setting up the objects to store the individual results so that I can use them all for the figures.
+
+```{r}
+
+fit_roc <- fit_roc_smooth <- list()
+roc_summary <- as.data.frame(matrix(0,ncol=13, nrow=60))
+colnames(roc_summary) <- c('Classification','Index', 'Estimator', 'AUC',
+                           'partial-AUC','Smoothed-AUC', 'Optimal-Threshold',
+                           'Specificity','Sensitivity', 'tn', 'tp', 'fn', 'fp')
+CLASS <- c('C', 'C_Level_1','C_Level_2')
+
+```
+
+## Detecting any type of misspecification
+
+```{r roc-any}
+
+INDEX <- c('CFI', 'TLI', 'RMSEA', 'SRMRW', 'SRMRB')
+EST <- c('ALL', 'MLR', 'ULSMV', 'WLSMV')
+
+i <- 1 ## counter for roc_summary
+j <- 1 ## Which class?
+for(index in INDEX){
+  for(est in EST){
+
+    ## Print out which iteration so I know what I am looking at
+    cat('\n\nROC Analysis in')
+    cat('\nIndex:\t', index)
+    cat('\nClassification:\t', CLASS[j])
+    cat('\nEstimator:\t', est)
+    ## Set up iteration key
+    key <- paste0(index,'.',CLASS[j],'.',est)
+    # Subset data is asked
+    if(est == 'ALL') mydata <- sim_results
+    if(est != 'ALL') mydata <- filter(sim_results, Estimator == est)
+    ## Create formula
+    model <- as.formula(paste0(CLASS[j], '~', index))
+    ## Fit ROC curve
+    fit_roc[[key]] <-  roc(model, data=mydata,
+                           plot =TRUE, ci=TRUE, print.auc=TRUE)
+    ## Create a plot of "smoothed" curve for plotting
+    fit_roc_smooth[[key]] <-  smooth(roc(model, data=mydata))
+    ## Compute partial AUC for specificity .9-1
+    p.auc <- auc(fit_roc[[key]], partial.auc = c(1,.9),partial.auc.focus = 'sp', partial.auc.correct = T )
+    ## get summary info
+    roc_summary[i, 2] <- index
+    roc_summary[i, 1] <- CLASS[j]
+    roc_summary[i, 3] <- est ##estimator
+    roc_summary[i, 4] <- fit_roc[[key]]$auc ## total AUC
+    roc_summary[i, 5] <- p.auc ## corrected partial AUC (.5 is no discrimination)
+    roc_summary[i, 6] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
+    roc_summary[i, 7:13] <- coords(fit_roc[[key]], "best", ret=c("threshold", "specificity", 'sensitivity', 'tn', 'tp', 'fn', 'fp'))
+    ## print summary
+    cat('\n\nSummary of ROC:\n')
+    print(roc_summary[i, ])
+    ## add to summary iterator
+    i <- i + 1
+  } ## End loop around estimator
+} ## End loop round index
+
+kable(roc_summary[1:20,], format = 'html') %>%
+  kable_styling(full_width = T)
+
+print(xtable(roc_summary[1:20,c(2:5,7:9)], digits = 3), booktabs=T,include.rownames = F)
+
+
+```
+
+
+## Detecting Misspecification at Level-1
+
+```{r roc-l1}
+
+j <- 2 ## Which class?
+for(index in INDEX){
+  for(est in EST){
+
+    ## Print out which iteration so I know what I am looking at
+    cat('\n\nROC Analysis in')
+    cat('\nIndex:\t', index)
+    cat('\nClassification:\t', CLASS[j])
+    cat('\nEstimator:\t', est)
+    ## Set up iteration key
+    key <- paste0(index,'.',CLASS[j],'.',est)
+    # Subset data is asked
+    if(est == 'ALL') mydata <- sim_results
+    if(est != 'ALL') mydata <- filter(sim_results, Estimator == est)
+    ## Create formula
+    model <- as.formula(paste0(CLASS[j], '~', index))
+    ## Fit ROC curve
+    fit_roc[[key]] <-  roc(model, data=mydata,
+                           plot =TRUE, ci=TRUE, print.auc=TRUE)
+    ## Create a plot of "smoothed" curve for plotting
+    fit_roc_smooth[[key]] <-  smooth(roc(model, data=mydata))
+    ## Compute partial AUC for specificity .9-1
+    p.auc <- auc(fit_roc[[key]], partial.auc = c(1,.9),partial.auc.focus = 'sp', partial.auc.correct = T )
+    ## get summary info
+    roc_summary[i, 2] <- index
+    roc_summary[i, 1] <- CLASS[j]
+    roc_summary[i, 3] <- est ##estimator
+    roc_summary[i, 4] <- fit_roc[[key]]$auc ## total AUC
+    roc_summary[i, 5] <- p.auc ## corrected partial AUC (.5 is no discrimination)
+    roc_summary[i, 6] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
+    roc_summary[i, 7:13]<- coords(fit_roc[[key]], "best", ret=c("threshold", "specificity", 'sensitivity', 'tn', 'tp', 'fn', 'fp'))
+    ## print summary
+      cat('\n\nSummary of ROC:\n')
+      print(roc_summary[i, ])
+
+    ## add to summary iterator
+    i <- i + 1
+  } ## End loop around estimator
+} ## End loop round index
+
+kable(roc_summary[21:40,], format = 'html') %>%
+  kable_styling(full_width = T)
+
+cat("Correct Level-1 Specification")
+print(xtable(roc_summary[21:40,c(2:5,7:9)], digits = 3), booktabs=T,include.rownames = F)
+
+
+
+```
+
+
+
+## Detecting Misspecification at Level-2
+
+```{r roc-l2}
+
+j <- 3 ## Which class?
+for(index in INDEX){
+  for(est in EST){
+
+    ## Print out which iteration so I know what I am looking at
+    cat('\n\nROC Analysis in')
+    cat('\nIndex:\t', index)
+    cat('\nClassification:\t', CLASS[j])
+    cat('\nEstimator:\t', est)
+    ## Set up iteration key
+    key <- paste0(index,'.',CLASS[j],'.',est)
+    # Subset data is asked
+    if(est == 'ALL') mydata <- sim_results
+    if(est != 'ALL') mydata <- filter(sim_results, Estimator == est)
+    ## Create formula
+    model <- as.formula(paste0(CLASS[j], '~', index))
+    ## Fit ROC curve
+    fit_roc[[key]] <-  roc(model, data=mydata,
+                           plot =TRUE, ci=TRUE, print.auc=TRUE)
+    ## Create a plot of "smoothed" curve for plotting
+    fit_roc_smooth[[key]] <-  smooth(roc(model, data=mydata))
+    ## Compute partial AUC for specificity .9-1
+    p.auc <- auc(fit_roc[[key]], partial.auc = c(1,.9),partial.auc.focus = 'sp', partial.auc.correct = T )
+    ## get summary info
+    roc_summary[i, 2] <- index
+    roc_summary[i, 1] <- CLASS[j]
+    roc_summary[i, 3] <- est ##estimator
+    roc_summary[i, 4] <- fit_roc[[key]]$auc ## total AUC
+    roc_summary[i, 5] <- p.auc ## corrected partial AUC (.5 is no discrimination)
+    roc_summary[i, 6] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
+    roc_summary[i, 7:13] <- coords(fit_roc[[key]], "best", ret=c("threshold", "specificity", 'sensitivity', 'tn', 'tp', 'fn', 'fp'))
+    ## print summary
+      cat('\n\nSummary of ROC:\n')
+      print(roc_summary[i, ])
+
+    ## add to summary iterator
+    i <- i + 1
+  } ## End loop around estimator
+} ## End loop round index
+
+kable(roc_summary[41:60,], format = 'html') %>%
+  kable_styling(full_width = T)
+
+cat("Correct Level-2")
+print(xtable(roc_summary[41:60,c(2:5,7:9)], digits = 3), booktabs=T,include.rownames = F)
+
+
+
+```
+
+### Extra Trial Attempt
+
+```{r}
+
+fit_roc2 <- fit_roc_smooth2 <- list()
+roc_summary2 <- as.data.frame(matrix(0,ncol=13, nrow=60))
+colnames(roc_summary2) <- c('Classification','Index', 'Estimator', 'AUC',
+                           'partial-AUC','Smoothed-AUC', 'Optimal-Threshold',
+                           'Specificity','Sensitivity', 'tn', 'tp', 'fn', 'fp')
+
+## Need to make codes for the ROC analyses outcomes
+# first, C vs. M1,M2,M12 - Perfect specification
+# sim_results$C <- ifelse(sim_results$Model == 'C', 1, 0)
+# second, C vs. M1|M12- correct level 1 model
+sim_results$C_L1_n <- ifelse(sim_results$Model == 'M2', NA, 0)
+sim_results$C_L1_n <- ifelse(sim_results$Model == 'C', 1, sim_results$C_L1_n)
+# third, C vs. M2|M12- correct level 2 model
+sim_results$C_L2_n <- ifelse(sim_results$Model == 'M1', NA, 0)
+sim_results$C_L2_n <- ifelse(sim_results$Model == 'C', 1, sim_results$C_L2_n)
+
+CLASS <- c("C", 'C_L1_n', 'C_L2_n')
+i <- 1
+for(j in 1:3){
+for(index in INDEX){
+  for(est in EST){
+
+    ## Print out which iteration so I know what I am looking at
+    cat('\n\nROC Analysis in')
+    cat('\nIndex:\t', index)
+    cat('\nClassification:\t', CLASS[j])
+    cat('\nEstimator:\t', est)
+    ## Set up iteration key
+    key <- paste0(index,'.',CLASS[j],'.',est)
+    # Subset data is asked
+    if(est == 'ALL') mydata <- sim_results
+    if(est != 'ALL') mydata <- filter(sim_results, Estimator == est)
+    ## Create formula
+    model <- as.formula(paste0(CLASS[j], '~', index))
+    ## Fit ROC curve
+    fit_roc2[[key]] <-  roc(model, data=mydata,
+                           plot =TRUE, ci=TRUE, print.auc=TRUE)
+    ## Create a plot of "smoothed" curve for plotting
+    fit_roc_smooth2[[key]] <-  smooth(roc(model, data=mydata))
+    ## Compute partial AUC for specificity .9-1
+    p.auc <- auc(fit_roc2[[key]], partial.auc = c(1,.9),partial.auc.focus = 'sp', partial.auc.correct = T )
+    ## get summary info
+    roc_summary2[i, 2] <- index
+    roc_summary2[i, 1] <- CLASS[j]
+    roc_summary2[i, 3] <- est ##estimator
+    roc_summary2[i, 4] <- fit_roc2[[key]]$auc ## total AUC
+    roc_summary2[i, 5] <- p.auc ## corrected partial AUC (.5 is no discrimination)
+    roc_summary2[i, 6] <- fit_roc_smooth2[[key]]$auc ## smoothed AUC
+    roc_summary2[i, 7:13] <- coords(fit_roc2[[key]], "best", ret=c("threshold", "specificity", 'sensitivity', 'tn', 'tp', 'fn', 'fp'))
+    ## print summary
+      cat('\n\nSummary of ROC:\n')
+      print(roc_summary2[i, ])
+
+    ## add to summary iterator
+    i <- i + 1
+  } ## End loop around estimator
+} ## End loop round index
+} # End loop around specification
+kable(roc_summary2, format = 'html') %>%
+  kable_styling(full_width = T)
+
+
+print(xtable(roc_summary2[,c(2:5,7:9)], digits = 3), booktabs=T,include.rownames = F)
+```
+
+
+## Summarizing the Results
+
+```{r roc-summary}
+## SMALL summary table for the conditions of "all" estiamtors" and completely correct spec.
+
+roc_sum_C_all <- filter(roc_summary, Estimator == "ALL", Classification == "C")
+kable(roc_sum_C_all, format = 'html', row.names = F) %>%
+  kable_styling(full_width = T)
+
+print(xtable(roc_sum_C_all[,c(2,4:5,7:9)], digits = 3), booktabs=T,include.rownames = F)
+
+
+## FULLSummary table
+
+kable(roc_summary, format = 'html') %>%
+  kable_styling(full_width = T)
+
+print(xtable(roc_summary[,1:9], digits = 3), booktabs=T,include.rownames = F)
+
+```
+
+## Combined Figures
+
+### First extract the data
+```{r roc-data-extract}
+roc_smooth_data <- as.data.frame(matrix(0,ncol=6, nrow=514*60))
+colnames(roc_smooth_data) <- c('Index', 'Classification', 'Estimator', 'AUC', 'Sensitivity', 'Specificity')
+CLASS <- c('C', 'C_Level_1','C_Level_2')
+i <- 1
+j <- 514
+for(index in INDEX){
+  for(est in EST){
+    for(class in CLASS){
+      key <- paste0(index,'.',class,'.',est)
+      ## update extracted data
+      roc_smooth_data[i:j, 1] <- index
+      roc_smooth_data[i:j, 2] <- class
+      roc_smooth_data[i:j, 3] <- est
+      ## extract smooth fit object
+      fit <- fit_roc_smooth[[key]]
+      ## update sen,spec, and auc
+      roc_smooth_data[i:j, 4] <- fit$auc
+      roc_smooth_data[i:j, 5] <- fit$sensitivities
+      roc_smooth_data[i:j, 6] <- fit$specificities
+      ## update iterators
+      i <- i + 514
+      j <- j + 514
+    }
+  }
+}
+
+
+## Forcing factor orders
+roc_smooth_data$Index <- factor(
+  roc_smooth_data$Index, ordered = T,
+  levels=c('CFI', 'TLI', 'RMSEA', 'SRMRW', 'SRMRB'))
+roc_smooth_data$Classification <- factor(
+  roc_smooth_data$Classification,
+  levels=c('C','C_Level_1','C_Level_2'),
+  labels=c('Correct', 'Correct Level-1', 'Correct Level-2'),
+  ordered = T
+)
+# roc_smooth_data$Classification <- factor(
+#   roc_smooth_data$Classification,
+#   levels=c('C','C_L1_n','C_L2_n'),
+#   labels=c('Correct', 'Correct Level-1', 'Correct Level-2'),
+#   ordered = T
+# )
+```
+
+
+### Plot figures
+
+```{r figures}
+
+p <- ggplot(roc_smooth_data, aes(x = Specificity, y=Sensitivity, group = Index)) +
+  geom_line(aes(linetype=Index, color=Index))+
+  facet_grid(Estimator~Classification) +
+  scale_x_reverse() +
+  scale_color_brewer(palette="Set1") +
+  guides(color=guide_legend(title="Fit Statistics"),
+         linetype=guide_legend(title="Fit Statistics"))
+
+p
+if(save.fig == T) ggsave('roc_full_plot.pdf', plot = p, height = 6,width = 9,units = 'in')
+
+```
+
+### Subfigures
+
+#### Figures by Classification Outcome
+
+```{r subfigs-class}
+
+subdata <- filter(roc_smooth_data, Estimator == "ALL")
+p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
+  geom_line(aes(linetype=Index, color=Index))+
+  facet_grid(.~Classification) +
+  scale_x_reverse() +
+  scale_color_brewer(palette="Set1") +
+  guides(color=guide_legend(title="Fit Statistics"),
+         linetype=guide_legend(title="Fit Statistics"))
+p
+if(save.fig == T) ggsave('roc_class_all.pdf', plot = p, height = 4,width = 9,units = 'in')
+
+
+
+subdata <- filter(roc_smooth_data, Estimator == "MLR")
+p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
+  geom_line(aes(linetype=Index, color=Index))+
+  facet_grid(.~Classification) +
+  scale_x_reverse() +
+  scale_color_brewer(palette="Set1") +
+  guides(color=guide_legend(title="Fit Statistics"),
+         linetype=guide_legend(title="Fit Statistics"))
+p
+if(save.fig == T) ggsave('roc_class_mlr.pdf', plot = p, height = 4,width = 9,units = 'in')
+
+
+
+subdata <- filter(roc_smooth_data, Estimator == "ULSMV")
+p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
+  geom_line(aes(linetype=Index, color=Index))+
+  facet_grid(.~Classification) +
+  scale_x_reverse() +
+  scale_color_brewer(palette="Set1") +
+  guides(color=guide_legend(title="Fit Statistics"),
+         linetype=guide_legend(title="Fit Statistics"))
+p
+if(save.fig == T) ggsave('roc_class_ulsmv.pdf', plot = p, height = 4,width = 9,units = 'in')
+
+
+subdata <- filter(roc_smooth_data, Estimator == "WLSMV")
+p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
+  geom_line(aes(linetype=Index, color=Index))+
+  facet_grid(.~Classification) +
+  scale_x_reverse() +
+  scale_color_brewer(palette="Set1") +
+  guides(color=guide_legend(title="Fit Statistics"),
+         linetype=guide_legend(title="Fit Statistics"))
+p
+if(save.fig == T) ggsave('roc_class_wlsmv.pdf', plot = p, height = 4,width = 9,units = 'in')
+```
+
+
+#### Figures by Estimator
+
+```{r subfigs-est}
+
+subdata <- filter(roc_smooth_data, Classification == "Correct")
+p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
+  geom_line(aes(linetype=Index, color=Index))+
+  facet_grid(.~Estimator) +
+  scale_x_reverse() +
+  scale_color_brewer(palette="Set1") +
+  guides(color=guide_legend(title="Fit Statistics"),
+         linetype=guide_legend(title="Fit Statistics"))
+p
+if(save.fig == T) ggsave('roc_est_c.pdf', plot = p, height = 4,width = 9,units = 'in')
+
+
+
+subdata <- filter(roc_smooth_data, Classification == "Correct Level-1")
+p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
+  geom_line(aes(linetype=Index, color=Index))+
+  facet_grid(.~Estimator) +
+  scale_x_reverse() +
+  scale_color_brewer(palette="Set1") +
+  guides(color=guide_legend(title="Fit Statistics"),
+         linetype=guide_legend(title="Fit Statistics"))
+p
+if(save.fig == T) ggsave('roc_est_cl1.pdf', plot = p, height = 4,width = 9,units = 'in')
+
+
+
+subdata <- filter(roc_smooth_data, Classification == "Correct Level-2")
+p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
+  geom_line(aes(linetype=Index, color=Index))+
+  facet_grid(.~Estimator) +
+  scale_x_reverse() +
+  scale_color_brewer(palette="Set1") +
+  guides(color=guide_legend(title="Fit Statistics"),
+         linetype=guide_legend(title="Fit Statistics"))
+p
+if(save.fig == T) ggsave('roc_est_cl2.pdf', plot = p, height = 4,width = 9,units = 'in')
+
+
+```

@@ -1,0 +1,70 @@
+---
+title: "Fit Statistics Investigated"
+date: "2019-05-08"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+The measures of fit are indicative of how much better of fit the hypothesized model provides over a null model.
+A null model refers to a measurement model where all items are assumed independent, which is the worst-case scenario and generally is the worst fitting model.
+The first measure of fit is the $\chi^2$ statistic and the associated $\chi^2$ test.
+Each model estimated has an associated model $\chi^2$, which is a statistical distribution that has an expected value equal to model degrees of freedom.
+The $\chi^2$ test is known to be sensitive to sample size, meaning that as sample size increases then test is likely to reject the null hypothesis that these data fit the hypothesized model even when the model is correctly specified \citep{Bollen1989}.
+Because the $\chi^2$ statistic has limited applicability, numerous other statistics based on the $\chi^2$ are frequently used. 
+These statistics are transformations of the $\chi^2$ statistic that have seen broad applicability.
+
+## CFI
+
+The comparative fit index (CFI) is a commonly used fit statistic that is based on the model $\chi^2$ \citep{Bentler1990}. 
+The CFI is a measure of improvement in fit over the null model with a fixed range of zero to one, where higher scores mean better fit.
+\begin{equation} \label{eq:cfi}
+CFI =  1 - \frac{ \mathrm{max}\left( \chi^2_H - {df}_H,\ 0 \right) }{ \mathrm{max}\left( \chi^2_H - {df}_H ,\ \chi^2_N - {df}_N,\ 0 \right) } 
+\end{equation}
+The recommended minimum value for CFI is .95 \citep{Hu1999}.
+
+## TLI
+
+The Tucker-Lewis index (TLI) is another measure of fit over the null model that is non-normed \citep{Tucker1973, Bentler1980}. 
+The TLI is non-normed because the range of possible values is not restricted, where values greater than one are possible.
+But, just like CFI, higher values of TLI are indicative of better fit.
+\begin{equation} \label{eq:tli}
+TLI = \frac{ \frac{\chi^2_N }{{df}_N} - \frac{\chi^2_H}{{df}_H}}{\frac{\chi^2_ N}{{df}_N} - 1} 
+\end{equation}
+The recommended minimum value for TLI is .95 \citep{Hu1999}.
+
+## RMSEA
+
+The root mean square error of approximation (RMSEA) is a measure of lack of fit \citep{Steiger1980}. 
+The RMSEA describes how well the hypothesized model is represented in the observed data.
+The comparison is accomplished by a measure of the deviation of what is observed
+\begin{equation} \label{eq:rmsea}
+RMSEA = \sqrt{\frac{\mathrm{max} \left(  \chi^2 - df,\ 0 \right)}{ df (N-1) }}
+\end{equation}
+
+The RMSEA has a known population distribution.
+Because the distribution is known based on a noncentral F-distribution, a confidence interval can be constructed.
+Usually, a 90\% confidence is reported for the RMSEA.
+The recommended minimum value for RMSEA is .06 \citep{Hu1999}.
+
+## SRMR
+
+The standardized root mean square residual (SRMR) is an aggregate measure of the deviation of the observed correlation matrix to the model implied correlation matrix \citep{Joreskog1981}. 
+Ideally, the average difference between the observed and expected correlations is minimal, and smaller values represent better fitting models.
+In MCFA, two difference SRMR are reported based on each level's covariance matrix.
+The level-1 SRMR is known as SRMR-Within (SRMRW).
+The level-2 SRMR is known as SRMR-Between (SRMRB).
+The computation of each of these measures is roughly equivalent conditional on which covariance matrix is under consideration.
+Generally, SRMR is computed as the standardized difference between the observed correlations and the model implied correlations about variables as shown below.
+\begin{equation} \label{eq:srmr}
+SRMR = \sqrt{\frac{2 \sum_{j=1}^{p} \sum_{k=j}^{i} {\left( \frac{s_{jk} - \hat{\sigma}_{jk} }{ \sqrt{ s_{jj}s_{kk}}  } \right)}^2 }{p(p+1)}}
+\end{equation}
+where $p$ is the total number of variables in the model, $s_{jk}$ and $\sigma_{jk}$ are the sample and model implied, respectively, covariance between the $j^{th}$ and $k^{th}$ variables.
+For the SRMR, generally acceptable values less than .08 are used.
+However, \cite{Hu1999} suggested values less .06 alone or .08 in combination of other within recommended ranges are indicative of good fit.
+
+In M\textit{plus}, SRMR is estimated slightly differently than shown in Equation \ref{eq:srmr}.
+The computation extends the definition above by accounting for the meanstructure, multilevel structure, and categorical nature if applicable.
+The technical details of the computation of SRMRW and SRMRB in M\textit{plus} v8.2 is out of scope for this article, and the interested reader is referred to \cite{MuthenSRMR} for more details.
+

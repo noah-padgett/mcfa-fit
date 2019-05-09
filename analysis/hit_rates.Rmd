@@ -1,0 +1,321 @@
+---
+title: "ROC Analyses"
+date: "2019-05-09"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+Purpose of this file:
+
+   1. Conduct ROC Analysies
+   2. Create ROC Curves
+   3. Create Summary tables of ROC analyses
+
+# Packages and Set-Up
+
+```{r set-up, tidy=T}
+##Chunk iptions
+knitr::opts_chunk$set(out.width="225%")
+
+#setwd('C:/Users/noahp/Dropbox/MCFA Thesis/Code Results')
+
+## Packages
+## General Packages
+library(tidyverse)
+library(car)
+library(psych)
+# Formatting and Tables
+library(kableExtra)
+library(xtable)
+# For plotting
+library(ggplot2)
+theme_set(theme_bw())
+# Data manipulating
+library(dplyr)
+# ROC Analysis
+library(pROC)
+
+## One global parameter for printing figures
+save.fig <- F
+
+## Load up the functions needed for ANOVA and Assumption checking
+source('code/r_functions.R')
+
+```
+
+
+# Data Management
+
+```{r data, tidy=T}
+
+sim_results <- as_tibble(read.table('data/compiled_fit_results.txt', header=T,sep='\t'))
+
+## Next, turn condition into a factor for plotting
+sim_results$Condition <- as.factor(sim_results$Condition)
+
+## Next, since TLI is non-normed, any value greater than 1 needs to be rescaled to 1.
+sim_results$TLI <- ifelse(sim_results$TLI > 1, 1, sim_results$TLI)
+sim_results$TLI <- ifelse(sim_results$TLI < 0, 0, sim_results$TLI)
+## Next, summarize the results of the chi-square test of model fit. This is done simply by comparing the p-value to alpha (0.05) and indicating whether the model was flagged as fitting or not.
+# Note: if  p < 0.05 then this variable is flagged as 0, and 1 otherwise
+sim_results$Chi2_pvalue_decision <- ifelse(sim_results$chisqu_pvalue > 0.05, 1, 0)
+# 0 = rejected that these data fit this model
+# 1 = failed to reject that these data fit this model
+
+## Need to make codes for the ROC analyses outcomes
+# first, C vs. M1,M2,M12 - Perfect specification
+sim_results$C <- ifelse(sim_results$Model == 'C', 1, 0)
+# second, C|M2 vs. M1|M12- correct level 1 model
+sim_results$C_Level_1 <- ifelse(sim_results$Model == 'C' | sim_results$Model == 'M2', 1, 0)
+# third, C|M1 vs. M2|M12- correct level 2 model
+sim_results$C_Level_2 <- ifelse(sim_results$Model == 'C' | sim_results$Model == 'M1', 1, 0)
+```
+
+## Adding Labels to Conditions
+
+Currently, each condition is kind of like a hidden id that we don't know what the actual factor is. 
+So, first thing isto create meaningful labels for us to use.
+Remember, the 72 conditions for the this study were
+
+  1. Level-1 sample size (5, 10, 30)
+  2. Level-2 sample size (30, 50, 100, 200)
+  3. Observed indicator ICC (.1, .3, .5)
+  4. Latent variable ICC (.1, .5)
+  
+```{r}
+## level-1 Sample size
+ss_l1 <- c(5, 10, 30) ## 6 conditions each
+ss_l2 <- c(30, 50, 100, 200) ## 18 condition each
+icc_ov <- c(.1, .3, .5) ## 2 conditions each
+icc_lv <- c(.1, .5) ## every other condition
+nCon <- 72 # number of conditions
+nRep <- 500 # number of replications per condition
+nMod <- 12 ## numberof estimated models per conditions
+## Total number of rows: 432,000
+ss_l2 <- c(rep(ss_l2[1], 18*nRep*nMod), rep(ss_l2[2], 18*nRep*nMod), rep(ss_l2[3], 18*nRep*nMod), rep(ss_l2[4], 18*nRep*nMod))
+ss_l1 <- rep(c(rep(ss_l1[1],6*nRep*nMod), rep(ss_l1[2],6*nRep*nMod), rep(ss_l1[3],6*nRep*nMod)), 4)
+icc_ov <- rep(c(rep(icc_ov[1], 2*nRep*nMod), rep(icc_ov[2], 2*nRep*nMod), rep(icc_ov[3], 2*nRep*nMod)), 12)
+icc_lv <- rep(c(rep(icc_lv[1], nRep*nMod), rep(icc_lv[2], nRep*nMod)), 36)
+## Force these vectors to be column vectors
+ss_l1 <- matrix(ss_l1, ncol=1)
+ss_l2 <- matrix(ss_l2, ncol=1)
+icc_ov <- matrix(icc_ov, ncol=1)
+icc_lv <- matrix(icc_lv, ncol=1)
+## Add the labels to the results data frame
+sim_results <- sim_results[order(sim_results$Condition),]
+sim_results <- cbind(sim_results, ss_l1, ss_l2, icc_ov, icc_lv)
+
+## Force the conditions to be factors
+sim_results$ss_l1 <- as.factor(sim_results$ss_l1)
+sim_results$ss_l2 <- as.factor(sim_results$ss_l2)
+sim_results$icc_ov <- as.factor(sim_results$icc_ov)
+sim_results$icc_lv <- as.factor(sim_results$icc_lv)
+sim_results$Model <- factor(sim_results$Model, levels = c('C','M1','M2','M12'), ordered = T)
+
+## Subset to the usable cases
+sim_results <- filter(sim_results, Converge == 1 & Admissible == 1)
+```
+
+# Hit Rates
+
+The cut-off values established by Hu and Bentler (1999) were determined
+by an inspection of the hit rates of various cut-off criteria. In some conditions, the hit
+rates were based on a rule with two different fit statistics. A hit rate is the proportion
+of times the true (generating) model had a value on the fit index at or above the
+cut-off. This is extremely valuable information, because knowing the lower bound
+for plausible values of fit indices just due to random variation allows the creation of
+guidelines for use of fit statistics. This is essential because many fit indices do not
+have an easily derivable analytic distribution.
+
+
+```{r}
+## Need to subset to only the correctly specified model
+mydata <- filter(sim_results, Model == "C")
+
+## Set up results
+ncut<-10
+cut.low <- c(.9,.01)
+cut.high <- c(.99,.1)
+cutoff <- list()
+cutoff[["CFI"]] <- cutoff[["TLI"]] <- seq(from=cut.low[1], to=cut.high[1], by=((.1)/ncut))
+cutoff[["RMSEA"]] <- cutoff[["SRMRW"]] <- cutoff[["SRMRB"]] <- seq(from=cut.low[2], to=cut.high[2], by= ((.1)/ncut))
+
+## Initialize results table
+hit_rate_results <- as_tibble(as.data.frame(matrix(0,ncol=(1+ncut), nrow=5)))
+colnames(hit_rate_results) <- c('Index', paste0(cutoff[["CFI"]], '/', paste0(cutoff[["RMSEA"]])))
+
+## Start looping around cutoffs
+INDEX <- c("CFI", "TLI", "RMSEA", "SRMRW", "SRMRB")
+index <- "CFI"
+i<- j <- 1
+for(index in INDEX){
+  for(j in 1:ncut){
+    ## save ids
+    hit_rate_results[i, 1] <- index
+    ## figure out the diection of comparson
+    dir <- ifelse(index == "CFI" | index == "TLI", ">", "<")
+    ## Calc andsave hit rate
+    hit_rate_results[i, (1+j)] <- hit_rate_calc(mydata[,index], cutoff[[index]][j], dir)
+  }
+  ## Update iterator for rows
+  i <- i + 1
+}
+
+
+kable(hit_rate_results, format = 'html') %>%
+  kable_styling(full_width = T)
+
+print(xtable(hit_rate_results, digits=3), booktabs = T)
+```
+
+### Hit Rates by Estimator
+
+
+```{r hit-con}
+
+hit_rate_results <- as.data.frame(matrix(0,ncol=8))
+colnames(hit_rate_results) <- c("Estimator", "CFI", "TLI", "RMSEA", "SRMRW", "SRMRB", "Cutoff.cfi", "Cutoff.rmsea")
+
+## Start looping around cutoffs
+j <- 1
+for(j in 1:ncut){
+    ## Calc hit rates
+    hit <-  mydata %>%
+        group_by(Estimator) %>%
+        summarize(
+          CFI = hit_rate_calc(CFI, cutoff[["CFI"]][j], ">"),
+          TLI = hit_rate_calc(TLI, cutoff[["TLI"]][j], ">"),
+          RMSEA = hit_rate_calc(RMSEA, cutoff[["RMSEA"]][j], "<"),
+          SRMRW = hit_rate_calc(SRMRW, cutoff[["SRMRW"]][j], "<"),
+          SRMRB = hit_rate_calc(SRMRB, cutoff[["SRMRB"]][j], "<"))
+    hit$Cutoff.cfi <- cutoff[["CFI"]][j]
+    hit$Cutoff.rmsea <- cutoff[["RMSEA"]][j]
+    ## Calc andsave hit rate
+    hit_rate_results <- rbind(hit_rate_results, hit)
+} ## End ncuts iter
+hit_rate_results<-hit_rate_results[-1,]
+
+
+kable(hit_rate_results, format = 'html', row.names = F) %>%
+  kable_styling(full_width = T)
+print(xtable(hit_rate_results, digits = 3), booktabs=T, include.rownames = F)
+
+
+## Some reformatting for plotting
+h <- hit_rate_results
+c <- unique(h$Cutoff.cfi)
+d <- unique(h$Cutoff.rmsea)
+h11<- h22 <- NULL
+i <- 1
+for(i in 1:10){
+
+  h.cfi <- h[ h$Cutoff.cfi == c[i] , "CFI", drop = F]
+  h.tli <- h[ h$Cutoff.cfi == c[i] , "TLI", drop = F]
+  h.rmsea <- h[ h$Cutoff.rmsea == d[11-i] , "RMSEA", drop = F]
+  h.srmrw <- h[ h$Cutoff.rmsea == d[11-i] , "SRMRW", drop = F]
+  h.srmrb <- h[ h$Cutoff.rmsea == d[11-i] , "SRMRB", drop = F]
+  colnames(h.cfi) <- colnames( h.tli) <-c[i]
+  colnames(h.rmsea) <- colnames(h.srmrw) <- colnames(h.srmrb) <- d[11-i]
+  h1 <- rbind(h.cfi, h.tli)
+  h2 <- rbind(h.rmsea,h.srmrw,h.srmrb)
+
+  if(i == 1) {
+    a1 <- matrix(c(rep("CFI",3), rep("TLI",3)), ncol=1)
+    a2 <- matrix(c(rep("RMSEA",3), rep("SRMRW",3), rep("SRMRB",3)), ncol=1)
+
+    b1 <- matrix(rep(c("MLR", "ULSMV", "WLSMV"),2), ncol=1)
+    b2 <- matrix(rep(c("MLR", "ULSMV", "WLSMV"),3), ncol=1)
+    h11 <- cbind(b1,a1,h1)
+    h22 <- cbind(b2,a2,h2)
+  }
+  if(i>1){
+    h11 <- cbind(h11, h1)
+    h22 <- cbind(h22, h2)
+  }
+}
+
+kable(h11, format = 'html', row.names = F) %>%
+  kable_styling(full_width = T)
+print(xtable(h11, digits = 3), booktabs=T, include.rownames = F)
+
+
+kable(h22, format = 'html', row.names = F) %>%
+  kable_styling(full_width = T)
+print(xtable(h22, digits = 3), booktabs=T, include.rownames = F)
+
+
+
+```
+
+
+## Hit Rates by Sample Sizes
+
+```{r}
+
+hit.list <- list()
+## Start looping around cutoffs
+j <- 1
+for(j in 1:ncut){
+    ## Calc hit rates
+    hit <-  mydata %>%
+        group_by(ss_l2, ss_l1) %>%
+        summarize(
+          CFI = hit_rate_calc(CFI, cutoff[["CFI"]][j], ">"),
+          TLI = hit_rate_calc(TLI, cutoff[["TLI"]][j], ">"),
+          RMSEA = hit_rate_calc(RMSEA, cutoff[["RMSEA"]][j], "<"),
+          SRMRW = hit_rate_calc(SRMRW, cutoff[["SRMRW"]][j], "<"),
+          SRMRB = hit_rate_calc(SRMRB, cutoff[["SRMRB"]][j], "<"))
+    hit$Cutoff.cfi <- cutoff[["CFI"]][j]
+    hit$Cutoff.rmsea <- cutoff[["RMSEA"]][j]
+    hit.list[[j]] <- hit
+    ## Calc andsave hit rate
+    #hit_rate_results <- rbind(hit_rate_results, hit)
+} ## End ncuts iter
+
+
+hit_rate_results<-rbind(hit.list[[1]], hit.list[[2]], hit.list[[3]], hit.list[[4]], hit.list[[5]], hit.list[[6]], hit.list[[7]], hit.list[[8]], hit.list[[9]], hit.list[[10]])
+
+
+kable(hit_rate_results, format = 'html') %>%
+  kable_styling(full_width = T)
+print(xtable(hit_rate_results, digits = 3), booktabs=T, include.rownames = F)
+
+
+```
+
+
+## Hit Rates by Sample Sizes
+
+```{r}
+
+hit.list <- list()
+## Start looping around cutoffs
+j <- 1
+for(j in 1:ncut){
+    ## Calc hit rates
+    hit <-  mydata %>%
+        group_by(ss_l2, ss_l1, icc_ov, icc_lv) %>%
+        summarize(
+          CFI = hit_rate_calc(CFI, cutoff[["CFI"]][j], ">"),
+          TLI = hit_rate_calc(TLI, cutoff[["TLI"]][j], ">"),
+          RMSEA = hit_rate_calc(RMSEA, cutoff[["RMSEA"]][j], "<"),
+          SRMRW = hit_rate_calc(SRMRW, cutoff[["SRMRW"]][j], "<"),
+          SRMRB = hit_rate_calc(SRMRB, cutoff[["SRMRB"]][j], "<"))
+    hit$Cutoff.cfi <- cutoff[["CFI"]][j]
+    hit$Cutoff.rmsea <- cutoff[["RMSEA"]][j]
+    hit.list[[j]] <- hit
+    ## Calc andsave hit rate
+    hit_rate_results <- rbind(hit_rate_results, hit)
+} ## End ncuts iter
+hit_rate_results<-hit_rate_results[-1,]
+
+kable(hit_rate_results, format = 'html') %>%
+  kable_styling(full_width = T)
+print(xtable(hit_rate_results, digits = 3), booktabs=T, include.rownames = F)
+
+
+```
+
+

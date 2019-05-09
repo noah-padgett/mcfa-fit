@@ -22,4 +22,7 @@ This limitation is mostly due to space restrictions in the actual manuscript.
 *[Fit Statistic Distribution](fit_boxplots.html)
 
 *[ANOVA Results](anova.html)
+<<<<<<< HEAD
 
+=======
+>>>>>>> f6f9e9136046109cb5966031a948d37e8630478f

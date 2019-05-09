@@ -1,0 +1,3647 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<meta name="date" content="2019-05-09" />
+
+<title>ANOVA</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">mcfa-fit</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">ANOVA</h1>
+<h4 class="date"><em>2019-05-09</em></h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2019-05-09
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>mcfa-fit/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.3.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20190507code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20190507)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20190507code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20190507)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree54bff7b0d8f622c53a6f6ded4cef6b2e7ed4afdctargetblank54bff7ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/noah-padgett/mcfa-fit/tree/54bff7b0d8f622c53a6f6ded4cef6b2e7ed4afdc" target="_blank">54bff7b</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree54bff7b0d8f622c53a6f6ded4cef6b2e7ed4afdctargetblank54bff7ba" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  analysis/fit_statistics_explained.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the R Markdown and HTML files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view them.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/54bff7b0d8f622c53a6f6ded4cef6b2e7ed4afdc/analysis/anova.Rmd" target="_blank">54bff7b</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-09
+</td>
+<td>
+anova-results reran
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<p>Purpose of this file:</p>
+<ol style="list-style-type: decimal">
+<li>Conduct ANOVA’s to get effect size study design</li>
+</ol>
+<div id="packages-and-set-up" class="section level1">
+<h1>Packages and Set-Up</h1>
+<pre class="r"><code>## Chunk iptions
+knitr::opts_chunk$set(out.width = &quot;225%&quot;)
+
+# setwd(&#39;C:/Users/noahp/Dropbox/MCFA Thesis/Code Results&#39;)
+
+## Packages General Packages
+library(tidyverse)</code></pre>
+<pre><code>-- Attaching packages ------------------------------------------------------- tidyverse 1.2.1 --</code></pre>
+<pre><code>v ggplot2 3.1.0       v purrr   0.2.5  
+v tibble  2.0.1       v dplyr   0.8.0.1
+v tidyr   0.8.2       v stringr 1.3.1  
+v readr   1.3.1       v forcats 0.3.0  </code></pre>
+<pre><code>Warning: package &#39;dplyr&#39; was built under R version 3.5.3</code></pre>
+<pre><code>-- Conflicts ---------------------------------------------------------- tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(car)</code></pre>
+<pre><code>Loading required package: carData</code></pre>
+<pre><code>
+Attaching package: &#39;car&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:dplyr&#39;:
+
+    recode</code></pre>
+<pre><code>The following object is masked from &#39;package:purrr&#39;:
+
+    some</code></pre>
+<pre class="r"><code>library(psych)</code></pre>
+<pre><code>
+Attaching package: &#39;psych&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:car&#39;:
+
+    logit</code></pre>
+<pre><code>The following objects are masked from &#39;package:ggplot2&#39;:
+
+    %+%, alpha</code></pre>
+<pre class="r"><code># Formatting and Tables
+library(kableExtra)</code></pre>
+<pre><code>
+Attaching package: &#39;kableExtra&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:dplyr&#39;:
+
+    group_rows</code></pre>
+<pre class="r"><code>library(xtable)
+# For plotting
+library(ggplot2)
+theme_set(theme_bw())
+# Data manipulating
+library(dplyr)
+
+## One global parameter for printing figures
+save.fig &lt;- F
+
+## Load up the functions needed for ANOVA and Assumption checking
+source(&quot;code/r_functions.R&quot;)</code></pre>
+</div>
+<div id="data-management" class="section level1">
+<h1>Data Management</h1>
+<pre class="r"><code>sim_results &lt;- as_tibble(read.table(&quot;data/compiled_fit_results.txt&quot;, header = T, 
+    sep = &quot;\t&quot;))
+
+## Next, turn condition into a factor for plotting
+sim_results$Condition &lt;- as.factor(sim_results$Condition)
+
+## Next, since TLI is non-normed, any value greater than 1 needs to be
+## rescaled to 1.
+sim_results$TLI &lt;- ifelse(sim_results$TLI &gt; 1, 1, sim_results$TLI)
+sim_results$TLI &lt;- ifelse(sim_results$TLI &lt; 0, 0, sim_results$TLI)
+## Next, summarize the results of the chi-square test of model fit. This is
+## done simply by comparing the p-value to alpha (0.05) and indicating
+## whether the model was flagged as fitting or not.  Note: if p &lt; 0.05 then
+## this variable is flagged as 0, and 1 otherwise
+sim_results$Chi2_pvalue_decision &lt;- ifelse(sim_results$chisqu_pvalue &gt; 0.05, 
+    1, 0)
+# 0 = rejected that these data fit this model 1 = failed to reject that
+# these data fit this model
+
+## Need to make codes for the ROC analyses outcomes first, C vs. M1,M2,M12 -
+## Perfect specification
+sim_results$C &lt;- ifelse(sim_results$Model == &quot;C&quot;, 1, 0)
+# second, C|M2 vs. M1|M12- correct level 1 model
+sim_results$C_Level_1 &lt;- ifelse(sim_results$Model == &quot;C&quot; | sim_results$Model == 
+    &quot;M2&quot;, 1, 0)
+# third, C|M1 vs. M2|M12- correct level 2 model
+sim_results$C_Level_2 &lt;- ifelse(sim_results$Model == &quot;C&quot; | sim_results$Model == 
+    &quot;M1&quot;, 1, 0)</code></pre>
+<div id="adding-labels-to-conditions" class="section level2">
+<h2>Adding Labels to Conditions</h2>
+<p>Currently, each condition is kind of like a hidden id that we don’t know what the actual factor is. So, first thing isto create meaningful labels for us to use. Remember, the 72 conditions for the this study were</p>
+<ol style="list-style-type: decimal">
+<li>Level-1 sample size (5, 10, 30)</li>
+<li>Level-2 sample size (30, 50, 100, 200)</li>
+<li>Observed indicator ICC (.1, .3, .5)</li>
+<li>Latent variable ICC (.1, .5)</li>
+</ol>
+<pre class="r"><code>## level-1 Sample size
+ss_l1 &lt;- c(5, 10, 30) ## 6 conditions each
+ss_l2 &lt;- c(30, 50, 100, 200) ## 18 condition each
+icc_ov &lt;- c(.1, .3, .5) ## 2 conditions each
+icc_lv &lt;- c(.1, .5) ## every other condition
+nCon &lt;- 72 # number of conditions
+nRep &lt;- 500 # number of replications per condition
+nMod &lt;- 12 ## numberof estimated models per conditions
+## Total number of rows: 432,000
+ss_l2 &lt;- c(rep(ss_l2[1], 18*nRep*nMod), rep(ss_l2[2], 18*nRep*nMod), rep(ss_l2[3], 18*nRep*nMod), rep(ss_l2[4], 18*nRep*nMod))
+ss_l1 &lt;- rep(c(rep(ss_l1[1],6*nRep*nMod), rep(ss_l1[2],6*nRep*nMod), rep(ss_l1[3],6*nRep*nMod)), 4)
+icc_ov &lt;- rep(c(rep(icc_ov[1], 2*nRep*nMod), rep(icc_ov[2], 2*nRep*nMod), rep(icc_ov[3], 2*nRep*nMod)), 12)
+icc_lv &lt;- rep(c(rep(icc_lv[1], nRep*nMod), rep(icc_lv[2], nRep*nMod)), 36)
+## Force these vectors to be column vectors
+ss_l1 &lt;- matrix(ss_l1, ncol=1)
+ss_l2 &lt;- matrix(ss_l2, ncol=1)
+icc_ov &lt;- matrix(icc_ov, ncol=1)
+icc_lv &lt;- matrix(icc_lv, ncol=1)
+## Add the labels to the results data frame
+sim_results &lt;- sim_results[order(sim_results$Condition),]
+sim_results &lt;- cbind(sim_results, ss_l1, ss_l2, icc_ov, icc_lv)
+
+## Force the conditions to be factors
+sim_results$ss_l1 &lt;- as.factor(sim_results$ss_l1)
+sim_results$ss_l2 &lt;- as.factor(sim_results$ss_l2)
+sim_results$icc_ov &lt;- as.factor(sim_results$icc_ov)
+sim_results$icc_lv &lt;- as.factor(sim_results$icc_lv)
+sim_results$Model &lt;- factor(sim_results$Model, levels = c(&#39;C&#39;,&#39;M1&#39;,&#39;M2&#39;,&#39;M12&#39;), ordered = T)
+
+## Subset to the usable cases
+sim_results &lt;- filter(sim_results, Converge == 1 &amp; Admissible == 1)</code></pre>
+</div>
+</div>
+<div id="anova-and-effect-sizes-for-distributional-differences" class="section level1">
+<h1>ANOVA and effect sizes for distributional differences</h1>
+<p>One of the key outcomes for this large simulation was how the distribution of fit indices changes due to manipulating the design factor. So, for this simulation experiment, there were 6 factors systematically varied. Of these 6 factors, 4 were factors influencing the observed data and 2 were factors pertaining to estimation and model fitting. The factors were</p>
+<ol style="list-style-type: decimal">
+<li>Level-1 sample size (5, 10, 30)</li>
+<li>Level-2 sample size (30, 50, 100, 200)</li>
+<li>Observed indicator ICC (.1, .3, .5)</li>
+<li>Latent variable ICC (.1, .5)</li>
+<li>Model specification (C, M1, M2, M12)</li>
+<li>Model estimator (MLR, ULSMV, WLSMV)</li>
+</ol>
+<p>For each fit statistic, an analysis of variance (ANOVA) was conducted in order to test how much influence each of these design factors had on the distribution of the fit indice.</p>
+<p>General Linear Model investigated for fit measures was: <span class="math display">\[
+Y_{ijklmno} = \mu + \alpha_{j} + \beta_{k} + \gamma_{l} + \delta_m + \zeta_n + \theta_o +\\
+(\alpha\beta)_{jk} + (\alpha\gamma)_{jl}+ (\alpha\delta)_{jm} + (\alpha\zeta)_{jn} + (\alpha\theta)_{jo}+ \\
+(\beta\gamma)_{kl}+ (\beta\delta)_{km} + (\beta\zeta)_{kn} + (\beta\theta)_{ko}+ (\gamma\delta)_{lm} +\\ 
+(\gamma\zeta)_{ln} + (\gamma\theta)_{lo} +(\delta\zeta)_{mn} + (\delta\theta)_{mo} + (\zeta\theta)_{no} + \varepsilon_{ijklmno}
+\]</span> where</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(\mu\)</span> is the grand mean,</li>
+<li><span class="math inline">\(\alpha_{j}\)</span> is the effect of Level-1 sample size,<br />
+</li>
+<li><span class="math inline">\(\beta_{k}\)</span> is the effect of Level-2 sample size,</li>
+<li><span class="math inline">\(\gamma_{l}\)</span> is the effect of Observed indicator ICC,</li>
+<li><span class="math inline">\(\delta_m\)</span> is the effect of Latent variable ICC,</li>
+<li><span class="math inline">\(\zeta_n\)</span> is the effect of Model specification,</li>
+<li><span class="math inline">\(\theta_o\)</span> is the effect of Model estimator ,</li>
+<li><span class="math inline">\((\alpha\beta)_{jk}\)</span> is the interaction between Level-1 sample size and Level-2 sample size,</li>
+<li><span class="math inline">\((\alpha\gamma)_{jl}\)</span> is the interaction between Level-1 sample size and Observed indicator ICC,</li>
+<li><span class="math inline">\((\alpha\delta)_{jm}\)</span> is the interaction between Level-1 sample size and Latent variable ICC,</li>
+<li><span class="math inline">\((\alpha\zeta)_{jn}\)</span> is the interaction between Level-1 sample size and Model specification,</li>
+<li><span class="math inline">\((\alpha\theta)_{jo}\)</span> is the interaction between Level-1 sample size and Model estimator ,</li>
+<li><span class="math inline">\((\beta\gamma)_{kl}\)</span> is the interaction between Level-2 sample size and Observed indicator ICC,</li>
+<li><span class="math inline">\((\beta\delta)_{km}\)</span> is the interaction between Level-2 sample size and Latent variable ICC,</li>
+<li><span class="math inline">\((\beta\zeta)_{kn}\)</span> is the interaction between Level-2 sample size and Model specification,</li>
+<li><span class="math inline">\((\beta\theta)_{ko}\)</span> is the interaction between Level-2 sample size and Model estimator ,</li>
+<li><span class="math inline">\((\gamma\delta)_{lm}\)</span> is the interaction between Observed indicator ICC and Latent variable ICC,</li>
+<li><span class="math inline">\((\gamma\zeta)_{ln}\)</span> is the interaction between Observed indicator ICC and Model specification,</li>
+<li><span class="math inline">\((\gamma\theta)_{lo}\)</span> is the interaction between Observed indicator ICC and Model estimator ,</li>
+<li><span class="math inline">\((\delta\zeta)_{mn}\)</span> is the interaction between Latent variable ICC and Model specification,</li>
+<li><span class="math inline">\((\delta\theta)_{mo}\)</span> is the interaction between Latent variable ICC and Model estimator ,</li>
+<li><span class="math inline">\((\zeta\theta)_{no}\)</span> is the interaction between Model specification and Model estimator , and</li>
+<li><span class="math inline">\(\varepsilon_{ijkl}\)</span> is the residual error for the <span class="math inline">\(i^{th}\)</span> observed fit measure.</li>
+</ol>
+<p>Note that for most of these terms there are actually 2 or 3 terms actually estimated. These additional terms are because of the categorical natire of each effect so we have to create “reference” groups and calculate the effect of being in a group other than the reference group. Higher order interactions were omitted for clearity of interpretation of the model. If interested in higher-order interactins, please see Maxwell and Delaney (2004).</p>
+<p>The real reason the higher order interaction was omitted: Because I have no clue how to interpret a 6-way interaction (whatever the heck that is), I am limiting the ANOVA to all bivariate interactions.</p>
+<p>Diagnostics for factorial ANOVA:</p>
+<ol style="list-style-type: decimal">
+<li>Independence of Observations</li>
+<li>Normality of residuals across cells for the design</li>
+<li>Homogeneity of variance across cells</li>
+</ol>
+<p>Independence of observations is by design, where these data were randomly generated from a known population and observations are across replications and are independent. The normality assumptions is that the residuals of the models are normally distributed across the design cells. The normality assumption is tested by investigation by Shapiro-Wilks Test, the K-S test, and visual inspection of QQ-plots and histograms. The equality of variance is checked through Levene’s test across all the different conditions/groupings. Furthermore, the plots of the residuals are also indicative of the equality of variance across groups as there should be no apparent pattern to the residual plots.</p>
+<div id="assumption-checking" class="section level2">
+<h2>Assumption Checking</h2>
+<div id="cfi" class="section level3">
+<h3>CFI</h3>
+<pre class="r"><code>## model factors...
+flist &lt;- c(&#39;ss_l1&#39;, &#39;ss_l2&#39;, &#39;icc_ov&#39;, &#39;icc_lv&#39;,&#39;Model&#39;, &#39;Estimator&#39;)
+## Check assumptions
+anova_assumptions_check(
+  sim_results, &#39;CFI&#39;, factors = flist,
+  model = as.formula(&#39;CFI ~ ss_l1 + ss_l2 + icc_ov + icc_lv + Model + Estimator + ss_l1:ss_l2 + ss_l1:icc_ov + ss_l1:icc_lv + ss_l1:Model + ss_l1:Estimator + ss_l2:icc_ov + ss_l2:icc_lv + ss_l2:Model + ss_l2:Estimator + icc_ov:icc_lv + icc_ov:Model + icc_ov:Estimator + icc_lv:Model + icc_lv:Estimator + Model:Estimator&#39;))</code></pre>
+<pre><code>
+ ============================= 
+
+ Tests and Plots of Normality:</code></pre>
+<p><img src="figure/anova.Rmd/anova-CFI-1.png" width="225%" style="display: block; margin: auto;" /><img src="figure/anova.Rmd/anova-CFI-2.png" width="225%" style="display: block; margin: auto;" /><img src="figure/anova.Rmd/anova-CFI-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>
+ Shapiro-Wilks Test of Normality of Residuals:
+
+    Shapiro-Wilk normality test
+
+data:  res
+W = 0.78436, p-value &lt; 2.2e-16
+
+
+ K-S Test for Normality of Residuals:</code></pre>
+<pre><code>Warning in ks.test(aov.out$residuals, &quot;pnorm&quot;, alternative = &quot;two.sided&quot;):
+ties should not be present for the Kolmogorov-Smirnov test</code></pre>
+<p><img src="figure/anova.Rmd/anova-CFI-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  aov.out$residuals
+D = 0.45839, p-value &lt; 2.2e-16
+alternative hypothesis: two-sided</code></pre>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-CFI-5.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-CFI-6.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-CFI-7.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-CFI-8.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-CFI-9.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-CFI-10.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>
+ ============================= 
+
+ Tests of Homogeneity of Variance
+
+ 
+ Levenes Test:  ss_l1 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      2  3589.8 &lt; 2.2e-16 ***
+      307264                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  ss_l2 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      3  4957.8 &lt; 2.2e-16 ***
+      307263                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  icc_ov 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      2  27.465 1.183e-12 ***
+      307264                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  icc_lv 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      1  1626.5 &lt; 2.2e-16 ***
+      307265                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  Model 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      3  4958.9 &lt; 2.2e-16 ***
+      307263                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  Estimator 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      2  4762.4 &lt; 2.2e-16 ***
+      307264                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="tli" class="section level3">
+<h3>TLI</h3>
+<pre class="r"><code>anova_assumptions_check(
+  sim_results, &#39;TLI&#39;, factors = flist,
+  model = as.formula(&#39;TLI ~ ss_l1 + ss_l2 + icc_ov + icc_lv + Model + Estimator + ss_l1:ss_l2 + ss_l1:icc_ov + ss_l1:icc_lv + ss_l1:Model + ss_l1:Estimator + ss_l2:icc_ov + ss_l2:icc_lv + ss_l2:Model + ss_l2:Estimator + icc_ov:icc_lv + icc_ov:Model + icc_ov:Estimator + icc_lv:Model + icc_lv:Estimator + Model:Estimator&#39;))</code></pre>
+<pre><code>
+ ============================= 
+
+ Tests and Plots of Normality:</code></pre>
+<p><img src="figure/anova.Rmd/anova-tli-1.png" width="225%" style="display: block; margin: auto;" /><img src="figure/anova.Rmd/anova-tli-2.png" width="225%" style="display: block; margin: auto;" /><img src="figure/anova.Rmd/anova-tli-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>
+ Shapiro-Wilks Test of Normality of Residuals:
+
+    Shapiro-Wilk normality test
+
+data:  res
+W = 0.87141, p-value &lt; 2.2e-16
+
+
+ K-S Test for Normality of Residuals:</code></pre>
+<pre><code>Warning in ks.test(aov.out$residuals, &quot;pnorm&quot;, alternative = &quot;two.sided&quot;):
+ties should not be present for the Kolmogorov-Smirnov test</code></pre>
+<p><img src="figure/anova.Rmd/anova-tli-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  aov.out$residuals
+D = 0.45175, p-value &lt; 2.2e-16
+alternative hypothesis: two-sided</code></pre>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-tli-5.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-tli-6.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-tli-7.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-tli-8.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-tli-9.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-tli-10.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>
+ ============================= 
+
+ Tests of Homogeneity of Variance
+
+ 
+ Levenes Test:  ss_l1 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      2  3604.9 &lt; 2.2e-16 ***
+      307264                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  ss_l2 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      3  5009.7 &lt; 2.2e-16 ***
+      307263                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  icc_ov 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      2  26.835 2.221e-12 ***
+      307264                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  icc_lv 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      1  1651.9 &lt; 2.2e-16 ***
+      307265                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  Model 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      3  4912.1 &lt; 2.2e-16 ***
+      307263                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  Estimator 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      2  4803.2 &lt; 2.2e-16 ***
+      307264                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="rmsea" class="section level3">
+<h3>RMSEA</h3>
+<pre class="r"><code>anova_assumptions_check(
+  sim_results, &#39;RMSEA&#39;, factors = flist,
+  model = as.formula(&#39;RMSEA ~ ss_l1 + ss_l2 + icc_ov + icc_lv + Model + Estimator + ss_l1:ss_l2 + ss_l1:icc_ov + ss_l1:icc_lv + ss_l1:Model + ss_l1:Estimator + ss_l2:icc_ov + ss_l2:icc_lv + ss_l2:Model + ss_l2:Estimator + icc_ov:icc_lv + icc_ov:Model + icc_ov:Estimator + icc_lv:Model + icc_lv:Estimator + Model:Estimator&#39;))</code></pre>
+<pre><code>
+ ============================= 
+
+ Tests and Plots of Normality:</code></pre>
+<p><img src="figure/anova.Rmd/anova-RMSEA-1.png" width="225%" style="display: block; margin: auto;" /><img src="figure/anova.Rmd/anova-RMSEA-2.png" width="225%" style="display: block; margin: auto;" /><img src="figure/anova.Rmd/anova-RMSEA-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>
+ Shapiro-Wilks Test of Normality of Residuals:
+
+    Shapiro-Wilk normality test
+
+data:  res
+W = 0.97275, p-value &lt; 2.2e-16
+
+
+ K-S Test for Normality of Residuals:</code></pre>
+<pre><code>Warning in ks.test(aov.out$residuals, &quot;pnorm&quot;, alternative = &quot;two.sided&quot;):
+ties should not be present for the Kolmogorov-Smirnov test</code></pre>
+<p><img src="figure/anova.Rmd/anova-RMSEA-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  aov.out$residuals
+D = 0.48597, p-value &lt; 2.2e-16
+alternative hypothesis: two-sided</code></pre>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-RMSEA-5.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-RMSEA-6.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-RMSEA-7.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-RMSEA-8.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-RMSEA-9.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-RMSEA-10.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>
+ ============================= 
+
+ Tests of Homogeneity of Variance
+
+ 
+ Levenes Test:  ss_l1 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      2  410.32 &lt; 2.2e-16 ***
+      307264                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  ss_l2 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      3  4073.6 &lt; 2.2e-16 ***
+      307263                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  icc_ov 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      2  2365.2 &lt; 2.2e-16 ***
+      307264                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  icc_lv 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value Pr(&gt;F)
+group      1    1.41 0.2351
+      307265               
+
+ 
+ Levenes Test:  Model 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      3  1570.3 &lt; 2.2e-16 ***
+      307263                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  Estimator 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      2  4400.9 &lt; 2.2e-16 ***
+      307264                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="srmrw" class="section level3">
+<h3>SRMRW</h3>
+<pre class="r"><code>anova_assumptions_check(
+  sim_results, &#39;SRMRW&#39;, factors = flist,
+  model = as.formula(&#39;SRMRW ~ ss_l1 + ss_l2 + icc_ov + icc_lv + Model + Estimator + ss_l1:ss_l2 + ss_l1:icc_ov + ss_l1:icc_lv + ss_l1:Model + ss_l1:Estimator + ss_l2:icc_ov + ss_l2:icc_lv + ss_l2:Model + ss_l2:Estimator + icc_ov:icc_lv + icc_ov:Model + icc_ov:Estimator + icc_lv:Model + icc_lv:Estimator + Model:Estimator&#39;))</code></pre>
+<pre><code>
+ ============================= 
+
+ Tests and Plots of Normality:</code></pre>
+<p><img src="figure/anova.Rmd/anova-SRMRW-1.png" width="225%" style="display: block; margin: auto;" /><img src="figure/anova.Rmd/anova-SRMRW-2.png" width="225%" style="display: block; margin: auto;" /><img src="figure/anova.Rmd/anova-SRMRW-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>
+ Shapiro-Wilks Test of Normality of Residuals:
+
+    Shapiro-Wilk normality test
+
+data:  res
+W = 0.95145, p-value &lt; 2.2e-16
+
+
+ K-S Test for Normality of Residuals:</code></pre>
+<pre><code>Warning in ks.test(aov.out$residuals, &quot;pnorm&quot;, alternative = &quot;two.sided&quot;):
+ties should not be present for the Kolmogorov-Smirnov test</code></pre>
+<p><img src="figure/anova.Rmd/anova-SRMRW-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  aov.out$residuals
+D = 0.48914, p-value &lt; 2.2e-16
+alternative hypothesis: two-sided</code></pre>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-SRMRW-5.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-SRMRW-6.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-SRMRW-7.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-SRMRW-8.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-SRMRW-9.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-SRMRW-10.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>
+ ============================= 
+
+ Tests of Homogeneity of Variance
+
+ 
+ Levenes Test:  ss_l1 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      2  1193.9 &lt; 2.2e-16 ***
+      307264                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  ss_l2 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      3  2255.5 &lt; 2.2e-16 ***
+      307263                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  icc_ov 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      2  1345.8 &lt; 2.2e-16 ***
+      307264                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  icc_lv 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      1  1446.7 &lt; 2.2e-16 ***
+      307265                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  Model 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      3  2758.5 &lt; 2.2e-16 ***
+      307263                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  Estimator 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      2  3272.8 &lt; 2.2e-16 ***
+      307264                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="srmrb" class="section level3">
+<h3>SRMRB</h3>
+<pre class="r"><code>anova_assumptions_check(
+  sim_results, &#39;SRMRB&#39;, factors = flist,
+  model = as.formula(&#39;SRMRB ~ ss_l1 + ss_l2 + icc_ov + icc_lv + Model + Estimator + ss_l1:ss_l2 + ss_l1:icc_ov + ss_l1:icc_lv + ss_l1:Model + ss_l1:Estimator + ss_l2:icc_ov + ss_l2:icc_lv + ss_l2:Model + ss_l2:Estimator + icc_ov:icc_lv + icc_ov:Model + icc_ov:Estimator + icc_lv:Model + icc_lv:Estimator + Model:Estimator&#39;))</code></pre>
+<pre><code>
+ ============================= 
+
+ Tests and Plots of Normality:</code></pre>
+<p><img src="figure/anova.Rmd/anova-srmrb-1.png" width="225%" style="display: block; margin: auto;" /><img src="figure/anova.Rmd/anova-srmrb-2.png" width="225%" style="display: block; margin: auto;" /><img src="figure/anova.Rmd/anova-srmrb-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>
+ Shapiro-Wilks Test of Normality of Residuals:
+
+    Shapiro-Wilk normality test
+
+data:  res
+W = 0.92039, p-value &lt; 2.2e-16
+
+
+ K-S Test for Normality of Residuals:</code></pre>
+<pre><code>Warning in ks.test(aov.out$residuals, &quot;pnorm&quot;, alternative = &quot;two.sided&quot;):
+ties should not be present for the Kolmogorov-Smirnov test</code></pre>
+<p><img src="figure/anova.Rmd/anova-srmrb-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  aov.out$residuals
+D = 0.47316, p-value &lt; 2.2e-16
+alternative hypothesis: two-sided</code></pre>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-srmrb-5.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-srmrb-6.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-srmrb-7.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-srmrb-8.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-srmrb-9.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="figure/anova.Rmd/anova-srmrb-10.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre><code>
+ ============================= 
+
+ Tests of Homogeneity of Variance
+
+ 
+ Levenes Test:  ss_l1 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      2  4683.8 &lt; 2.2e-16 ***
+      307264                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  ss_l2 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      3  2531.7 &lt; 2.2e-16 ***
+      307263                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  icc_ov 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      2  8813.7 &lt; 2.2e-16 ***
+      307264                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  icc_lv 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      1   12256 &lt; 2.2e-16 ***
+      307265                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  Model 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      3  112.29 &lt; 2.2e-16 ***
+      307263                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ 
+ Levenes Test:  Estimator 
+ 
+ 
+Levene&#39;s Test for Homogeneity of Variance (center = &quot;mean&quot;)
+          Df F value    Pr(&gt;F)    
+group      2  1871.3 &lt; 2.2e-16 ***
+      307264                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+</div>
+<div id="anova-analyses" class="section level2">
+<h2>ANOVA Analyses</h2>
+<div id="cfi-1" class="section level3">
+<h3>CFI</h3>
+<pre class="r"><code>model &lt;- as.formula(&#39;CFI ~ ss_l1 + ss_l2 + icc_ov + icc_lv + Model + Estimator + ss_l1:ss_l2 + ss_l1:icc_ov + ss_l1:icc_lv + ss_l1:Model + ss_l1:Estimator + ss_l2:icc_ov + ss_l2:icc_lv + ss_l2:Model + ss_l2:Estimator + icc_ov:icc_lv + icc_ov:Model + icc_ov:Estimator + icc_lv:Model + icc_lv:Estimator + Model:Estimator&#39;)
+
+fit &lt;- aov(model, data = sim_results)
+fit.out &lt;- summary(fit)
+fit.out</code></pre>
+<pre><code>                     Df Sum Sq Mean Sq F value Pr(&gt;F)    
+ss_l1                 2   34.0   16.99 14004.7 &lt;2e-16 ***
+ss_l2                 3   10.9    3.65  3005.9 &lt;2e-16 ***
+icc_ov                2    4.2    2.10  1734.5 &lt;2e-16 ***
+icc_lv                1    3.7    3.65  3009.1 &lt;2e-16 ***
+Model                 3  268.1   89.37 73671.1 &lt;2e-16 ***
+Estimator             2   19.9    9.96  8212.8 &lt;2e-16 ***
+ss_l1:ss_l2           6   30.6    5.10  4203.9 &lt;2e-16 ***
+ss_l1:icc_ov          4    4.0    0.99   815.4 &lt;2e-16 ***
+ss_l1:icc_lv          2    0.4    0.21   169.2 &lt;2e-16 ***
+ss_l1:Model           6    0.9    0.14   119.5 &lt;2e-16 ***
+ss_l1:Estimator       4    1.3    0.34   276.2 &lt;2e-16 ***
+ss_l2:icc_ov          6    1.2    0.19   158.6 &lt;2e-16 ***
+ss_l2:icc_lv          3    4.7    1.56  1289.5 &lt;2e-16 ***
+ss_l2:Model           9    2.6    0.29   239.2 &lt;2e-16 ***
+ss_l2:Estimator       6   28.7    4.79  3948.8 &lt;2e-16 ***
+icc_ov:icc_lv         2    2.6    1.30  1072.7 &lt;2e-16 ***
+icc_ov:Model          6    5.9    0.99   816.6 &lt;2e-16 ***
+icc_ov:Estimator      4    5.3    1.32  1084.2 &lt;2e-16 ***
+icc_lv:Model          3   15.3    5.11  4214.2 &lt;2e-16 ***
+icc_lv:Estimator      2   11.1    5.57  4588.7 &lt;2e-16 ***
+Model:Estimator       6   16.8    2.80  2310.3 &lt;2e-16 ***
+Residuals        307184  372.7    0.00                   
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+111 observations deleted due to missingness</code></pre>
+<pre class="r"><code>cfi.out &lt;- cbind(omega2(fit.out),p_omega2(fit.out))
+cfi.out</code></pre>
+<pre><code>                 omega^2 partial-omega^2
+ss_l1             0.0402          0.0835
+ss_l2             0.0129          0.0285
+icc_ov            0.0050          0.0112
+icc_lv            0.0043          0.0097
+Model             0.3173          0.4184
+Estimator         0.0236          0.0507
+ss_l1:ss_l2       0.0362          0.0758
+ss_l1:icc_ov      0.0047          0.0105
+ss_l1:icc_lv      0.0005          0.0011
+ss_l1:Model       0.0010          0.0023
+ss_l1:Estimator   0.0016          0.0036
+ss_l2:icc_ov      0.0014          0.0031
+ss_l2:icc_lv      0.0055          0.0124
+ss_l2:Model       0.0031          0.0069
+ss_l2:Estimator   0.0340          0.0716
+icc_ov:icc_lv     0.0031          0.0069
+icc_ov:Model      0.0070          0.0157
+icc_ov:Estimator  0.0062          0.0139
+icc_lv:Model      0.0181          0.0395
+icc_lv:Estimator  0.0132          0.0290
+Model:Estimator   0.0199          0.0431</code></pre>
+</div>
+<div id="tli-1" class="section level3">
+<h3>TLI</h3>
+<pre class="r"><code>model &lt;- as.formula(&#39;TLI ~ ss_l1 + ss_l2 + icc_ov + icc_lv + Model + Estimator + ss_l1:ss_l2 + ss_l1:icc_ov + ss_l1:icc_lv + ss_l1:Model + ss_l1:Estimator + ss_l2:icc_ov + ss_l2:icc_lv + ss_l2:Model + ss_l2:Estimator + icc_ov:icc_lv + icc_ov:Model + icc_ov:Estimator + icc_lv:Model + icc_lv:Estimator + Model:Estimator&#39;)
+
+fit &lt;- aov(model, data = sim_results)
+fit.out &lt;- summary(fit)
+fit.out</code></pre>
+<pre><code>                     Df Sum Sq Mean Sq F value Pr(&gt;F)    
+ss_l1                 2   48.5   24.23 14068.8 &lt;2e-16 ***
+ss_l2                 3   15.6    5.21  3024.8 &lt;2e-16 ***
+icc_ov                2    6.0    2.98  1731.7 &lt;2e-16 ***
+icc_lv                1    5.3    5.25  3050.4 &lt;2e-16 ***
+Model                 3  377.9  125.97 73129.1 &lt;2e-16 ***
+Estimator             2   28.4   14.18  8229.9 &lt;2e-16 ***
+ss_l1:ss_l2           6   43.7    7.28  4223.7 &lt;2e-16 ***
+ss_l1:icc_ov          4    5.7    1.42   822.6 &lt;2e-16 ***
+ss_l1:icc_lv          2    0.6    0.29   169.5 &lt;2e-16 ***
+ss_l1:Model           6    1.2    0.20   113.7 &lt;2e-16 ***
+ss_l1:Estimator       4    1.9    0.48   276.5 &lt;2e-16 ***
+ss_l2:icc_ov          6    1.6    0.27   155.9 &lt;2e-16 ***
+ss_l2:icc_lv          3    6.7    2.23  1295.7 &lt;2e-16 ***
+ss_l2:Model           9    3.8    0.42   244.7 &lt;2e-16 ***
+ss_l2:Estimator       6   41.0    6.84  3969.2 &lt;2e-16 ***
+icc_ov:icc_lv         2    3.8    1.88  1088.8 &lt;2e-16 ***
+icc_ov:Model          6    8.4    1.41   816.2 &lt;2e-16 ***
+icc_ov:Estimator      4    7.5    1.89  1094.7 &lt;2e-16 ***
+icc_lv:Model          3   22.1    7.36  4270.3 &lt;2e-16 ***
+icc_lv:Estimator      2   15.9    7.96  4623.3 &lt;2e-16 ***
+Model:Estimator       6   24.0    4.00  2320.9 &lt;2e-16 ***
+Residuals        307184  529.1    0.00                   
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+111 observations deleted due to missingness</code></pre>
+<pre class="r"><code>tli.out &lt;- cbind(omega2(fit.out),p_omega2(fit.out))
+tli.out</code></pre>
+<pre><code>                 omega^2 partial-omega^2
+ss_l1             0.0404          0.0839
+ss_l2             0.0130          0.0287
+icc_ov            0.0050          0.0111
+icc_lv            0.0044          0.0098
+Model             0.3153          0.4166
+Estimator         0.0237          0.0508
+ss_l1:ss_l2       0.0364          0.0762
+ss_l1:icc_ov      0.0047          0.0106
+ss_l1:icc_lv      0.0005          0.0011
+ss_l1:Model       0.0010          0.0022
+ss_l1:Estimator   0.0016          0.0036
+ss_l2:icc_ov      0.0013          0.0030
+ss_l2:icc_lv      0.0056          0.0125
+ss_l2:Model       0.0032          0.0071
+ss_l2:Estimator   0.0342          0.0719
+icc_ov:icc_lv     0.0031          0.0070
+icc_ov:Model      0.0070          0.0157
+icc_ov:Estimator  0.0063          0.0140
+icc_lv:Model      0.0184          0.0400
+icc_lv:Estimator  0.0133          0.0292
+Model:Estimator   0.0200          0.0433</code></pre>
+</div>
+<div id="rmsea-1" class="section level3">
+<h3>RMSEA</h3>
+<pre class="r"><code>model &lt;- as.formula(&#39;RMSEA ~ ss_l1 + ss_l2 + icc_ov + icc_lv + Model + Estimator + ss_l1:ss_l2 + ss_l1:icc_ov + ss_l1:icc_lv + ss_l1:Model + ss_l1:Estimator + ss_l2:icc_ov + ss_l2:icc_lv + ss_l2:Model + ss_l2:Estimator + icc_ov:icc_lv + icc_ov:Model + icc_ov:Estimator + icc_lv:Model + icc_lv:Estimator + Model:Estimator&#39;)
+
+fit &lt;- aov(model, data = sim_results)
+fit.out &lt;- summary(fit)
+fit.out</code></pre>
+<pre><code>                     Df Sum Sq Mean Sq  F value Pr(&gt;F)    
+ss_l1                 2  3.873   1.937  29985.6 &lt;2e-16 ***
+ss_l2                 3  0.464   0.155   2392.8 &lt;2e-16 ***
+icc_ov                2  3.218   1.609  24911.6 &lt;2e-16 ***
+icc_lv                1  0.171   0.171   2640.7 &lt;2e-16 ***
+Model                 3 29.709   9.903 153329.0 &lt;2e-16 ***
+Estimator             2  6.991   3.496  54124.3 &lt;2e-16 ***
+ss_l1:ss_l2           6  1.262   0.210   3255.6 &lt;2e-16 ***
+ss_l1:icc_ov          4  0.094   0.023    363.6 &lt;2e-16 ***
+ss_l1:icc_lv          2  0.189   0.094   1460.1 &lt;2e-16 ***
+ss_l1:Model           6  0.202   0.034    522.1 &lt;2e-16 ***
+ss_l1:Estimator       4  0.070   0.017    269.3 &lt;2e-16 ***
+ss_l2:icc_ov          6  0.411   0.068   1059.3 &lt;2e-16 ***
+ss_l2:icc_lv          3  0.103   0.034    529.8 &lt;2e-16 ***
+ss_l2:Model           9  0.891   0.099   1533.4 &lt;2e-16 ***
+ss_l2:Estimator       6  3.478   0.580   8976.3 &lt;2e-16 ***
+icc_ov:icc_lv         2  0.156   0.078   1209.6 &lt;2e-16 ***
+icc_ov:Model          6  1.316   0.219   3396.0 &lt;2e-16 ***
+icc_ov:Estimator      4  0.867   0.217   3357.5 &lt;2e-16 ***
+icc_lv:Model          3  1.437   0.479   7415.3 &lt;2e-16 ***
+icc_lv:Estimator      2  0.043   0.021    329.5 &lt;2e-16 ***
+Model:Estimator       6  1.376   0.229   3551.7 &lt;2e-16 ***
+Residuals        307184 19.840   0.000                    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+111 observations deleted due to missingness</code></pre>
+<pre class="r"><code>rmsea.out &lt;- cbind(omega2(fit.out),p_omega2(fit.out))
+rmsea.out</code></pre>
+<pre><code>                 omega^2 partial-omega^2
+ss_l1             0.0509          0.1633
+ss_l2             0.0061          0.0228
+icc_ov            0.0423          0.1395
+icc_lv            0.0022          0.0085
+Model             0.3901          0.5995
+Estimator         0.0918          0.2605
+ss_l1:ss_l2       0.0166          0.0598
+ss_l1:icc_ov      0.0012          0.0047
+ss_l1:icc_lv      0.0025          0.0094
+ss_l1:Model       0.0027          0.0101
+ss_l1:Estimator   0.0009          0.0035
+ss_l2:icc_ov      0.0054          0.0202
+ss_l2:icc_lv      0.0013          0.0051
+ss_l2:Model       0.0117          0.0430
+ss_l2:Estimator   0.0457          0.1491
+icc_ov:icc_lv     0.0020          0.0078
+icc_ov:Model      0.0173          0.0622
+icc_ov:Estimator  0.0114          0.0419
+icc_lv:Model      0.0189          0.0675
+icc_lv:Estimator  0.0006          0.0021
+Model:Estimator   0.0181          0.0648</code></pre>
+</div>
+<div id="srmrw-1" class="section level3">
+<h3>SRMRW</h3>
+<pre class="r"><code>model &lt;- as.formula(&#39;SRMRW ~ ss_l1 + ss_l2 + icc_ov + icc_lv + Model + Estimator + ss_l1:ss_l2 + ss_l1:icc_ov + ss_l1:icc_lv + ss_l1:Model + ss_l1:Estimator + ss_l2:icc_ov + ss_l2:icc_lv + ss_l2:Model + ss_l2:Estimator + icc_ov:icc_lv + icc_ov:Model + icc_ov:Estimator + icc_lv:Model + icc_lv:Estimator + Model:Estimator&#39;)
+
+fit &lt;- aov(model, data = sim_results)
+fit.out &lt;- summary(fit)
+fit.out</code></pre>
+<pre><code>                     Df Sum Sq Mean Sq   F value Pr(&gt;F)    
+ss_l1                 2  25.52  12.761 296166.56 &lt;2e-16 ***
+ss_l2                 3  26.41   8.804 204332.83 &lt;2e-16 ***
+icc_ov                2   2.50   1.248  28955.46 &lt;2e-16 ***
+icc_lv                1   0.58   0.579  13432.28 &lt;2e-16 ***
+Model                 3  44.23  14.745 342204.95 &lt;2e-16 ***
+Estimator             2  10.80   5.399 125296.55 &lt;2e-16 ***
+ss_l1:ss_l2           6   5.19   0.864  20057.33 &lt;2e-16 ***
+ss_l1:icc_ov          4   0.01   0.002     34.94 &lt;2e-16 ***
+ss_l1:icc_lv          2   0.07   0.035    812.79 &lt;2e-16 ***
+ss_l1:Model           6   1.69   0.281   6530.42 &lt;2e-16 ***
+ss_l1:Estimator       4   0.20   0.050   1156.99 &lt;2e-16 ***
+ss_l2:icc_ov          6   0.13   0.022    509.02 &lt;2e-16 ***
+ss_l2:icc_lv          3   0.09   0.031    724.90 &lt;2e-16 ***
+ss_l2:Model           9   1.42   0.158   3673.60 &lt;2e-16 ***
+ss_l2:Estimator       6   1.05   0.175   4066.67 &lt;2e-16 ***
+icc_ov:icc_lv         2   0.02   0.009    204.43 &lt;2e-16 ***
+icc_ov:Model          6   0.08   0.013    310.70 &lt;2e-16 ***
+icc_ov:Estimator      4   1.23   0.308   7153.27 &lt;2e-16 ***
+icc_lv:Model          3   0.23   0.075   1749.61 &lt;2e-16 ***
+icc_lv:Estimator      2   1.60   0.802  18624.61 &lt;2e-16 ***
+Model:Estimator       6   0.36   0.059   1380.92 &lt;2e-16 ***
+Residuals        307184  13.24   0.000                     
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+111 observations deleted due to missingness</code></pre>
+<pre class="r"><code>srmrw.out &lt;- cbind(omega2(fit.out),p_omega2(fit.out))
+srmrw.out</code></pre>
+<pre><code>                 omega^2 partial-omega^2
+ss_l1             0.1868          0.6584
+ss_l2             0.1933          0.6661
+icc_ov            0.0183          0.1586
+icc_lv            0.0042          0.0419
+Model             0.3237          0.7696
+Estimator         0.0790          0.4492
+ss_l1:ss_l2       0.0379          0.2814
+ss_l1:icc_ov      0.0000          0.0004
+ss_l1:icc_lv      0.0005          0.0053
+ss_l1:Model       0.0124          0.1131
+ss_l1:Estimator   0.0015          0.0148
+ss_l2:icc_ov      0.0010          0.0098
+ss_l2:icc_lv      0.0007          0.0070
+ss_l2:Model       0.0104          0.0971
+ss_l2:Estimator   0.0077          0.0736
+icc_ov:icc_lv     0.0001          0.0013
+icc_ov:Model      0.0006          0.0060
+icc_ov:Estimator  0.0090          0.0852
+icc_lv:Model      0.0017          0.0168
+icc_lv:Estimator  0.0117          0.1081
+Model:Estimator   0.0026          0.0262</code></pre>
+</div>
+<div id="srmrb-1" class="section level3">
+<h3>SRMRB</h3>
+<pre class="r"><code>model &lt;- as.formula(&#39;SRMRB ~ ss_l1 + ss_l2 + icc_ov + icc_lv + Model + Estimator + ss_l1:ss_l2 + ss_l1:icc_ov + ss_l1:icc_lv + ss_l1:Model + ss_l1:Estimator + ss_l2:icc_ov + ss_l2:icc_lv + ss_l2:Model + ss_l2:Estimator + icc_ov:icc_lv + icc_ov:Model + icc_ov:Estimator + icc_lv:Model + icc_lv:Estimator + Model:Estimator&#39;)
+
+fit &lt;- aov(model, data = sim_results)
+fit.out &lt;- summary(fit)
+fit.out</code></pre>
+<pre><code>                     Df Sum Sq Mean Sq   F value   Pr(&gt;F)    
+ss_l1                 2  44.99   22.49  33620.78  &lt; 2e-16 ***
+ss_l2                 3 284.76   94.92 141877.12  &lt; 2e-16 ***
+icc_ov                2 117.74   58.87  87995.72  &lt; 2e-16 ***
+icc_lv                1  32.82   32.82  49050.45  &lt; 2e-16 ***
+Model                 3  17.37    5.79   8656.17  &lt; 2e-16 ***
+Estimator             2  48.54   24.27  36276.51  &lt; 2e-16 ***
+ss_l1:ss_l2           6   4.86    0.81   1211.68  &lt; 2e-16 ***
+ss_l1:icc_ov          4  33.56    8.39  12540.25  &lt; 2e-16 ***
+ss_l1:icc_lv          2   9.23    4.61   6898.00  &lt; 2e-16 ***
+ss_l1:Model           6   0.40    0.07     99.89  &lt; 2e-16 ***
+ss_l1:Estimator       4   0.04    0.01     14.14 1.52e-11 ***
+ss_l2:icc_ov          6   3.69    0.61    918.94  &lt; 2e-16 ***
+ss_l2:icc_lv          3  12.77    4.26   6364.08  &lt; 2e-16 ***
+ss_l2:Model           9   0.99    0.11    164.53  &lt; 2e-16 ***
+ss_l2:Estimator       6   2.02    0.34    503.67  &lt; 2e-16 ***
+icc_ov:icc_lv         2  27.31   13.66  20412.65  &lt; 2e-16 ***
+icc_ov:Model          6   4.91    0.82   1223.78  &lt; 2e-16 ***
+icc_ov:Estimator      4   0.25    0.06     91.96  &lt; 2e-16 ***
+icc_lv:Model          3  10.77    3.59   5366.68  &lt; 2e-16 ***
+icc_lv:Estimator      2   1.76    0.88   1315.58  &lt; 2e-16 ***
+Model:Estimator       6   0.82    0.14    204.37  &lt; 2e-16 ***
+Residuals        307184 205.51    0.00                       
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+111 observations deleted due to missingness</code></pre>
+<pre class="r"><code>srmrb.out &lt;- cbind(omega2(fit.out),p_omega2(fit.out))
+srmrb.out</code></pre>
+<pre><code>                 omega^2 partial-omega^2
+ss_l1             0.0520          0.1795
+ss_l2             0.3292          0.5807
+icc_ov            0.1361          0.3642
+icc_lv            0.0379          0.1377
+Model             0.0201          0.0779
+Estimator         0.0561          0.1910
+ss_l1:ss_l2       0.0056          0.0231
+ss_l1:icc_ov      0.0388          0.1403
+ss_l1:icc_lv      0.0107          0.0430
+ss_l1:Model       0.0005          0.0019
+ss_l1:Estimator   0.0000          0.0002
+ss_l2:icc_ov      0.0043          0.0176
+ss_l2:icc_lv      0.0148          0.0585
+ss_l2:Model       0.0011          0.0048
+ss_l2:Estimator   0.0023          0.0097
+icc_ov:icc_lv     0.0316          0.1173
+icc_ov:Model      0.0057          0.0233
+icc_ov:Estimator  0.0003          0.0012
+icc_lv:Model      0.0124          0.0498
+icc_lv:Estimator  0.0020          0.0085
+Model:Estimator   0.0009          0.0040</code></pre>
+</div>
+</div>
+<div id="summary-table-of-effect-sizes" class="section level2">
+<h2>Summary Table of Effect Sizes</h2>
+<pre class="r"><code>tb &lt;- cbind(cfi.out, tli.out, rmsea.out, srmrw.out, srmrb.out)
+
+kable(tb, format=&#39;html&#39;) %&gt;%
+    kable_styling(full_width = T) %&gt;%
+    add_header_above(c(&#39;Effect&#39;=1,&#39;CFI&#39;=2,&#39;TLI&#39;=2,&#39;RMSEA&#39;=2,&#39;SRMRW&#39;=2,&#39;SRMRB&#39;=2))</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Effect
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+CFI
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+TLI
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+RMSEA
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+SRMRW
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+SRMRB
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+omega^2
+</th>
+<th style="text-align:right;">
+partial-omega^2
+</th>
+<th style="text-align:right;">
+omega^2
+</th>
+<th style="text-align:right;">
+partial-omega^2
+</th>
+<th style="text-align:right;">
+omega^2
+</th>
+<th style="text-align:right;">
+partial-omega^2
+</th>
+<th style="text-align:right;">
+omega^2
+</th>
+<th style="text-align:right;">
+partial-omega^2
+</th>
+<th style="text-align:right;">
+omega^2
+</th>
+<th style="text-align:right;">
+partial-omega^2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+ss_l1
+</td>
+<td style="text-align:right;">
+0.0402
+</td>
+<td style="text-align:right;">
+0.0835
+</td>
+<td style="text-align:right;">
+0.0404
+</td>
+<td style="text-align:right;">
+0.0839
+</td>
+<td style="text-align:right;">
+0.0509
+</td>
+<td style="text-align:right;">
+0.1633
+</td>
+<td style="text-align:right;">
+0.1868
+</td>
+<td style="text-align:right;">
+0.6584
+</td>
+<td style="text-align:right;">
+0.0520
+</td>
+<td style="text-align:right;">
+0.1795
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l2
+</td>
+<td style="text-align:right;">
+0.0129
+</td>
+<td style="text-align:right;">
+0.0285
+</td>
+<td style="text-align:right;">
+0.0130
+</td>
+<td style="text-align:right;">
+0.0287
+</td>
+<td style="text-align:right;">
+0.0061
+</td>
+<td style="text-align:right;">
+0.0228
+</td>
+<td style="text-align:right;">
+0.1933
+</td>
+<td style="text-align:right;">
+0.6661
+</td>
+<td style="text-align:right;">
+0.3292
+</td>
+<td style="text-align:right;">
+0.5807
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_ov
+</td>
+<td style="text-align:right;">
+0.0050
+</td>
+<td style="text-align:right;">
+0.0112
+</td>
+<td style="text-align:right;">
+0.0050
+</td>
+<td style="text-align:right;">
+0.0111
+</td>
+<td style="text-align:right;">
+0.0423
+</td>
+<td style="text-align:right;">
+0.1395
+</td>
+<td style="text-align:right;">
+0.0183
+</td>
+<td style="text-align:right;">
+0.1586
+</td>
+<td style="text-align:right;">
+0.1361
+</td>
+<td style="text-align:right;">
+0.3642
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_lv
+</td>
+<td style="text-align:right;">
+0.0043
+</td>
+<td style="text-align:right;">
+0.0097
+</td>
+<td style="text-align:right;">
+0.0044
+</td>
+<td style="text-align:right;">
+0.0098
+</td>
+<td style="text-align:right;">
+0.0022
+</td>
+<td style="text-align:right;">
+0.0085
+</td>
+<td style="text-align:right;">
+0.0042
+</td>
+<td style="text-align:right;">
+0.0419
+</td>
+<td style="text-align:right;">
+0.0379
+</td>
+<td style="text-align:right;">
+0.1377
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Model
+</td>
+<td style="text-align:right;">
+0.3173
+</td>
+<td style="text-align:right;">
+0.4184
+</td>
+<td style="text-align:right;">
+0.3153
+</td>
+<td style="text-align:right;">
+0.4166
+</td>
+<td style="text-align:right;">
+0.3901
+</td>
+<td style="text-align:right;">
+0.5995
+</td>
+<td style="text-align:right;">
+0.3237
+</td>
+<td style="text-align:right;">
+0.7696
+</td>
+<td style="text-align:right;">
+0.0201
+</td>
+<td style="text-align:right;">
+0.0779
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Estimator
+</td>
+<td style="text-align:right;">
+0.0236
+</td>
+<td style="text-align:right;">
+0.0507
+</td>
+<td style="text-align:right;">
+0.0237
+</td>
+<td style="text-align:right;">
+0.0508
+</td>
+<td style="text-align:right;">
+0.0918
+</td>
+<td style="text-align:right;">
+0.2605
+</td>
+<td style="text-align:right;">
+0.0790
+</td>
+<td style="text-align:right;">
+0.4492
+</td>
+<td style="text-align:right;">
+0.0561
+</td>
+<td style="text-align:right;">
+0.1910
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l1:ss_l2
+</td>
+<td style="text-align:right;">
+0.0362
+</td>
+<td style="text-align:right;">
+0.0758
+</td>
+<td style="text-align:right;">
+0.0364
+</td>
+<td style="text-align:right;">
+0.0762
+</td>
+<td style="text-align:right;">
+0.0166
+</td>
+<td style="text-align:right;">
+0.0598
+</td>
+<td style="text-align:right;">
+0.0379
+</td>
+<td style="text-align:right;">
+0.2814
+</td>
+<td style="text-align:right;">
+0.0056
+</td>
+<td style="text-align:right;">
+0.0231
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l1:icc_ov
+</td>
+<td style="text-align:right;">
+0.0047
+</td>
+<td style="text-align:right;">
+0.0105
+</td>
+<td style="text-align:right;">
+0.0047
+</td>
+<td style="text-align:right;">
+0.0106
+</td>
+<td style="text-align:right;">
+0.0012
+</td>
+<td style="text-align:right;">
+0.0047
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:right;">
+0.0004
+</td>
+<td style="text-align:right;">
+0.0388
+</td>
+<td style="text-align:right;">
+0.1403
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l1:icc_lv
+</td>
+<td style="text-align:right;">
+0.0005
+</td>
+<td style="text-align:right;">
+0.0011
+</td>
+<td style="text-align:right;">
+0.0005
+</td>
+<td style="text-align:right;">
+0.0011
+</td>
+<td style="text-align:right;">
+0.0025
+</td>
+<td style="text-align:right;">
+0.0094
+</td>
+<td style="text-align:right;">
+0.0005
+</td>
+<td style="text-align:right;">
+0.0053
+</td>
+<td style="text-align:right;">
+0.0107
+</td>
+<td style="text-align:right;">
+0.0430
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l1:Model
+</td>
+<td style="text-align:right;">
+0.0010
+</td>
+<td style="text-align:right;">
+0.0023
+</td>
+<td style="text-align:right;">
+0.0010
+</td>
+<td style="text-align:right;">
+0.0022
+</td>
+<td style="text-align:right;">
+0.0027
+</td>
+<td style="text-align:right;">
+0.0101
+</td>
+<td style="text-align:right;">
+0.0124
+</td>
+<td style="text-align:right;">
+0.1131
+</td>
+<td style="text-align:right;">
+0.0005
+</td>
+<td style="text-align:right;">
+0.0019
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l1:Estimator
+</td>
+<td style="text-align:right;">
+0.0016
+</td>
+<td style="text-align:right;">
+0.0036
+</td>
+<td style="text-align:right;">
+0.0016
+</td>
+<td style="text-align:right;">
+0.0036
+</td>
+<td style="text-align:right;">
+0.0009
+</td>
+<td style="text-align:right;">
+0.0035
+</td>
+<td style="text-align:right;">
+0.0015
+</td>
+<td style="text-align:right;">
+0.0148
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:right;">
+0.0002
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l2:icc_ov
+</td>
+<td style="text-align:right;">
+0.0014
+</td>
+<td style="text-align:right;">
+0.0031
+</td>
+<td style="text-align:right;">
+0.0013
+</td>
+<td style="text-align:right;">
+0.0030
+</td>
+<td style="text-align:right;">
+0.0054
+</td>
+<td style="text-align:right;">
+0.0202
+</td>
+<td style="text-align:right;">
+0.0010
+</td>
+<td style="text-align:right;">
+0.0098
+</td>
+<td style="text-align:right;">
+0.0043
+</td>
+<td style="text-align:right;">
+0.0176
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l2:icc_lv
+</td>
+<td style="text-align:right;">
+0.0055
+</td>
+<td style="text-align:right;">
+0.0124
+</td>
+<td style="text-align:right;">
+0.0056
+</td>
+<td style="text-align:right;">
+0.0125
+</td>
+<td style="text-align:right;">
+0.0013
+</td>
+<td style="text-align:right;">
+0.0051
+</td>
+<td style="text-align:right;">
+0.0007
+</td>
+<td style="text-align:right;">
+0.0070
+</td>
+<td style="text-align:right;">
+0.0148
+</td>
+<td style="text-align:right;">
+0.0585
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l2:Model
+</td>
+<td style="text-align:right;">
+0.0031
+</td>
+<td style="text-align:right;">
+0.0069
+</td>
+<td style="text-align:right;">
+0.0032
+</td>
+<td style="text-align:right;">
+0.0071
+</td>
+<td style="text-align:right;">
+0.0117
+</td>
+<td style="text-align:right;">
+0.0430
+</td>
+<td style="text-align:right;">
+0.0104
+</td>
+<td style="text-align:right;">
+0.0971
+</td>
+<td style="text-align:right;">
+0.0011
+</td>
+<td style="text-align:right;">
+0.0048
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l2:Estimator
+</td>
+<td style="text-align:right;">
+0.0340
+</td>
+<td style="text-align:right;">
+0.0716
+</td>
+<td style="text-align:right;">
+0.0342
+</td>
+<td style="text-align:right;">
+0.0719
+</td>
+<td style="text-align:right;">
+0.0457
+</td>
+<td style="text-align:right;">
+0.1491
+</td>
+<td style="text-align:right;">
+0.0077
+</td>
+<td style="text-align:right;">
+0.0736
+</td>
+<td style="text-align:right;">
+0.0023
+</td>
+<td style="text-align:right;">
+0.0097
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_ov:icc_lv
+</td>
+<td style="text-align:right;">
+0.0031
+</td>
+<td style="text-align:right;">
+0.0069
+</td>
+<td style="text-align:right;">
+0.0031
+</td>
+<td style="text-align:right;">
+0.0070
+</td>
+<td style="text-align:right;">
+0.0020
+</td>
+<td style="text-align:right;">
+0.0078
+</td>
+<td style="text-align:right;">
+0.0001
+</td>
+<td style="text-align:right;">
+0.0013
+</td>
+<td style="text-align:right;">
+0.0316
+</td>
+<td style="text-align:right;">
+0.1173
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_ov:Model
+</td>
+<td style="text-align:right;">
+0.0070
+</td>
+<td style="text-align:right;">
+0.0157
+</td>
+<td style="text-align:right;">
+0.0070
+</td>
+<td style="text-align:right;">
+0.0157
+</td>
+<td style="text-align:right;">
+0.0173
+</td>
+<td style="text-align:right;">
+0.0622
+</td>
+<td style="text-align:right;">
+0.0006
+</td>
+<td style="text-align:right;">
+0.0060
+</td>
+<td style="text-align:right;">
+0.0057
+</td>
+<td style="text-align:right;">
+0.0233
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_ov:Estimator
+</td>
+<td style="text-align:right;">
+0.0062
+</td>
+<td style="text-align:right;">
+0.0139
+</td>
+<td style="text-align:right;">
+0.0063
+</td>
+<td style="text-align:right;">
+0.0140
+</td>
+<td style="text-align:right;">
+0.0114
+</td>
+<td style="text-align:right;">
+0.0419
+</td>
+<td style="text-align:right;">
+0.0090
+</td>
+<td style="text-align:right;">
+0.0852
+</td>
+<td style="text-align:right;">
+0.0003
+</td>
+<td style="text-align:right;">
+0.0012
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_lv:Model
+</td>
+<td style="text-align:right;">
+0.0181
+</td>
+<td style="text-align:right;">
+0.0395
+</td>
+<td style="text-align:right;">
+0.0184
+</td>
+<td style="text-align:right;">
+0.0400
+</td>
+<td style="text-align:right;">
+0.0189
+</td>
+<td style="text-align:right;">
+0.0675
+</td>
+<td style="text-align:right;">
+0.0017
+</td>
+<td style="text-align:right;">
+0.0168
+</td>
+<td style="text-align:right;">
+0.0124
+</td>
+<td style="text-align:right;">
+0.0498
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_lv:Estimator
+</td>
+<td style="text-align:right;">
+0.0132
+</td>
+<td style="text-align:right;">
+0.0290
+</td>
+<td style="text-align:right;">
+0.0133
+</td>
+<td style="text-align:right;">
+0.0292
+</td>
+<td style="text-align:right;">
+0.0006
+</td>
+<td style="text-align:right;">
+0.0021
+</td>
+<td style="text-align:right;">
+0.0117
+</td>
+<td style="text-align:right;">
+0.1081
+</td>
+<td style="text-align:right;">
+0.0020
+</td>
+<td style="text-align:right;">
+0.0085
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Model:Estimator
+</td>
+<td style="text-align:right;">
+0.0199
+</td>
+<td style="text-align:right;">
+0.0431
+</td>
+<td style="text-align:right;">
+0.0200
+</td>
+<td style="text-align:right;">
+0.0433
+</td>
+<td style="text-align:right;">
+0.0181
+</td>
+<td style="text-align:right;">
+0.0648
+</td>
+<td style="text-align:right;">
+0.0026
+</td>
+<td style="text-align:right;">
+0.0262
+</td>
+<td style="text-align:right;">
+0.0009
+</td>
+<td style="text-align:right;">
+0.0040
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>## Print out in tex
+print(xtable(tb, digits = 3), booktabs = T, include.rownames = T)</code></pre>
+<pre><code>% latex table generated in R 3.5.2 by xtable 1.8-3 package
+% Thu May 09 14:44:22 2019
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrrrrrrrr}
+  \toprule
+ &amp; omega\verb|^|2 &amp; partial-omega\verb|^|2 &amp; omega\verb|^|2 &amp; partial-omega\verb|^|2 &amp; omega\verb|^|2 &amp; partial-omega\verb|^|2 &amp; omega\verb|^|2 &amp; partial-omega\verb|^|2 &amp; omega\verb|^|2 &amp; partial-omega\verb|^|2 \\ 
+  \midrule
+ss\_l1            &amp; 0.040 &amp; 0.084 &amp; 0.040 &amp; 0.084 &amp; 0.051 &amp; 0.163 &amp; 0.187 &amp; 0.658 &amp; 0.052 &amp; 0.179 \\ 
+  ss\_l2            &amp; 0.013 &amp; 0.028 &amp; 0.013 &amp; 0.029 &amp; 0.006 &amp; 0.023 &amp; 0.193 &amp; 0.666 &amp; 0.329 &amp; 0.581 \\ 
+  icc\_ov           &amp; 0.005 &amp; 0.011 &amp; 0.005 &amp; 0.011 &amp; 0.042 &amp; 0.140 &amp; 0.018 &amp; 0.159 &amp; 0.136 &amp; 0.364 \\ 
+  icc\_lv           &amp; 0.004 &amp; 0.010 &amp; 0.004 &amp; 0.010 &amp; 0.002 &amp; 0.008 &amp; 0.004 &amp; 0.042 &amp; 0.038 &amp; 0.138 \\ 
+  Model            &amp; 0.317 &amp; 0.418 &amp; 0.315 &amp; 0.417 &amp; 0.390 &amp; 0.600 &amp; 0.324 &amp; 0.770 &amp; 0.020 &amp; 0.078 \\ 
+  Estimator        &amp; 0.024 &amp; 0.051 &amp; 0.024 &amp; 0.051 &amp; 0.092 &amp; 0.261 &amp; 0.079 &amp; 0.449 &amp; 0.056 &amp; 0.191 \\ 
+  ss\_l1:ss\_l2      &amp; 0.036 &amp; 0.076 &amp; 0.036 &amp; 0.076 &amp; 0.017 &amp; 0.060 &amp; 0.038 &amp; 0.281 &amp; 0.006 &amp; 0.023 \\ 
+  ss\_l1:icc\_ov     &amp; 0.005 &amp; 0.010 &amp; 0.005 &amp; 0.011 &amp; 0.001 &amp; 0.005 &amp; 0.000 &amp; 0.000 &amp; 0.039 &amp; 0.140 \\ 
+  ss\_l1:icc\_lv     &amp; 0.000 &amp; 0.001 &amp; 0.000 &amp; 0.001 &amp; 0.002 &amp; 0.009 &amp; 0.000 &amp; 0.005 &amp; 0.011 &amp; 0.043 \\ 
+  ss\_l1:Model      &amp; 0.001 &amp; 0.002 &amp; 0.001 &amp; 0.002 &amp; 0.003 &amp; 0.010 &amp; 0.012 &amp; 0.113 &amp; 0.000 &amp; 0.002 \\ 
+  ss\_l1:Estimator  &amp; 0.002 &amp; 0.004 &amp; 0.002 &amp; 0.004 &amp; 0.001 &amp; 0.004 &amp; 0.002 &amp; 0.015 &amp; 0.000 &amp; 0.000 \\ 
+  ss\_l2:icc\_ov     &amp; 0.001 &amp; 0.003 &amp; 0.001 &amp; 0.003 &amp; 0.005 &amp; 0.020 &amp; 0.001 &amp; 0.010 &amp; 0.004 &amp; 0.018 \\ 
+  ss\_l2:icc\_lv     &amp; 0.005 &amp; 0.012 &amp; 0.006 &amp; 0.012 &amp; 0.001 &amp; 0.005 &amp; 0.001 &amp; 0.007 &amp; 0.015 &amp; 0.058 \\ 
+  ss\_l2:Model      &amp; 0.003 &amp; 0.007 &amp; 0.003 &amp; 0.007 &amp; 0.012 &amp; 0.043 &amp; 0.010 &amp; 0.097 &amp; 0.001 &amp; 0.005 \\ 
+  ss\_l2:Estimator  &amp; 0.034 &amp; 0.072 &amp; 0.034 &amp; 0.072 &amp; 0.046 &amp; 0.149 &amp; 0.008 &amp; 0.074 &amp; 0.002 &amp; 0.010 \\ 
+  icc\_ov:icc\_lv    &amp; 0.003 &amp; 0.007 &amp; 0.003 &amp; 0.007 &amp; 0.002 &amp; 0.008 &amp; 0.000 &amp; 0.001 &amp; 0.032 &amp; 0.117 \\ 
+  icc\_ov:Model     &amp; 0.007 &amp; 0.016 &amp; 0.007 &amp; 0.016 &amp; 0.017 &amp; 0.062 &amp; 0.001 &amp; 0.006 &amp; 0.006 &amp; 0.023 \\ 
+  icc\_ov:Estimator &amp; 0.006 &amp; 0.014 &amp; 0.006 &amp; 0.014 &amp; 0.011 &amp; 0.042 &amp; 0.009 &amp; 0.085 &amp; 0.000 &amp; 0.001 \\ 
+  icc\_lv:Model     &amp; 0.018 &amp; 0.040 &amp; 0.018 &amp; 0.040 &amp; 0.019 &amp; 0.068 &amp; 0.002 &amp; 0.017 &amp; 0.012 &amp; 0.050 \\ 
+  icc\_lv:Estimator &amp; 0.013 &amp; 0.029 &amp; 0.013 &amp; 0.029 &amp; 0.001 &amp; 0.002 &amp; 0.012 &amp; 0.108 &amp; 0.002 &amp; 0.008 \\ 
+  Model:Estimator  &amp; 0.020 &amp; 0.043 &amp; 0.020 &amp; 0.043 &amp; 0.018 &amp; 0.065 &amp; 0.003 &amp; 0.026 &amp; 0.001 &amp; 0.004 \\ 
+   \bottomrule
+\end{tabular}
+\end{table}</code></pre>
+<pre class="r"><code>## Table of partial-omega2
+tb &lt;- cbind(cfi.out[,2, drop=F], tli.out[,2, drop=F], rmsea.out[,2, drop=F], srmrw.out[,2, drop=F], srmrb.out[,2, drop=F])
+
+kable(tb, format=&#39;html&#39;) %&gt;%
+    kable_styling(full_width = T) %&gt;%
+    add_header_above(c(&#39;Effect&#39;=1,&#39;CFI&#39;=1,&#39;TLI&#39;=1,&#39;RMSEA&#39;=1,&#39;SRMRW&#39;=1,&#39;SRMRB&#39;=1))</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Effect
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+CFI
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+TLI
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+RMSEA
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+SRMRW
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+SRMRB
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+partial-omega^2
+</th>
+<th style="text-align:right;">
+partial-omega^2
+</th>
+<th style="text-align:right;">
+partial-omega^2
+</th>
+<th style="text-align:right;">
+partial-omega^2
+</th>
+<th style="text-align:right;">
+partial-omega^2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+ss_l1
+</td>
+<td style="text-align:right;">
+0.0835
+</td>
+<td style="text-align:right;">
+0.0839
+</td>
+<td style="text-align:right;">
+0.1633
+</td>
+<td style="text-align:right;">
+0.6584
+</td>
+<td style="text-align:right;">
+0.1795
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l2
+</td>
+<td style="text-align:right;">
+0.0285
+</td>
+<td style="text-align:right;">
+0.0287
+</td>
+<td style="text-align:right;">
+0.0228
+</td>
+<td style="text-align:right;">
+0.6661
+</td>
+<td style="text-align:right;">
+0.5807
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_ov
+</td>
+<td style="text-align:right;">
+0.0112
+</td>
+<td style="text-align:right;">
+0.0111
+</td>
+<td style="text-align:right;">
+0.1395
+</td>
+<td style="text-align:right;">
+0.1586
+</td>
+<td style="text-align:right;">
+0.3642
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_lv
+</td>
+<td style="text-align:right;">
+0.0097
+</td>
+<td style="text-align:right;">
+0.0098
+</td>
+<td style="text-align:right;">
+0.0085
+</td>
+<td style="text-align:right;">
+0.0419
+</td>
+<td style="text-align:right;">
+0.1377
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Model
+</td>
+<td style="text-align:right;">
+0.4184
+</td>
+<td style="text-align:right;">
+0.4166
+</td>
+<td style="text-align:right;">
+0.5995
+</td>
+<td style="text-align:right;">
+0.7696
+</td>
+<td style="text-align:right;">
+0.0779
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Estimator
+</td>
+<td style="text-align:right;">
+0.0507
+</td>
+<td style="text-align:right;">
+0.0508
+</td>
+<td style="text-align:right;">
+0.2605
+</td>
+<td style="text-align:right;">
+0.4492
+</td>
+<td style="text-align:right;">
+0.1910
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l1:ss_l2
+</td>
+<td style="text-align:right;">
+0.0758
+</td>
+<td style="text-align:right;">
+0.0762
+</td>
+<td style="text-align:right;">
+0.0598
+</td>
+<td style="text-align:right;">
+0.2814
+</td>
+<td style="text-align:right;">
+0.0231
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l1:icc_ov
+</td>
+<td style="text-align:right;">
+0.0105
+</td>
+<td style="text-align:right;">
+0.0106
+</td>
+<td style="text-align:right;">
+0.0047
+</td>
+<td style="text-align:right;">
+0.0004
+</td>
+<td style="text-align:right;">
+0.1403
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l1:icc_lv
+</td>
+<td style="text-align:right;">
+0.0011
+</td>
+<td style="text-align:right;">
+0.0011
+</td>
+<td style="text-align:right;">
+0.0094
+</td>
+<td style="text-align:right;">
+0.0053
+</td>
+<td style="text-align:right;">
+0.0430
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l1:Model
+</td>
+<td style="text-align:right;">
+0.0023
+</td>
+<td style="text-align:right;">
+0.0022
+</td>
+<td style="text-align:right;">
+0.0101
+</td>
+<td style="text-align:right;">
+0.1131
+</td>
+<td style="text-align:right;">
+0.0019
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l1:Estimator
+</td>
+<td style="text-align:right;">
+0.0036
+</td>
+<td style="text-align:right;">
+0.0036
+</td>
+<td style="text-align:right;">
+0.0035
+</td>
+<td style="text-align:right;">
+0.0148
+</td>
+<td style="text-align:right;">
+0.0002
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l2:icc_ov
+</td>
+<td style="text-align:right;">
+0.0031
+</td>
+<td style="text-align:right;">
+0.0030
+</td>
+<td style="text-align:right;">
+0.0202
+</td>
+<td style="text-align:right;">
+0.0098
+</td>
+<td style="text-align:right;">
+0.0176
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l2:icc_lv
+</td>
+<td style="text-align:right;">
+0.0124
+</td>
+<td style="text-align:right;">
+0.0125
+</td>
+<td style="text-align:right;">
+0.0051
+</td>
+<td style="text-align:right;">
+0.0070
+</td>
+<td style="text-align:right;">
+0.0585
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l2:Model
+</td>
+<td style="text-align:right;">
+0.0069
+</td>
+<td style="text-align:right;">
+0.0071
+</td>
+<td style="text-align:right;">
+0.0430
+</td>
+<td style="text-align:right;">
+0.0971
+</td>
+<td style="text-align:right;">
+0.0048
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l2:Estimator
+</td>
+<td style="text-align:right;">
+0.0716
+</td>
+<td style="text-align:right;">
+0.0719
+</td>
+<td style="text-align:right;">
+0.1491
+</td>
+<td style="text-align:right;">
+0.0736
+</td>
+<td style="text-align:right;">
+0.0097
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_ov:icc_lv
+</td>
+<td style="text-align:right;">
+0.0069
+</td>
+<td style="text-align:right;">
+0.0070
+</td>
+<td style="text-align:right;">
+0.0078
+</td>
+<td style="text-align:right;">
+0.0013
+</td>
+<td style="text-align:right;">
+0.1173
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_ov:Model
+</td>
+<td style="text-align:right;">
+0.0157
+</td>
+<td style="text-align:right;">
+0.0157
+</td>
+<td style="text-align:right;">
+0.0622
+</td>
+<td style="text-align:right;">
+0.0060
+</td>
+<td style="text-align:right;">
+0.0233
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_ov:Estimator
+</td>
+<td style="text-align:right;">
+0.0139
+</td>
+<td style="text-align:right;">
+0.0140
+</td>
+<td style="text-align:right;">
+0.0419
+</td>
+<td style="text-align:right;">
+0.0852
+</td>
+<td style="text-align:right;">
+0.0012
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_lv:Model
+</td>
+<td style="text-align:right;">
+0.0395
+</td>
+<td style="text-align:right;">
+0.0400
+</td>
+<td style="text-align:right;">
+0.0675
+</td>
+<td style="text-align:right;">
+0.0168
+</td>
+<td style="text-align:right;">
+0.0498
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_lv:Estimator
+</td>
+<td style="text-align:right;">
+0.0290
+</td>
+<td style="text-align:right;">
+0.0292
+</td>
+<td style="text-align:right;">
+0.0021
+</td>
+<td style="text-align:right;">
+0.1081
+</td>
+<td style="text-align:right;">
+0.0085
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Model:Estimator
+</td>
+<td style="text-align:right;">
+0.0431
+</td>
+<td style="text-align:right;">
+0.0433
+</td>
+<td style="text-align:right;">
+0.0648
+</td>
+<td style="text-align:right;">
+0.0262
+</td>
+<td style="text-align:right;">
+0.0040
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>## Print out in tex
+print(xtable(tb, digits = 3), booktabs = T, include.rownames = T)</code></pre>
+<pre><code>% latex table generated in R 3.5.2 by xtable 1.8-3 package
+% Thu May 09 14:44:22 2019
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrrr}
+  \toprule
+ &amp; partial-omega\verb|^|2 &amp; partial-omega\verb|^|2 &amp; partial-omega\verb|^|2 &amp; partial-omega\verb|^|2 &amp; partial-omega\verb|^|2 \\ 
+  \midrule
+ss\_l1            &amp; 0.084 &amp; 0.084 &amp; 0.163 &amp; 0.658 &amp; 0.179 \\ 
+  ss\_l2            &amp; 0.028 &amp; 0.029 &amp; 0.023 &amp; 0.666 &amp; 0.581 \\ 
+  icc\_ov           &amp; 0.011 &amp; 0.011 &amp; 0.140 &amp; 0.159 &amp; 0.364 \\ 
+  icc\_lv           &amp; 0.010 &amp; 0.010 &amp; 0.008 &amp; 0.042 &amp; 0.138 \\ 
+  Model            &amp; 0.418 &amp; 0.417 &amp; 0.600 &amp; 0.770 &amp; 0.078 \\ 
+  Estimator        &amp; 0.051 &amp; 0.051 &amp; 0.261 &amp; 0.449 &amp; 0.191 \\ 
+  ss\_l1:ss\_l2      &amp; 0.076 &amp; 0.076 &amp; 0.060 &amp; 0.281 &amp; 0.023 \\ 
+  ss\_l1:icc\_ov     &amp; 0.010 &amp; 0.011 &amp; 0.005 &amp; 0.000 &amp; 0.140 \\ 
+  ss\_l1:icc\_lv     &amp; 0.001 &amp; 0.001 &amp; 0.009 &amp; 0.005 &amp; 0.043 \\ 
+  ss\_l1:Model      &amp; 0.002 &amp; 0.002 &amp; 0.010 &amp; 0.113 &amp; 0.002 \\ 
+  ss\_l1:Estimator  &amp; 0.004 &amp; 0.004 &amp; 0.004 &amp; 0.015 &amp; 0.000 \\ 
+  ss\_l2:icc\_ov     &amp; 0.003 &amp; 0.003 &amp; 0.020 &amp; 0.010 &amp; 0.018 \\ 
+  ss\_l2:icc\_lv     &amp; 0.012 &amp; 0.012 &amp; 0.005 &amp; 0.007 &amp; 0.058 \\ 
+  ss\_l2:Model      &amp; 0.007 &amp; 0.007 &amp; 0.043 &amp; 0.097 &amp; 0.005 \\ 
+  ss\_l2:Estimator  &amp; 0.072 &amp; 0.072 &amp; 0.149 &amp; 0.074 &amp; 0.010 \\ 
+  icc\_ov:icc\_lv    &amp; 0.007 &amp; 0.007 &amp; 0.008 &amp; 0.001 &amp; 0.117 \\ 
+  icc\_ov:Model     &amp; 0.016 &amp; 0.016 &amp; 0.062 &amp; 0.006 &amp; 0.023 \\ 
+  icc\_ov:Estimator &amp; 0.014 &amp; 0.014 &amp; 0.042 &amp; 0.085 &amp; 0.001 \\ 
+  icc\_lv:Model     &amp; 0.040 &amp; 0.040 &amp; 0.068 &amp; 0.017 &amp; 0.050 \\ 
+  icc\_lv:Estimator &amp; 0.029 &amp; 0.029 &amp; 0.002 &amp; 0.108 &amp; 0.008 \\ 
+  Model:Estimator  &amp; 0.043 &amp; 0.043 &amp; 0.065 &amp; 0.026 &amp; 0.004 \\ 
+   \bottomrule
+\end{tabular}
+\end{table}</code></pre>
+<pre class="r"><code>## Table of omege-2
+
+tb &lt;- cbind(cfi.out[,1, drop=F], tli.out[,1, drop=F], rmsea.out[,1, drop=F], srmrw.out[,1, drop=F], srmrb.out[,1, drop=F])
+
+kable(tb, format=&#39;html&#39;) %&gt;%
+    kable_styling(full_width = T) %&gt;%
+    add_header_above(c(&#39;Effect&#39;=1,&#39;CFI&#39;=1,&#39;TLI&#39;=1,&#39;RMSEA&#39;=1,&#39;SRMRW&#39;=1,&#39;SRMRB&#39;=1))</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Effect
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+CFI
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+TLI
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+RMSEA
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+SRMRW
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="1">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+SRMRB
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+omega^2
+</th>
+<th style="text-align:right;">
+omega^2
+</th>
+<th style="text-align:right;">
+omega^2
+</th>
+<th style="text-align:right;">
+omega^2
+</th>
+<th style="text-align:right;">
+omega^2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+ss_l1
+</td>
+<td style="text-align:right;">
+0.0402
+</td>
+<td style="text-align:right;">
+0.0404
+</td>
+<td style="text-align:right;">
+0.0509
+</td>
+<td style="text-align:right;">
+0.1868
+</td>
+<td style="text-align:right;">
+0.0520
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l2
+</td>
+<td style="text-align:right;">
+0.0129
+</td>
+<td style="text-align:right;">
+0.0130
+</td>
+<td style="text-align:right;">
+0.0061
+</td>
+<td style="text-align:right;">
+0.1933
+</td>
+<td style="text-align:right;">
+0.3292
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_ov
+</td>
+<td style="text-align:right;">
+0.0050
+</td>
+<td style="text-align:right;">
+0.0050
+</td>
+<td style="text-align:right;">
+0.0423
+</td>
+<td style="text-align:right;">
+0.0183
+</td>
+<td style="text-align:right;">
+0.1361
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_lv
+</td>
+<td style="text-align:right;">
+0.0043
+</td>
+<td style="text-align:right;">
+0.0044
+</td>
+<td style="text-align:right;">
+0.0022
+</td>
+<td style="text-align:right;">
+0.0042
+</td>
+<td style="text-align:right;">
+0.0379
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Model
+</td>
+<td style="text-align:right;">
+0.3173
+</td>
+<td style="text-align:right;">
+0.3153
+</td>
+<td style="text-align:right;">
+0.3901
+</td>
+<td style="text-align:right;">
+0.3237
+</td>
+<td style="text-align:right;">
+0.0201
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Estimator
+</td>
+<td style="text-align:right;">
+0.0236
+</td>
+<td style="text-align:right;">
+0.0237
+</td>
+<td style="text-align:right;">
+0.0918
+</td>
+<td style="text-align:right;">
+0.0790
+</td>
+<td style="text-align:right;">
+0.0561
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l1:ss_l2
+</td>
+<td style="text-align:right;">
+0.0362
+</td>
+<td style="text-align:right;">
+0.0364
+</td>
+<td style="text-align:right;">
+0.0166
+</td>
+<td style="text-align:right;">
+0.0379
+</td>
+<td style="text-align:right;">
+0.0056
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l1:icc_ov
+</td>
+<td style="text-align:right;">
+0.0047
+</td>
+<td style="text-align:right;">
+0.0047
+</td>
+<td style="text-align:right;">
+0.0012
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:right;">
+0.0388
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l1:icc_lv
+</td>
+<td style="text-align:right;">
+0.0005
+</td>
+<td style="text-align:right;">
+0.0005
+</td>
+<td style="text-align:right;">
+0.0025
+</td>
+<td style="text-align:right;">
+0.0005
+</td>
+<td style="text-align:right;">
+0.0107
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l1:Model
+</td>
+<td style="text-align:right;">
+0.0010
+</td>
+<td style="text-align:right;">
+0.0010
+</td>
+<td style="text-align:right;">
+0.0027
+</td>
+<td style="text-align:right;">
+0.0124
+</td>
+<td style="text-align:right;">
+0.0005
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l1:Estimator
+</td>
+<td style="text-align:right;">
+0.0016
+</td>
+<td style="text-align:right;">
+0.0016
+</td>
+<td style="text-align:right;">
+0.0009
+</td>
+<td style="text-align:right;">
+0.0015
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l2:icc_ov
+</td>
+<td style="text-align:right;">
+0.0014
+</td>
+<td style="text-align:right;">
+0.0013
+</td>
+<td style="text-align:right;">
+0.0054
+</td>
+<td style="text-align:right;">
+0.0010
+</td>
+<td style="text-align:right;">
+0.0043
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l2:icc_lv
+</td>
+<td style="text-align:right;">
+0.0055
+</td>
+<td style="text-align:right;">
+0.0056
+</td>
+<td style="text-align:right;">
+0.0013
+</td>
+<td style="text-align:right;">
+0.0007
+</td>
+<td style="text-align:right;">
+0.0148
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l2:Model
+</td>
+<td style="text-align:right;">
+0.0031
+</td>
+<td style="text-align:right;">
+0.0032
+</td>
+<td style="text-align:right;">
+0.0117
+</td>
+<td style="text-align:right;">
+0.0104
+</td>
+<td style="text-align:right;">
+0.0011
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ss_l2:Estimator
+</td>
+<td style="text-align:right;">
+0.0340
+</td>
+<td style="text-align:right;">
+0.0342
+</td>
+<td style="text-align:right;">
+0.0457
+</td>
+<td style="text-align:right;">
+0.0077
+</td>
+<td style="text-align:right;">
+0.0023
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_ov:icc_lv
+</td>
+<td style="text-align:right;">
+0.0031
+</td>
+<td style="text-align:right;">
+0.0031
+</td>
+<td style="text-align:right;">
+0.0020
+</td>
+<td style="text-align:right;">
+0.0001
+</td>
+<td style="text-align:right;">
+0.0316
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_ov:Model
+</td>
+<td style="text-align:right;">
+0.0070
+</td>
+<td style="text-align:right;">
+0.0070
+</td>
+<td style="text-align:right;">
+0.0173
+</td>
+<td style="text-align:right;">
+0.0006
+</td>
+<td style="text-align:right;">
+0.0057
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_ov:Estimator
+</td>
+<td style="text-align:right;">
+0.0062
+</td>
+<td style="text-align:right;">
+0.0063
+</td>
+<td style="text-align:right;">
+0.0114
+</td>
+<td style="text-align:right;">
+0.0090
+</td>
+<td style="text-align:right;">
+0.0003
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_lv:Model
+</td>
+<td style="text-align:right;">
+0.0181
+</td>
+<td style="text-align:right;">
+0.0184
+</td>
+<td style="text-align:right;">
+0.0189
+</td>
+<td style="text-align:right;">
+0.0017
+</td>
+<td style="text-align:right;">
+0.0124
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+icc_lv:Estimator
+</td>
+<td style="text-align:right;">
+0.0132
+</td>
+<td style="text-align:right;">
+0.0133
+</td>
+<td style="text-align:right;">
+0.0006
+</td>
+<td style="text-align:right;">
+0.0117
+</td>
+<td style="text-align:right;">
+0.0020
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Model:Estimator
+</td>
+<td style="text-align:right;">
+0.0199
+</td>
+<td style="text-align:right;">
+0.0200
+</td>
+<td style="text-align:right;">
+0.0181
+</td>
+<td style="text-align:right;">
+0.0026
+</td>
+<td style="text-align:right;">
+0.0009
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>## Print out in tex
+print(xtable(tb, digits = 3), booktabs = T, include.rownames = T)</code></pre>
+<pre><code>% latex table generated in R 3.5.2 by xtable 1.8-3 package
+% Thu May 09 14:44:22 2019
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrrr}
+  \toprule
+ &amp; omega\verb|^|2 &amp; omega\verb|^|2 &amp; omega\verb|^|2 &amp; omega\verb|^|2 &amp; omega\verb|^|2 \\ 
+  \midrule
+ss\_l1            &amp; 0.040 &amp; 0.040 &amp; 0.051 &amp; 0.187 &amp; 0.052 \\ 
+  ss\_l2            &amp; 0.013 &amp; 0.013 &amp; 0.006 &amp; 0.193 &amp; 0.329 \\ 
+  icc\_ov           &amp; 0.005 &amp; 0.005 &amp; 0.042 &amp; 0.018 &amp; 0.136 \\ 
+  icc\_lv           &amp; 0.004 &amp; 0.004 &amp; 0.002 &amp; 0.004 &amp; 0.038 \\ 
+  Model            &amp; 0.317 &amp; 0.315 &amp; 0.390 &amp; 0.324 &amp; 0.020 \\ 
+  Estimator        &amp; 0.024 &amp; 0.024 &amp; 0.092 &amp; 0.079 &amp; 0.056 \\ 
+  ss\_l1:ss\_l2      &amp; 0.036 &amp; 0.036 &amp; 0.017 &amp; 0.038 &amp; 0.006 \\ 
+  ss\_l1:icc\_ov     &amp; 0.005 &amp; 0.005 &amp; 0.001 &amp; 0.000 &amp; 0.039 \\ 
+  ss\_l1:icc\_lv     &amp; 0.000 &amp; 0.000 &amp; 0.002 &amp; 0.000 &amp; 0.011 \\ 
+  ss\_l1:Model      &amp; 0.001 &amp; 0.001 &amp; 0.003 &amp; 0.012 &amp; 0.000 \\ 
+  ss\_l1:Estimator  &amp; 0.002 &amp; 0.002 &amp; 0.001 &amp; 0.002 &amp; 0.000 \\ 
+  ss\_l2:icc\_ov     &amp; 0.001 &amp; 0.001 &amp; 0.005 &amp; 0.001 &amp; 0.004 \\ 
+  ss\_l2:icc\_lv     &amp; 0.005 &amp; 0.006 &amp; 0.001 &amp; 0.001 &amp; 0.015 \\ 
+  ss\_l2:Model      &amp; 0.003 &amp; 0.003 &amp; 0.012 &amp; 0.010 &amp; 0.001 \\ 
+  ss\_l2:Estimator  &amp; 0.034 &amp; 0.034 &amp; 0.046 &amp; 0.008 &amp; 0.002 \\ 
+  icc\_ov:icc\_lv    &amp; 0.003 &amp; 0.003 &amp; 0.002 &amp; 0.000 &amp; 0.032 \\ 
+  icc\_ov:Model     &amp; 0.007 &amp; 0.007 &amp; 0.017 &amp; 0.001 &amp; 0.006 \\ 
+  icc\_ov:Estimator &amp; 0.006 &amp; 0.006 &amp; 0.011 &amp; 0.009 &amp; 0.000 \\ 
+  icc\_lv:Model     &amp; 0.018 &amp; 0.018 &amp; 0.019 &amp; 0.002 &amp; 0.012 \\ 
+  icc\_lv:Estimator &amp; 0.013 &amp; 0.013 &amp; 0.001 &amp; 0.012 &amp; 0.002 \\ 
+  Model:Estimator  &amp; 0.020 &amp; 0.020 &amp; 0.018 &amp; 0.003 &amp; 0.001 \\ 
+   \bottomrule
+\end{tabular}
+\end{table}</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.2 (2018-12-20)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 17134)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252 
+[2] LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] xtable_1.8-3     kableExtra_1.0.1 psych_1.8.12     car_3.0-2       
+ [5] carData_3.0-2    forcats_0.3.0    stringr_1.3.1    dplyr_0.8.0.1   
+ [9] purrr_0.2.5      readr_1.3.1      tidyr_0.8.2      tibble_2.0.1    
+[13] ggplot2_3.1.0    tidyverse_1.2.1 
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.0        lubridate_1.7.4   lattice_0.20-38  
+ [4] assertthat_0.2.0  rprojroot_1.3-2   digest_0.6.18    
+ [7] R6_2.3.0          cellranger_1.1.0  plyr_1.8.4       
+[10] backports_1.1.3   evaluate_0.12     highr_0.7        
+[13] httr_1.4.0        pillar_1.3.1      rlang_0.3.1      
+[16] lazyeval_0.2.1    curl_3.3          readxl_1.2.0     
+[19] rstudioapi_0.9.0  data.table_1.12.0 whisker_0.3-2    
+[22] rmarkdown_1.11    labeling_0.3      webshot_0.5.1    
+[25] foreign_0.8-71    munsell_0.5.0     broom_0.5.1      
+[28] compiler_3.5.2    modelr_0.1.2      xfun_0.4         
+[31] pkgconfig_2.0.2   mnormt_1.5-5      htmltools_0.3.6  
+[34] tidyselect_0.2.5  workflowr_1.3.0   rio_0.5.16       
+[37] viridisLite_0.3.0 crayon_1.3.4      withr_2.1.2      
+[40] grid_3.5.2        nlme_3.1-137      jsonlite_1.6     
+[43] gtable_0.2.0      git2r_0.24.0      magrittr_1.5     
+[46] formatR_1.5       scales_1.0.0      zip_1.0.0        
+[49] cli_1.0.1         stringi_1.2.4     fs_1.2.6         
+[52] xml2_1.2.0        generics_0.0.2    openxlsx_4.1.0   
+[55] tools_3.5.2       glue_1.3.0        hms_0.4.2        
+[58] abind_1.4-5       parallel_3.5.2    yaml_2.2.0       
+[61] colorspace_1.4-0  rvest_0.3.2       knitr_1.21       
+[64] haven_2.0.0      </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

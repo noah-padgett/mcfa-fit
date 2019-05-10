@@ -64,13 +64,6 @@ sim_results$Chi2_pvalue_decision <- ifelse(sim_results$chisqu_pvalue > 0.05, 1, 
 # 0 = rejected that these data fit this model
 # 1 = failed to reject that these data fit this model
 
-## Need to make codes for the ROC analyses outcomes
-# first, C vs. M1,M2,M12 - Perfect specification
-sim_results$C <- ifelse(sim_results$Model == 'C', 1, 0)
-# second, C vs. M1|M12- correct level 1 model
-sim_results$M1 <- ifelse(sim_results$Model == 'C' & sim_results$Model != 'M2', 1, 0)
-# third, C vs. M2|M12- correct level 2 model
-sim_results$M2 <- ifelse(sim_results$Model == 'C' & sim_results$Model != 'M1', 1, 0)
 ```
 
 ## Adding Labels to Conditions
@@ -114,15 +107,37 @@ sim_results$icc_ov <- as.factor(sim_results$icc_ov)
 sim_results$icc_lv <- as.factor(sim_results$icc_lv)
 sim_results$Model <- factor(sim_results$Model, levels = c('C','M1','M2','M12'), ordered = T)
 
-## Subset to the usable cases
-sim_results <- filter(sim_results, Converge == 1 & Admissible == 1)
 ```
 
+## ROC Analysis Labels
 
+Make coding of variables/model specifications for the ROC analyses.
+The coding of the variables is in order to get the correct specifications labeled for the ROC analyses to come. 
+The coding is as follows:
+
+1. C = correct model specification versus any misspecification (Model C vs. M1, M2, M12)
+2. CvM1 = when only the level-1 model is misspecified (Model C vs. M1)
+2. CvM2 = when only the level-2 model is misspecified (Model C vs. M2)
+
+```{r}
+
+## Need to make codes for the ROC analyses outcomes
+# first, C vs. M1,M2,M12 - Perfect specification
+sim_results$C <- ifelse(sim_results$Model == 'C', 1, 0)
+table(sim_results$C)
+# second, C vs. M1|M12- correct level 1 model
+sim_results$CvM1 <- ifelse(sim_results$Model == 'C', 1, 0)
+sim_results$CvM1[sim_results$Model == "M2" | sim_results$Model == "M12"] <- NA
+table(sim_results$CvM1)
+# third, C vs. M2|M12- correct level 2 model
+sim_results$CvM2 <- ifelse(sim_results$Model == 'C', 1, 0)
+sim_results$CvM2[sim_results$Model == "M1" | sim_results$Model == "M12"] <- NA
+table(sim_results$CvM2)
+```
 
 # Introduction to ROC Analysis
 
-ROC stands for Receiver Operating Curve.
+ROC stands for Receiver Operating Characteristic.
 ROC analysis aims to detect the presense of signals in data by looking at how the ability to classify an outcome (usually binary) based on a continuous or ordinal indicator.
 ROC analyses was orginally used in wartime to help detect the presence of radar signals.
 However, now ROC analysis is used in many areas including medical and psychology research.
@@ -130,59 +145,138 @@ It is commonly used as a tool to help make decisions about what tools or methods
 
 In R, a package called pROC (Robin et al., 2011) was built that greatly enhancing the flexibility of using R for ROC analysis.
 For example, aside from just being able to conduct ROC analysis, one can compute confidences for this curve and conduct specific statistical tests comparing AUCs from the same data.
-One cool feature of this package is the ability to estimate partial-Area Under the Curve values for a specific range of specificities or sensitivities.
-This is very cool trick to be able to gain fine grained information about one end of the curve (i.e., if you are more interested in how well the classifier is performing when specificity is high, 90-100\%).
 
-For the ROC analyses, I conducted them in pieces to build more and more fine grained information about the classification quality of fit indices for detecting a simple type of misspecification.
-For misspecification, I broke up the ROC analyses into three major chunks.
+For the ROC analyses, we conducted them in pieces to build more and more fine grained information about the classification quality of fit indices for detecting a simple type of misspecification.
+For misspecification, we broke up the ROC analyses into three major chunks.
 
   1. Detecting any type of misspecification (i.e., C vs. M1-M2-M12),
-  2. Detecting misspecified level-1 model (i.e., C-M2 vs. M1-M12), and
-  3. Detecting misspecified level-2 model (i.e., C-M1 vs. M2-M12).
+  2. Detecting misspecified level-1 model (i.e., C vs. M1), and
+  3. Detecting misspecified level-2 model (i.e., C vs. M2).
 
-Within each of these major chunks of analyses, I furhter investigated whether classification of correctly (ish) specified models was depended upon estimator.
-So, that means that three additional ROC analyses were conducted for each major type.
-One analysis for each estimator (MLR, ULSMV, WLSMV).
-
-There are intitally be MANY ROC curve figures. However, I only really care about 12 figures.
-These 12 are used in my thesis and manuscript.
+Within each of these major chunks of analyses, we furhter investigated whether classification of correctly specified models was depended upon estimator, level-1 sample size, or level-2 sample size.
+There are intitally be MANY ROC curve figures and over 1200 ROC analyses. 
 
 
-Setting up the objects to store the individual results so that I can use them all for the figures.
+Setting up the objects to store the individual results so that we can use them all for the figures.
+First, we run over each condition separately then go into the conditional ROC analyses.
 
 ```{r}
 
 fit_roc <- fit_roc_smooth <- list()
-roc_summary <- as.data.frame(matrix(0,ncol=13, nrow=60))
-colnames(roc_summary) <- c('Classification','Index', 'Estimator', 'AUC',
+roc_summary <- as.data.frame(matrix(0,ncol=13, nrow=5*3*4*4*5))
+colnames(roc_summary) <- c('Classification','Index', 'Estimator', 'Level-2 SS', 
+                           'Level-1 SS', 'AUC',
                            'partial-AUC','Smoothed-AUC', 'Optimal-Threshold',
-                           'Specificity','Sensitivity', 'tn', 'tp', 'fn', 'fp')
-CLASS <- c('C', 'C_Level_1','C_Level_2')
+                           'Specificity','Sensitivity', 'Num-C', 'Num-Mis')
+roc_summary_gen <- as.data.frame(matrix(0,ncol=8, nrow=5)*3)
+colnames(roc_summary_gen) <- c('Classification','Index', 'AUC',
+                           'partial-AUC','Smoothed-AUC', 'Optimal-Threshold',
+                           'Specificity','Sensitivity')
+# Defining iterators
+CLASS <- c('C', 'CvM1','CvM2')
+INDEX <- c('CFI', 'TLI', 'RMSEA', 'SRMRW', 'SRMRB')
+EST <- c('ALL','MLR', 'ULSMV', 'WLSMV')
+SS_L1 <- c('ALL', 5, 10, 30)
+SS_L2 <- c('ALL', 30, 50, 100, 200)
 
+
+## Subset to the usable cases
+sim_results <- filter(sim_results, Converge == 1 & Admissible == 1)
 ```
 
 ## Detecting any type of misspecification
 
+### General overview over all conditions
+
+```{r roc-any-gen}
+
+ig <- 1 ## counter for roc_summary
+j <- 1 ## Which class?
+for(index in INDEX){
+
+    ## Print out which iteration so we know what we am looking at
+    cat('\n\nROC Analysis in')
+    cat('\nIndex:\t', index)
+    cat('\nClassification:\t', CLASS[j])
+    ## Set up iteration key
+    key <- paste0(index,'.',CLASS[j])
+    ## Create formula
+    model <- as.formula(paste0(CLASS[j], '~', index))
+    ## Fit ROC curve
+    fit_roc[[key]] <-  roc(model, data=sim_results,
+                           plot =TRUE, ci=TRUE, print.auc=TRUE)
+    ## Create a plot of "smoothed" curve for plotting
+    fit_roc_smooth[[key]] <-  smooth(roc(model, data=sim_results))
+    ## Compute partial AUC for specificity .8-1
+    p.auc <- auc(fit_roc[[key]], partial.auc = c(1,.8),
+                 partial.auc.focus = 'sp', partial.auc.correct = T)
+    ## get summary info
+    roc_summary_gen[ig, 2] <- index
+    roc_summary_gen[ig, 1] <- CLASS[j]
+    roc_summary_gen[ig, 3] <- fit_roc[[key]]$auc ## total AUC
+    roc_summary_gen[ig, 4] <- p.auc ## corrected partial AUC (.5 is no discrimination)
+    roc_summary_gen[ig, 5] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
+    roc_summary_gen[ig, 6:8] <- coords(fit_roc[[key]], "best", 
+                                   ret=c("threshold", "specificity", 'sensitivity'))
+    ## print summary
+    cat('\n\nSummary of ROC:\n')
+    print(roc_summary_gen[ig, ])
+    ## add to summary iterator
+    ig <- ig + 1
+} ## End loop round index
+
+kable(roc_summary_gen[1:5,], format = 'html', digits=3) %>%
+  kable_styling(full_width = T)
+
+print(xtable(roc_summary_gen[1:5,c(2:3,6:8)], digits = 3), booktabs=T,include.rownames = F)
+
+```
+
+### More fine grained information within/across conditions
+
 ```{r roc-any}
 
-INDEX <- c('CFI', 'TLI', 'RMSEA', 'SRMRW', 'SRMRB')
-EST <- c('ALL', 'MLR', 'ULSMV', 'WLSMV')
 
 i <- 1 ## counter for roc_summary
 j <- 1 ## Which class?
 for(index in INDEX){
   for(est in EST){
+    for(s2 in SS_L2){
+      for(s1 in SS_L1){
 
-    ## Print out which iteration so I know what I am looking at
+    ## Print out which iteration so we know what we are looking at
     cat('\n\nROC Analysis in')
     cat('\nIndex:\t', index)
     cat('\nClassification:\t', CLASS[j])
-    cat('\nEstimator:\t', est)
+    cat('\nEstimation Method:\t', est)
+    cat('\nLevel-2 Sample Size:\t', s2)
+    cat('\nLevel-1 Sample Size:\t', s1)
     ## Set up iteration key
-    key <- paste0(index,'.',CLASS[j],'.',est)
-    # Subset data is asked
-    if(est == 'ALL') mydata <- sim_results
-    if(est != 'ALL') mydata <- filter(sim_results, Estimator == est)
+    key <- paste0(index,'.',CLASS[j],'.',est,'.', s2,'.',s1)
+    # Subset data as  needed
+    if(est == 'ALL' & s2 == 'ALL' & s1 == 'ALL') mydata <- sim_results
+
+    if(est != 'ALL' & s2 == 'ALL' & s1 == 'ALL'){
+      mydata <- filter(sim_results, Estimator == est)
+    }
+    if(est == 'ALL' & s2 != 'ALL' & s1 == 'ALL'){
+      mydata <- filter(sim_results, ss_l2 == s2)
+    }
+    if(est == 'ALL' & s2 == 'ALL' & s1 != 'ALL'){
+      mydata <- filter(sim_results, ss_l1 == s1)
+    }
+    if(est != 'ALL' & s2 != 'ALL' & s1 == 'ALL'){
+      mydata <- filter(sim_results, Estimator == est, ss_l2 == s2)
+    }
+    if(est != 'ALL' & s2 == 'ALL' & s1 != 'ALL'){
+      mydata <- filter(sim_results, Estimator == est, ss_l1 == s1)
+    }
+    if(est == 'ALL' & s2 != 'ALL' & s1 != 'ALL'){
+      mydata <- filter(sim_results, ss_l2 == s2, ss_l1 == s1)
+    }
+    if(est != 'ALL' & s2 != 'ALL' & s1 != 'ALL'){
+      mydata <- filter(sim_results, Estimator == est, ss_l2 == s2, ss_l1 == s1)
+    }
     ## Create formula
     model <- as.formula(paste0(CLASS[j], '~', index))
     ## Fit ROC curve
@@ -190,51 +284,132 @@ for(index in INDEX){
                            plot =TRUE, ci=TRUE, print.auc=TRUE)
     ## Create a plot of "smoothed" curve for plotting
     fit_roc_smooth[[key]] <-  smooth(roc(model, data=mydata))
-    ## Compute partial AUC for specificity .9-1
-    p.auc <- auc(fit_roc[[key]], partial.auc = c(1,.9),partial.auc.focus = 'sp', partial.auc.correct = T )
+    ## Compute partial AUC for specificity .8-1
+    p.auc <- auc(fit_roc[[key]], partial.auc = c(1,.8),
+                 partial.auc.focus = 'sp', partial.auc.correct = T)
     ## get summary info
     roc_summary[i, 2] <- index
     roc_summary[i, 1] <- CLASS[j]
     roc_summary[i, 3] <- est ##estimator
-    roc_summary[i, 4] <- fit_roc[[key]]$auc ## total AUC
-    roc_summary[i, 5] <- p.auc ## corrected partial AUC (.5 is no discrimination)
-    roc_summary[i, 6] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
-    roc_summary[i, 7:13] <- coords(fit_roc[[key]], "best", ret=c("threshold", "specificity", 'sensitivity', 'tn', 'tp', 'fn', 'fp'))
+    roc_summary[i, 4] <- s2 ## level-2 sample size
+    roc_summary[i, 5] <- s1 ## level-1 sample size
+    roc_summary[i, 6] <- fit_roc[[key]]$auc ## total AUC
+    roc_summary[i, 7] <- p.auc ## corrected partial AUC (.5 is no discrimination)
+    roc_summary[i, 8] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
+    roc_summary[i, 9:11] <- coords(fit_roc[[key]], "best", 
+                                   ret=c("threshold", "specificity", 'sensitivity'))
+    
+    ## add number of C and number of miss models in analysis
+    n.C <- nrow(mydata[ mydata[, CLASS[j]] == 1, ])
+    n.M <- nrow(mydata[ mydata[, CLASS[j]] == 0, ])
+    roc_summary[i, 12] <- n.C
+    roc_summary[i, 13] <- n.M
+    
     ## print summary
     cat('\n\nSummary of ROC:\n')
     print(roc_summary[i, ])
     ## add to summary iterator
     i <- i + 1
+      } ## end loop around ss l1
+    } ## End loop around ss l2
   } ## End loop around estimator
 } ## End loop round index
 
-kable(roc_summary[1:20,], format = 'html') %>%
+kable(roc_summary[1:400, ], format = 'html', digits=3) %>%
   kable_styling(full_width = T)
-
-print(xtable(roc_summary[1:20,c(2:5,7:9)], digits = 3), booktabs=T,include.rownames = F)
-
 
 ```
 
-
 ## Detecting Misspecification at Level-1
+
+### General overview over all conditions
+
+```{r roc-l1-gen}
+
+j <- 2 ## Which class?
+for(index in INDEX){
+
+    ## Print out which iteration so we know what we am looking at
+    cat('\n\nROC Analysis in')
+    cat('\nIndex:\t', index)
+    cat('\nClassification:\t', CLASS[j])
+    ## Set up iteration key
+    key <- paste0(index,'.',CLASS[j])
+    ## Create formula
+    model <- as.formula(paste0(CLASS[j], '~', index))
+    ## Fit ROC curve
+    fit_roc[[key]] <-  roc(model, data=sim_results,
+                           plot =TRUE, ci=TRUE, print.auc=TRUE)
+    ## Create a plot of "smoothed" curve for plotting
+    fit_roc_smooth[[key]] <-  smooth(roc(model, data=sim_results))
+    ## Compute partial AUC for specificity .8-1
+    p.auc <- auc(fit_roc[[key]], partial.auc = c(1,.8),
+                 partial.auc.focus = 'sp', partial.auc.correct = T)
+    ## get summary info
+    roc_summary_gen[ig, 2] <- index
+    roc_summary_gen[ig, 1] <- CLASS[j]
+    roc_summary_gen[ig, 3] <- fit_roc[[key]]$auc ## total AUC
+    roc_summary_gen[ig, 4] <- p.auc ## corrected partial AUC (.5 is no discrimination)
+    roc_summary_gen[ig, 5] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
+    roc_summary_gen[ig, 6:8] <- coords(fit_roc[[key]], "best", 
+                                   ret=c("threshold", "specificity", 'sensitivity'))
+    ## print summary
+    cat('\n\nSummary of ROC:\n')
+    print(roc_summary_gen[ig, ])
+    ## add to summary iterator
+    ig <- ig + 1
+} ## End loop round index
+
+kable(roc_summary_gen[1:5,], format = 'html', digits=3) %>%
+  kable_styling(full_width = T)
+
+print(xtable(roc_summary_gen[1:5,c(2:3,6:8)], digits = 3), booktabs=T,include.rownames = F)
+
+```
+
+### More fine grained information within/across conditions
 
 ```{r roc-l1}
 
 j <- 2 ## Which class?
 for(index in INDEX){
   for(est in EST){
+    for(s2 in SS_L2){
+      for(s1 in SS_L1){
 
-    ## Print out which iteration so I know what I am looking at
+    ## Print out which iteration so we know what we are looking at
     cat('\n\nROC Analysis in')
     cat('\nIndex:\t', index)
     cat('\nClassification:\t', CLASS[j])
-    cat('\nEstimator:\t', est)
+    cat('\nEstimation Method:\t', est)
+    cat('\nLevel-2 Sample Size:\t', s2)
+    cat('\nLevel-1 Sample Size:\t', s1)
     ## Set up iteration key
-    key <- paste0(index,'.',CLASS[j],'.',est)
-    # Subset data is asked
-    if(est == 'ALL') mydata <- sim_results
-    if(est != 'ALL') mydata <- filter(sim_results, Estimator == est)
+    key <- paste0(index,'.',CLASS[j],'.',est,'.', s2,'.',s1)
+    # Subset data as  needed
+    if(est == 'ALL' & s2 == 'ALL' & s1 == 'ALL') mydata <- sim_results
+
+    if(est != 'ALL' & s2 == 'ALL' & s1 == 'ALL'){
+      mydata <- filter(sim_results, Estimator == est)
+    }
+    if(est == 'ALL' & s2 != 'ALL' & s1 == 'ALL'){
+      mydata <- filter(sim_results, ss_l2 == s2)
+    }
+    if(est == 'ALL' & s2 == 'ALL' & s1 != 'ALL'){
+      mydata <- filter(sim_results, ss_l1 == s1)
+    }
+    if(est != 'ALL' & s2 != 'ALL' & s1 == 'ALL'){
+      mydata <- filter(sim_results, Estimator == est, ss_l2 == s2)
+    }
+    if(est != 'ALL' & s2 == 'ALL' & s1 != 'ALL'){
+      mydata <- filter(sim_results, Estimator == est, ss_l1 == s1)
+    }
+    if(est == 'ALL' & s2 != 'ALL' & s1 != 'ALL'){
+      mydata <- filter(sim_results, ss_l2 == s2, ss_l1 == s1)
+    }
+    if(est != 'ALL' & s2 != 'ALL' & s1 != 'ALL'){
+      mydata <- filter(sim_results, Estimator == est, ss_l2 == s2, ss_l1 == s1)
+    }
     ## Create formula
     model <- as.formula(paste0(CLASS[j], '~', index))
     ## Fit ROC curve
@@ -242,32 +417,39 @@ for(index in INDEX){
                            plot =TRUE, ci=TRUE, print.auc=TRUE)
     ## Create a plot of "smoothed" curve for plotting
     fit_roc_smooth[[key]] <-  smooth(roc(model, data=mydata))
-    ## Compute partial AUC for specificity .9-1
-    p.auc <- auc(fit_roc[[key]], partial.auc = c(1,.9),partial.auc.focus = 'sp', partial.auc.correct = T )
+    ## Compute partial AUC for specificity .8-1
+    p.auc <- auc(fit_roc[[key]], partial.auc = c(1,.8),
+                 partial.auc.focus = 'sp', partial.auc.correct = T)
     ## get summary info
     roc_summary[i, 2] <- index
     roc_summary[i, 1] <- CLASS[j]
     roc_summary[i, 3] <- est ##estimator
-    roc_summary[i, 4] <- fit_roc[[key]]$auc ## total AUC
-    roc_summary[i, 5] <- p.auc ## corrected partial AUC (.5 is no discrimination)
-    roc_summary[i, 6] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
-    roc_summary[i, 7:13]<- coords(fit_roc[[key]], "best", ret=c("threshold", "specificity", 'sensitivity', 'tn', 'tp', 'fn', 'fp'))
+    roc_summary[i, 4] <- s2 ## level-2 sample size
+    roc_summary[i, 5] <- s1 ## level-1 sample size
+    roc_summary[i, 6] <- fit_roc[[key]]$auc ## total AUC
+    roc_summary[i, 7] <- p.auc ## corrected partial AUC (.5 is no discrimination)
+    roc_summary[i, 8] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
+    roc_summary[i, 9:11] <- coords(fit_roc[[key]], "best", 
+                                   ret=c("threshold", "specificity", 'sensitivity'))
+    
+    ## add number of C and number of miss models in analysis
+    n.C <- nrow(mydata[ mydata[, CLASS[j]] == 1, ])
+    n.M <- nrow(mydata[ mydata[, CLASS[j]] == 0, ])
+    roc_summary[i, 12] <- n.C
+    roc_summary[i, 13] <- n.M
+    
     ## print summary
-      cat('\n\nSummary of ROC:\n')
-      print(roc_summary[i, ])
-
+    cat('\n\nSummary of ROC:\n')
+    print(roc_summary[i, ])
     ## add to summary iterator
     i <- i + 1
+      } ## end loop around ss l1
+    } ## End loop around ss l2
   } ## End loop around estimator
 } ## End loop round index
 
-kable(roc_summary[21:40,], format = 'html') %>%
+kable(roc_summary[401:800, ], format = 'html', digits=3) %>%
   kable_styling(full_width = T)
-
-cat("Correct Level-1 Specification")
-print(xtable(roc_summary[21:40,c(2:5,7:9)], digits = 3), booktabs=T,include.rownames = F)
-
-
 
 ```
 
@@ -275,22 +457,94 @@ print(xtable(roc_summary[21:40,c(2:5,7:9)], digits = 3), booktabs=T,include.rown
 
 ## Detecting Misspecification at Level-2
 
+### General overview over all conditions
+
+```{r roc-l2-gen}
+
+j <- 3 ## Which class?
+for(index in INDEX){
+
+    ## Print out which iteration so we know what we am looking at
+    cat('\n\nROC Analysis in')
+    cat('\nIndex:\t', index)
+    cat('\nClassification:\t', CLASS[j])
+    ## Set up iteration key
+    key <- paste0(index,'.',CLASS[j])
+    ## Create formula
+    model <- as.formula(paste0(CLASS[j], '~', index))
+    ## Fit ROC curve
+    fit_roc[[key]] <-  roc(model, data=sim_results,
+                           plot =TRUE, ci=TRUE, print.auc=TRUE)
+    ## Create a plot of "smoothed" curve for plotting
+    fit_roc_smooth[[key]] <-  smooth(roc(model, data=sim_results))
+    ## Compute partial AUC for specificity .8-1
+    p.auc <- auc(fit_roc[[key]], partial.auc = c(1,.8),
+                 partial.auc.focus = 'sp', partial.auc.correct = T)
+    ## get summary info
+    roc_summary_gen[ig, 2] <- index
+    roc_summary_gen[ig, 1] <- CLASS[j]
+    roc_summary_gen[ig, 3] <- fit_roc[[key]]$auc ## total AUC
+    roc_summary_gen[ig, 4] <- p.auc ## corrected partial AUC (.5 is no discrimination)
+    roc_summary_gen[ig, 5] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
+    roc_summary_gen[ig, 6:8] <- coords(fit_roc[[key]], "best", 
+                                   ret=c("threshold", "specificity", 'sensitivity'))
+    ## print summary
+    cat('\n\nSummary of ROC:\n')
+    print(roc_summary_gen[ig, ])
+    ## add to summary iterator
+    ig <- ig + 1
+} ## End loop round index
+
+kable(roc_summary_gen[11:15,], format = 'html', digits=3) %>%
+  kable_styling(full_width = T)
+
+print(xtable(roc_summary_gen[11:15,c(2:3,6:8)], digits = 3), booktabs=T,include.rownames = F)
+
+```
+
+### More fine grained information within/across conditions
+
 ```{r roc-l2}
 
 j <- 3 ## Which class?
 for(index in INDEX){
   for(est in EST){
+    for(s2 in SS_L2){
+      for(s1 in SS_L1){
 
-    ## Print out which iteration so I know what I am looking at
+    ## Print out which iteration so we know what we are looking at
     cat('\n\nROC Analysis in')
     cat('\nIndex:\t', index)
     cat('\nClassification:\t', CLASS[j])
-    cat('\nEstimator:\t', est)
+    cat('\nEstimation Method:\t', est)
+    cat('\nLevel-2 Sample Size:\t', s2)
+    cat('\nLevel-1 Sample Size:\t', s1)
     ## Set up iteration key
-    key <- paste0(index,'.',CLASS[j],'.',est)
-    # Subset data is asked
-    if(est == 'ALL') mydata <- sim_results
-    if(est != 'ALL') mydata <- filter(sim_results, Estimator == est)
+    key <- paste0(index,'.',CLASS[j],'.',est,'.', s2,'.',s1)
+    # Subset data as  needed
+    if(est == 'ALL' & s2 == 'ALL' & s1 == 'ALL') mydata <- sim_results
+
+    if(est != 'ALL' & s2 == 'ALL' & s1 == 'ALL'){
+      mydata <- filter(sim_results, Estimator == est)
+    }
+    if(est == 'ALL' & s2 != 'ALL' & s1 == 'ALL'){
+      mydata <- filter(sim_results, ss_l2 == s2)
+    }
+    if(est == 'ALL' & s2 == 'ALL' & s1 != 'ALL'){
+      mydata <- filter(sim_results, ss_l1 == s1)
+    }
+    if(est != 'ALL' & s2 != 'ALL' & s1 == 'ALL'){
+      mydata <- filter(sim_results, Estimator == est, ss_l2 == s2)
+    }
+    if(est != 'ALL' & s2 == 'ALL' & s1 != 'ALL'){
+      mydata <- filter(sim_results, Estimator == est, ss_l1 == s1)
+    }
+    if(est == 'ALL' & s2 != 'ALL' & s1 != 'ALL'){
+      mydata <- filter(sim_results, ss_l2 == s2, ss_l1 == s1)
+    }
+    if(est != 'ALL' & s2 != 'ALL' & s1 != 'ALL'){
+      mydata <- filter(sim_results, Estimator == est, ss_l2 == s2, ss_l1 == s1)
+    }
     ## Create formula
     model <- as.formula(paste0(CLASS[j], '~', index))
     ## Fit ROC curve
@@ -298,104 +552,41 @@ for(index in INDEX){
                            plot =TRUE, ci=TRUE, print.auc=TRUE)
     ## Create a plot of "smoothed" curve for plotting
     fit_roc_smooth[[key]] <-  smooth(roc(model, data=mydata))
-    ## Compute partial AUC for specificity .9-1
-    p.auc <- auc(fit_roc[[key]], partial.auc = c(1,.9),partial.auc.focus = 'sp', partial.auc.correct = T )
+    ## Compute partial AUC for specificity .8-1
+    p.auc <- auc(fit_roc[[key]], partial.auc = c(1,.8),
+                 partial.auc.focus = 'sp', partial.auc.correct = T)
     ## get summary info
     roc_summary[i, 2] <- index
     roc_summary[i, 1] <- CLASS[j]
     roc_summary[i, 3] <- est ##estimator
-    roc_summary[i, 4] <- fit_roc[[key]]$auc ## total AUC
-    roc_summary[i, 5] <- p.auc ## corrected partial AUC (.5 is no discrimination)
-    roc_summary[i, 6] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
-    roc_summary[i, 7:13] <- coords(fit_roc[[key]], "best", ret=c("threshold", "specificity", 'sensitivity', 'tn', 'tp', 'fn', 'fp'))
+    roc_summary[i, 4] <- s2 ## level-2 sample size
+    roc_summary[i, 5] <- s1 ## level-1 sample size
+    roc_summary[i, 6] <- fit_roc[[key]]$auc ## total AUC
+    roc_summary[i, 7] <- p.auc ## corrected partial AUC (.5 is no discrimination)
+    roc_summary[i, 8] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
+    roc_summary[i, 9:11] <- coords(fit_roc[[key]], "best", 
+                                   ret=c("threshold", "specificity", 'sensitivity'))
+    
+    ## add number of C and number of miss models in analysis
+    n.C <- nrow(mydata[ mydata[, CLASS[j]] == 1, ])
+    n.M <- nrow(mydata[ mydata[, CLASS[j]] == 0, ])
+    roc_summary[i, 12] <- n.C
+    roc_summary[i, 13] <- n.M
+    
     ## print summary
-      cat('\n\nSummary of ROC:\n')
-      print(roc_summary[i, ])
-
+    cat('\n\nSummary of ROC:\n')
+    print(roc_summary[i, ])
     ## add to summary iterator
     i <- i + 1
+      } ## end loop around ss l1
+    } ## End loop around ss l2
   } ## End loop around estimator
 } ## End loop round index
 
-kable(roc_summary[41:60,], format = 'html') %>%
+kable(roc_summary[801:1200, ], format = 'html', digits=3) %>%
   kable_styling(full_width = T)
 
-cat("Correct Level-2")
-print(xtable(roc_summary[41:60,c(2:5,7:9)], digits = 3), booktabs=T,include.rownames = F)
-
-
-
 ```
-
-### Extra Trial Attempt
-
-```{r}
-
-fit_roc2 <- fit_roc_smooth2 <- list()
-roc_summary2 <- as.data.frame(matrix(0,ncol=13, nrow=60))
-colnames(roc_summary2) <- c('Classification','Index', 'Estimator', 'AUC',
-                           'partial-AUC','Smoothed-AUC', 'Optimal-Threshold',
-                           'Specificity','Sensitivity', 'tn', 'tp', 'fn', 'fp')
-
-## Need to make codes for the ROC analyses outcomes
-# first, C vs. M1,M2,M12 - Perfect specification
-# sim_results$C <- ifelse(sim_results$Model == 'C', 1, 0)
-# second, C vs. M1|M12- correct level 1 model
-sim_results$C_L1_n <- ifelse(sim_results$Model == 'M2', NA, 0)
-sim_results$C_L1_n <- ifelse(sim_results$Model == 'C', 1, sim_results$C_L1_n)
-# third, C vs. M2|M12- correct level 2 model
-sim_results$C_L2_n <- ifelse(sim_results$Model == 'M1', NA, 0)
-sim_results$C_L2_n <- ifelse(sim_results$Model == 'C', 1, sim_results$C_L2_n)
-
-CLASS <- c("C", 'C_L1_n', 'C_L2_n')
-i <- 1
-for(j in 1:3){
-for(index in INDEX){
-  for(est in EST){
-
-    ## Print out which iteration so I know what I am looking at
-    cat('\n\nROC Analysis in')
-    cat('\nIndex:\t', index)
-    cat('\nClassification:\t', CLASS[j])
-    cat('\nEstimator:\t', est)
-    ## Set up iteration key
-    key <- paste0(index,'.',CLASS[j],'.',est)
-    # Subset data is asked
-    if(est == 'ALL') mydata <- sim_results
-    if(est != 'ALL') mydata <- filter(sim_results, Estimator == est)
-    ## Create formula
-    model <- as.formula(paste0(CLASS[j], '~', index))
-    ## Fit ROC curve
-    fit_roc2[[key]] <-  roc(model, data=mydata,
-                           plot =TRUE, ci=TRUE, print.auc=TRUE)
-    ## Create a plot of "smoothed" curve for plotting
-    fit_roc_smooth2[[key]] <-  smooth(roc(model, data=mydata))
-    ## Compute partial AUC for specificity .9-1
-    p.auc <- auc(fit_roc2[[key]], partial.auc = c(1,.9),partial.auc.focus = 'sp', partial.auc.correct = T )
-    ## get summary info
-    roc_summary2[i, 2] <- index
-    roc_summary2[i, 1] <- CLASS[j]
-    roc_summary2[i, 3] <- est ##estimator
-    roc_summary2[i, 4] <- fit_roc2[[key]]$auc ## total AUC
-    roc_summary2[i, 5] <- p.auc ## corrected partial AUC (.5 is no discrimination)
-    roc_summary2[i, 6] <- fit_roc_smooth2[[key]]$auc ## smoothed AUC
-    roc_summary2[i, 7:13] <- coords(fit_roc2[[key]], "best", ret=c("threshold", "specificity", 'sensitivity', 'tn', 'tp', 'fn', 'fp'))
-    ## print summary
-      cat('\n\nSummary of ROC:\n')
-      print(roc_summary2[i, ])
-
-    ## add to summary iterator
-    i <- i + 1
-  } ## End loop around estimator
-} ## End loop round index
-} # End loop around specification
-kable(roc_summary2, format = 'html') %>%
-  kable_styling(full_width = T)
-
-
-print(xtable(roc_summary2[,c(2:5,7:9)], digits = 3), booktabs=T,include.rownames = F)
-```
-
 
 ## Summarizing the Results
 
@@ -409,7 +600,7 @@ kable(roc_sum_C_all, format = 'html', row.names = F) %>%
 print(xtable(roc_sum_C_all[,c(2,4:5,7:9)], digits = 3), booktabs=T,include.rownames = F)
 
 
-## FULLSummary table
+## FULL Summary table
 
 kable(roc_summary, format = 'html') %>%
   kable_styling(full_width = T)

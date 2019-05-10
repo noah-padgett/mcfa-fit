@@ -17,12 +17,12 @@ The pages are broken up into what we considered logical sections of the results.
 Not all of the results shown here are reported in the manuscript.
 This limitation is mostly due to space restrictions in the actual manuscript.
 
+# Study Results
+
 *[Convergence, Admissibility, and Fit Descriptive Statistics](summary_stats_tables.html)
 
 *[Fit Statistic Distribution](fit_boxplots.html)
 
 *[ANOVA Results](anova.html)
-<<<<<<< HEAD
 
-=======
->>>>>>> f6f9e9136046109cb5966031a948d37e8630478f
+

@@ -2,9 +2,23 @@
 title: "About"
 output:
   workflowr::wflow_html:
-    toc: true
+    toc: false
 editor_options:
   chunk_output_type: console
 ---
 
-Describe your project.
+This study is a continuation from R. Noah Padgett's Master's Thesis. 
+The project is generally about the performance of commonly used fit statistics in multilevel CFA models.
+The work is part of a large simulation study that will be reported in multiple manuscripts throughout the next year.
+This study is solely on the FIT statistis.
+
+# Abstract
+
+The ability of commonly used fit statistics to discriminate between a correctly specified model and misspecified models was investigated within a multilevel factor analysis context.
+Performance of fit statistics was investigated with receiver-operating-characteristics (ROC) analyses. 
+Combining ROC analyses with traditional methods of investigating fit statistic performance resulted in converging evidence for the utility of the investigated fit statistics. 
+Optimal thresholds were identified and found to vary across different robust estimation methods (i.e., MLR, ULSMV, and WLSMV).
+Estimation method and sample size were found to influence the performance of common fit statistic to detect misspecification of the level-1 model, while all fit statistics investigated performed poorly for detecting misspecification of the level-2 model.
+Recommendations were given for which commonly reported fit statistics to use, cut-off criteria to use for which estimators, and cautions about the use of the suggested cut-off criteria.
+
+

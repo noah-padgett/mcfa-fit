@@ -413,7 +413,7 @@ div.section {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -422,7 +422,7 @@ div.section {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -431,10 +431,10 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-05-08
+<strong>Last updated:</strong> 2019-05-17
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>mcfa-fit/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -450,12 +450,12 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
 </div>
 </div>
 </div>
@@ -510,10 +510,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittreeb794176dc451c8cca4094bbbd249a395d3536a65targetblankb794176a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/noah-padgett/mcfa-fit/tree/b794176dc451c8cca4094bbbd249a395d3536a65" target="_blank">b794176</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree4a2f40d1fcb790f157656be30a1670345f67b177targetblank4a2f40da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/noah-padgett/mcfa-fit/tree/4a2f40d1fcb790f157656be30a1670345f67b177" target="_blank">4a2f40d</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittreeb794176dc451c8cca4094bbbd249a395d3536a65targetblankb794176a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree4a2f40d1fcb790f157656be30a1670345f67b177targetblank4a2f40da" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -524,7 +524,14 @@ Ignored files:
     Ignored:    .Rproj.user/
 
 Untracked files:
-    Untracked:  analysis/fit_statistics_explained.Rmd
+    Untracked:  .RDataTmp
+
+Unstaged changes:
+    Modified:   analysis/about.Rmd
+    Modified:   analysis/fit_boxplots.Rmd
+    Modified:   analysis/index.Rmd
+    Modified:   analysis/roc_analyses.Rmd
+    Deleted:    docs/.nojekyll
 
 </code></pre>
 <p>
@@ -565,6 +572,23 @@ Message
 <tbody>
 <tr>
 <td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/noah-padgett/mcfa-fit/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/fit_boxplots.html" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
 Rmd
 </td>
 <td>
@@ -599,13 +623,13 @@ knitr::opts_chunk$set(out.width = &quot;225%&quot;)
 
 ## Packages General Packages
 library(tidyverse)</code></pre>
-<pre><code>-- Attaching packages ------------------------------------------------------- tidyverse 1.2.1 --</code></pre>
+<pre><code>-- Attaching packages ---------------------------------------------- tidyverse 1.2.1 --</code></pre>
 <pre><code>v ggplot2 3.1.0       v purrr   0.2.5  
 v tibble  2.0.1       v dplyr   0.8.0.1
 v tidyr   0.8.2       v stringr 1.3.1  
 v readr   1.3.1       v forcats 0.3.0  </code></pre>
 <pre><code>Warning: package &#39;dplyr&#39; was built under R version 3.5.3</code></pre>
-<pre><code>-- Conflicts ---------------------------------------------------------- tidyverse_conflicts() --
+<pre><code>-- Conflicts ------------------------------------------------- tidyverse_conflicts() --
 x dplyr::filter() masks stats::filter()
 x dplyr::lag()    masks stats::lag()</code></pre>
 <pre class="r"><code># Formatting and Tables
@@ -721,6 +745,43 @@ p &lt;- ggplot(mydata, aes(x=Condition, y=CFI))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-1-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-1-1">
+Past versions of gen-box-1-1.png
+</button>
+</p>
+<div id="fig-gen-box-1-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-1-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_all_conditions.pdf&quot;,plot = p, width=12, height=6, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=Condition, y=TLI))+
@@ -729,6 +790,43 @@ p &lt;- ggplot(mydata, aes(x=Condition, y=TLI))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-1-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-1-2">
+Past versions of gen-box-1-2.png
+</button>
+</p>
+<div id="fig-gen-box-1-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-1-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_all_conditions.pdf&quot;,plot = p, width=12, height=6, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=Condition, y=RMSEA))+
@@ -737,6 +835,43 @@ p &lt;- ggplot(mydata, aes(x=Condition, y=RMSEA))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-1-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-1-3">
+Past versions of gen-box-1-3.png
+</button>
+</p>
+<div id="fig-gen-box-1-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-1-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_all_conditions.pdf&quot;,plot = p, width=12, height=6, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=Condition, y=SRMRW))+
@@ -745,6 +880,43 @@ p &lt;- ggplot(mydata, aes(x=Condition, y=SRMRW))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-1-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-1-4">
+Past versions of gen-box-1-4.png
+</button>
+</p>
+<div id="fig-gen-box-1-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-1-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_all_conditions.pdf&quot;,plot = p, width=12, height=6, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=Condition, y=SRMRB))+
@@ -754,6 +926,43 @@ p &lt;- ggplot(mydata, aes(x=Condition, y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-1-5.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-1-5">
+Past versions of gen-box-1-5.png
+</button>
+</p>
+<div id="fig-gen-box-1-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-1-5.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_all_conditions.pdf&quot;,plot = p, width=12, height=6, units=&#39;in&#39;)
 
 ## SRMRB without range restriction
@@ -763,6 +972,43 @@ p &lt;- ggplot(mydata, aes(x=Condition, y=SRMRB))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-1-6.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-1-6">
+Past versions of gen-box-1-6.png
+</button>
+</p>
+<div id="fig-gen-box-1-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-1-6.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="marginal-plots-of-conditions" class="section level3">
 <h3>Marginal Plots of Conditions</h3>
@@ -774,6 +1020,43 @@ p</code></pre>
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-cfi-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-cfi-1">
+Past versions of gen-box-cfi-1.png
+</button>
+</p>
+<div id="fig-gen-box-cfi-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-cfi-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=Estimator, y=CFI))+
@@ -782,6 +1065,43 @@ p &lt;- ggplot(mydata, aes(x=Estimator, y=CFI))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-cfi-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-cfi-2">
+Past versions of gen-box-cfi-2.png
+</button>
+</p>
+<div id="fig-gen-box-cfi-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-cfi-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=ss_l1, y=CFI))+
@@ -790,6 +1110,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l1, y=CFI))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-cfi-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-cfi-3">
+Past versions of gen-box-cfi-3.png
+</button>
+</p>
+<div id="fig-gen-box-cfi-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-cfi-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_ssl1.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -799,6 +1156,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2, y=CFI))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-cfi-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-cfi-4">
+Past versions of gen-box-cfi-4.png
+</button>
+</p>
+<div id="fig-gen-box-cfi-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-cfi-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_ss_l2.pdf&quot;,plot = p,width=6, height=4, units=&#39;in&#39;)
 
 
@@ -809,6 +1203,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov, y=CFI))+
     labs(title = &#39;CFI by Obs. Var. ICC&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-cfi-5.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-cfi-5">
+Past versions of gen-box-cfi-5.png
+</button>
+</p>
+<div id="fig-gen-box-cfi-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-cfi-5.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_icc_ov.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -818,6 +1249,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=CFI))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-cfi-6.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-cfi-6">
+Past versions of gen-box-cfi-6.png
+</button>
+</p>
+<div id="fig-gen-box-cfi-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-cfi-6.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_icc_lv.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="tli" class="section level4">
@@ -828,6 +1296,43 @@ p</code></pre>
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-tli-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-tli-1">
+Past versions of gen-box-tli-1.png
+</button>
+</p>
+<div id="fig-gen-box-tli-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-tli-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 p &lt;- ggplot(mydata, aes(x=Estimator, y=TLI))+
     geom_boxplot(outlier.alpha = .1)+
@@ -835,6 +1340,43 @@ p &lt;- ggplot(mydata, aes(x=Estimator, y=TLI))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-tli-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-tli-2">
+Past versions of gen-box-tli-2.png
+</button>
+</p>
+<div id="fig-gen-box-tli-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-tli-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_estimator.pdf&quot;,plot = p,width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=ss_l1, y=TLI))+
@@ -843,6 +1385,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l1, y=TLI))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-tli-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-tli-3">
+Past versions of gen-box-tli-3.png
+</button>
+</p>
+<div id="fig-gen-box-tli-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-tli-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_ss_l1.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -852,6 +1431,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2, y=TLI))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-tli-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-tli-4">
+Past versions of gen-box-tli-4.png
+</button>
+</p>
+<div id="fig-gen-box-tli-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-tli-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_ss_l2.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_ov, y=TLI))+
@@ -860,6 +1476,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov, y=TLI))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-tli-5.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-tli-5">
+Past versions of gen-box-tli-5.png
+</button>
+</p>
+<div id="fig-gen-box-tli-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-tli-5.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_icc_ov.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_lv, y=TLI))+
@@ -868,6 +1521,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=TLI))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-tli-6.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-tli-6">
+Past versions of gen-box-tli-6.png
+</button>
+</p>
+<div id="fig-gen-box-tli-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-tli-6.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_icc_lv.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="rmsea" class="section level4">
@@ -878,6 +1568,43 @@ p</code></pre>
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-rmsea-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-rmsea-1">
+Past versions of gen-box-rmsea-1.png
+</button>
+</p>
+<div id="fig-gen-box-rmsea-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-rmsea-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=Estimator, y=RMSEA))+
@@ -886,6 +1613,43 @@ p &lt;- ggplot(mydata, aes(x=Estimator, y=RMSEA))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-rmsea-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-rmsea-2">
+Past versions of gen-box-rmsea-2.png
+</button>
+</p>
+<div id="fig-gen-box-rmsea-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-rmsea-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -895,6 +1659,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l1, y=RMSEA))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-rmsea-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-rmsea-3">
+Past versions of gen-box-rmsea-3.png
+</button>
+</p>
+<div id="fig-gen-box-rmsea-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-rmsea-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_ss_l1.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -904,6 +1705,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2, y=RMSEA))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-rmsea-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-rmsea-4">
+Past versions of gen-box-rmsea-4.png
+</button>
+</p>
+<div id="fig-gen-box-rmsea-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-rmsea-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_ss_l2.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_ov, y=RMSEA))+
@@ -912,6 +1750,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov, y=RMSEA))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-rmsea-5.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-rmsea-5">
+Past versions of gen-box-rmsea-5.png
+</button>
+</p>
+<div id="fig-gen-box-rmsea-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-rmsea-5.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_icc_ov.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -921,6 +1796,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=RMSEA))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-rmsea-6.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-rmsea-6">
+Past versions of gen-box-rmsea-6.png
+</button>
+</p>
+<div id="fig-gen-box-rmsea-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-rmsea-6.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_icc_lv.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="srmrw" class="section level4">
@@ -931,6 +1843,43 @@ p</code></pre>
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-srmrw-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-srmrw-1">
+Past versions of gen-box-srmrw-1.png
+</button>
+</p>
+<div id="fig-gen-box-srmrw-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-srmrw-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=Estimator, y=SRMRW))+
@@ -939,6 +1888,43 @@ p &lt;- ggplot(mydata, aes(x=Estimator, y=SRMRW))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-srmrw-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-srmrw-2">
+Past versions of gen-box-srmrw-2.png
+</button>
+</p>
+<div id="fig-gen-box-srmrw-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-srmrw-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -948,6 +1934,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l1, y=SRMRW))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-srmrw-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-srmrw-3">
+Past versions of gen-box-srmrw-3.png
+</button>
+</p>
+<div id="fig-gen-box-srmrw-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-srmrw-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_ss_l1.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -957,6 +1980,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2,  y=SRMRW))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-srmrw-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-srmrw-4">
+Past versions of gen-box-srmrw-4.png
+</button>
+</p>
+<div id="fig-gen-box-srmrw-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-srmrw-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_ss_l2.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -967,6 +2027,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov,  y=SRMRW))+
     labs(title = &#39;SRMRW by Obs. Var. ICC&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-srmrw-5.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-srmrw-5">
+Past versions of gen-box-srmrw-5.png
+</button>
+</p>
+<div id="fig-gen-box-srmrw-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-srmrw-5.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_icc_ov.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -976,6 +2073,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=SRMRW))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-srmrw-6.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-srmrw-6">
+Past versions of gen-box-srmrw-6.png
+</button>
+</p>
+<div id="fig-gen-box-srmrw-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-srmrw-6.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_icc_lv.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="srmrb" class="section level4">
@@ -987,6 +2121,43 @@ p</code></pre>
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-srmrb-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-srmrb-1">
+Past versions of gen-box-srmrb-1.png
+</button>
+</p>
+<div id="fig-gen-box-srmrb-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-srmrb-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=Estimator, y=SRMRB))+
@@ -996,6 +2167,43 @@ p &lt;- ggplot(mydata, aes(x=Estimator, y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-srmrb-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-srmrb-2">
+Past versions of gen-box-srmrb-2.png
+</button>
+</p>
+<div id="fig-gen-box-srmrb-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-srmrb-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1006,6 +2214,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l1, y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-srmrb-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-srmrb-3">
+Past versions of gen-box-srmrb-3.png
+</button>
+</p>
+<div id="fig-gen-box-srmrb-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-srmrb-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_ss_l1.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1017,6 +2262,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2,  y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-srmrb-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-srmrb-4">
+Past versions of gen-box-srmrb-4.png
+</button>
+</p>
+<div id="fig-gen-box-srmrb-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-srmrb-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_ss_l2.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_ov,  y=SRMRB))+
@@ -1026,6 +2308,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov,  y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-srmrb-5.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-srmrb-5">
+Past versions of gen-box-srmrb-5.png
+</button>
+</p>
+<div id="fig-gen-box-srmrb-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-srmrb-5.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_icc_ov.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_lv, y=SRMRB))+
@@ -1035,6 +2354,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/gen-box-srmrb-6.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gen-box-srmrb-6">
+Past versions of gen-box-srmrb-6.png
+</button>
+</p>
+<div id="fig-gen-box-srmrb-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/gen-box-srmrb-6.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_icc_lv.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 </div>
 </div>
@@ -1059,6 +2415,43 @@ p &lt;- ggplot(mydata, aes(x=Condition, y=CFI))+
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-box-1-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-box-1-1">
+Past versions of fac-box-1-1.png
+</button>
+</p>
+<div id="fig-fac-box-1-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-box-1-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_all_condition_facet.pdf&quot;,plot = p, width=16, height=12, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=Condition, y=TLI))+
@@ -1068,6 +2461,43 @@ p &lt;- ggplot(mydata, aes(x=Condition, y=TLI))+
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-box-1-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-box-1-2">
+Past versions of fac-box-1-2.png
+</button>
+</p>
+<div id="fig-fac-box-1-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-box-1-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_all_condition_facet.pdf&quot;,plot = p, width=16, height=12, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=Condition, y=RMSEA))+
@@ -1077,6 +2507,43 @@ p &lt;- ggplot(mydata, aes(x=Condition, y=RMSEA))+
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-box-1-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-box-1-3">
+Past versions of fac-box-1-3.png
+</button>
+</p>
+<div id="fig-fac-box-1-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-box-1-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_all_condition_facet.pdf&quot;,plot = p, width=16, height=12, units=&#39;in&#39;)
 
 
@@ -1087,6 +2554,43 @@ p &lt;- ggplot(mydata, aes(x=Condition, y=SRMRW))+
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-box-1-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-box-1-4">
+Past versions of fac-box-1-4.png
+</button>
+</p>
+<div id="fig-fac-box-1-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-box-1-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_all_condition_facet.pdf&quot;,plot = p, width=16, height=12, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=Condition, y=SRMRB))+
@@ -1097,6 +2601,43 @@ p &lt;- ggplot(mydata, aes(x=Condition, y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-box-1-5.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-box-1-5">
+Past versions of fac-box-1-5.png
+</button>
+</p>
+<div id="fig-fac-box-1-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-box-1-5.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_all_condition_facet.pdf&quot;,plot = p, width=16, height=12, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="marginal-plots-of-conditions-facetted-by-estimator" class="section level3">
@@ -1110,6 +2651,43 @@ p</code></pre>
     facet_grid(.~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-cfi-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-cfi-1">
+Past versions of fac-e-box-cfi-1.png
+</button>
+</p>
+<div id="fig-fac-e-box-cfi-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-cfi-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_ssl1_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1121,6 +2699,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2, y=CFI))+
     labs(title = &#39;CFI by Level-2 Sample Size&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-cfi-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-cfi-2">
+Past versions of fac-e-box-cfi-2.png
+</button>
+</p>
+<div id="fig-fac-e-box-cfi-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-cfi-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_ss_l2_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1131,6 +2746,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov, y=CFI))+
     facet_grid(.~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-cfi-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-cfi-3">
+Past versions of fac-e-box-cfi-3.png
+</button>
+</p>
+<div id="fig-fac-e-box-cfi-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-cfi-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_icc_ov_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1141,6 +2793,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=CFI))+
     facet_grid(.~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-cfi-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-cfi-4">
+Past versions of fac-e-box-cfi-4.png
+</button>
+</p>
+<div id="fig-fac-e-box-cfi-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-cfi-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_icc_lv_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="tli-1" class="section level4">
@@ -1152,6 +2841,43 @@ p</code></pre>
     facet_grid(.~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-tli-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-tli-1">
+Past versions of fac-e-box-tli-1.png
+</button>
+</p>
+<div id="fig-fac-e-box-tli-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-tli-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_ss_l1_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1162,6 +2888,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2, y=TLI))+
     facet_grid(.~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-tli-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-tli-2">
+Past versions of fac-e-box-tli-2.png
+</button>
+</p>
+<div id="fig-fac-e-box-tli-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-tli-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_ss_l2_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_ov, y=TLI))+
@@ -1171,6 +2934,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov, y=TLI))+
     facet_grid(.~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-tli-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-tli-3">
+Past versions of fac-e-box-tli-3.png
+</button>
+</p>
+<div id="fig-fac-e-box-tli-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-tli-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_icc_ov_facet_estimator.pdf&quot;,plot = p, scale=1)
 
 p &lt;- ggplot(mydata, aes(x=icc_lv, y=TLI))+
@@ -1180,6 +2980,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=TLI))+
     facet_grid(.~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-tli-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-tli-4">
+Past versions of fac-e-box-tli-4.png
+</button>
+</p>
+<div id="fig-fac-e-box-tli-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-tli-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_icc_lv_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="rmsea-1" class="section level4">
@@ -1191,6 +3028,43 @@ p</code></pre>
     facet_grid(.~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-rmsea-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-rmsea-1">
+Past versions of fac-e-box-rmsea-1.png
+</button>
+</p>
+<div id="fig-fac-e-box-rmsea-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-rmsea-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_ss_l1_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1201,6 +3075,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2, y=RMSEA))+
     facet_grid(.~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-rmsea-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-rmsea-2">
+Past versions of fac-e-box-rmsea-2.png
+</button>
+</p>
+<div id="fig-fac-e-box-rmsea-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-rmsea-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_ss_l2_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_ov, y=RMSEA))+
@@ -1210,6 +3121,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov, y=RMSEA))+
     facet_grid(.~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-rmsea-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-rmsea-3">
+Past versions of fac-e-box-rmsea-3.png
+</button>
+</p>
+<div id="fig-fac-e-box-rmsea-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-rmsea-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_icc_ov_facet_estimator.pdf&quot;,plot = p,width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1220,6 +3168,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=RMSEA))+
     facet_grid(.~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-rmsea-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-rmsea-4">
+Past versions of fac-e-box-rmsea-4.png
+</button>
+</p>
+<div id="fig-fac-e-box-rmsea-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-rmsea-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_icc_lv_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="srmrw-1" class="section level4">
@@ -1231,6 +3216,43 @@ p</code></pre>
     facet_grid(.~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-srmrw-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-srmrw-1">
+Past versions of fac-e-box-srmrw-1.png
+</button>
+</p>
+<div id="fig-fac-e-box-srmrw-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-srmrw-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_ss_l1_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1241,6 +3263,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2,  y=SRMRW))+
     facet_grid(.~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-srmrw-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-srmrw-2">
+Past versions of fac-e-box-srmrw-2.png
+</button>
+</p>
+<div id="fig-fac-e-box-srmrw-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-srmrw-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_ss_l2_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1251,6 +3310,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov,  y=SRMRW))+
     facet_grid(.~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-srmrw-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-srmrw-3">
+Past versions of fac-e-box-srmrw-3.png
+</button>
+</p>
+<div id="fig-fac-e-box-srmrw-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-srmrw-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_icc_ov_facet_estimator.pdf&quot;,plot = p,width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1261,6 +3357,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=SRMRW))+
     facet_grid(.~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-srmrw-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-srmrw-4">
+Past versions of fac-e-box-srmrw-4.png
+</button>
+</p>
+<div id="fig-fac-e-box-srmrw-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-srmrw-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_icc_lv_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="srmrb-1" class="section level4">
@@ -1273,6 +3406,43 @@ p</code></pre>
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-srmrb-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-srmrb-1">
+Past versions of fac-e-box-srmrb-1.png
+</button>
+</p>
+<div id="fig-fac-e-box-srmrb-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-srmrb-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_ss_l1_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1284,6 +3454,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2,  y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-srmrb-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-srmrb-2">
+Past versions of fac-e-box-srmrb-2.png
+</button>
+</p>
+<div id="fig-fac-e-box-srmrb-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-srmrb-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_ss_l2_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_ov,  y=SRMRB))+
@@ -1294,6 +3501,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov,  y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-srmrb-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-srmrb-3">
+Past versions of fac-e-box-srmrb-3.png
+</button>
+</p>
+<div id="fig-fac-e-box-srmrb-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-srmrb-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_icc_ov_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_lv, y=SRMRB))+
@@ -1304,6 +3548,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-e-box-srmrb-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-e-box-srmrb-4">
+Past versions of fac-e-box-srmrb-4.png
+</button>
+</p>
+<div id="fig-fac-e-box-srmrb-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-e-box-srmrb-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_icc_lv_facet_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 </div>
 </div>
@@ -1318,6 +3599,43 @@ p</code></pre>
     facet_grid(.~Model)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-cfi-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-cfi-1">
+Past versions of fac-m-box-cfi-1.png
+</button>
+</p>
+<div id="fig-fac-m-box-cfi-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-cfi-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_ssl1_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1328,6 +3646,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2, y=CFI))+
     facet_grid(.~Model)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-cfi-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-cfi-2">
+Past versions of fac-m-box-cfi-2.png
+</button>
+</p>
+<div id="fig-fac-m-box-cfi-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-cfi-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_ss_l2_facet_model.pdf&quot;,plot = p,width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1338,6 +3693,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov, y=CFI))+
     facet_grid(.~Model)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-cfi-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-cfi-3">
+Past versions of fac-m-box-cfi-3.png
+</button>
+</p>
+<div id="fig-fac-m-box-cfi-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-cfi-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_icc_ov_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1348,6 +3740,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=CFI))+
     facet_grid(.~Model)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-cfi-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-cfi-4">
+Past versions of fac-m-box-cfi-4.png
+</button>
+</p>
+<div id="fig-fac-m-box-cfi-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-cfi-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_icc_lv_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="tli-2" class="section level4">
@@ -1359,6 +3788,43 @@ p</code></pre>
     facet_grid(.~Model)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-tli-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-tli-1">
+Past versions of fac-m-box-tli-1.png
+</button>
+</p>
+<div id="fig-fac-m-box-tli-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-tli-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_ss_l1_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1370,6 +3836,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2, y=TLI))+
     labs(title = &#39;TLI by Level-2 Sample Size&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-tli-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-tli-2">
+Past versions of fac-m-box-tli-2.png
+</button>
+</p>
+<div id="fig-fac-m-box-tli-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-tli-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_ss_l2_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_ov, y=TLI))+
@@ -1379,6 +3882,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov, y=TLI))+
     facet_grid(.~Model)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-tli-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-tli-3">
+Past versions of fac-m-box-tli-3.png
+</button>
+</p>
+<div id="fig-fac-m-box-tli-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-tli-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_icc_ov_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_lv, y=TLI))+
@@ -1388,6 +3928,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=TLI))+
     facet_grid(.~Model)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-tli-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-tli-4">
+Past versions of fac-m-box-tli-4.png
+</button>
+</p>
+<div id="fig-fac-m-box-tli-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-tli-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_icc_lv_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="rmsea-2" class="section level4">
@@ -1399,6 +3976,43 @@ p</code></pre>
     facet_grid(.~Model)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-rmsea-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-rmsea-1">
+Past versions of fac-m-box-rmsea-1.png
+</button>
+</p>
+<div id="fig-fac-m-box-rmsea-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-rmsea-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_ss_l1_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1409,6 +4023,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2, y=RMSEA))+
     facet_grid(.~Model)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-rmsea-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-rmsea-2">
+Past versions of fac-m-box-rmsea-2.png
+</button>
+</p>
+<div id="fig-fac-m-box-rmsea-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-rmsea-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_ss_l2_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_ov, y=RMSEA))+
@@ -1418,6 +4069,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov, y=RMSEA))+
     facet_grid(.~Model)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-rmsea-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-rmsea-3">
+Past versions of fac-m-box-rmsea-3.png
+</button>
+</p>
+<div id="fig-fac-m-box-rmsea-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-rmsea-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_icc_ov_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1428,6 +4116,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=RMSEA))+
     facet_grid(.~Model)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-rmsea-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-rmsea-4">
+Past versions of fac-m-box-rmsea-4.png
+</button>
+</p>
+<div id="fig-fac-m-box-rmsea-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-rmsea-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_icc_lv_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="srmrw-2" class="section level4">
@@ -1439,6 +4164,43 @@ p</code></pre>
     facet_grid(.~Model)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-srmrw-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-srmrw-1">
+Past versions of fac-m-box-srmrw-1.png
+</button>
+</p>
+<div id="fig-fac-m-box-srmrw-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-srmrw-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_ss_l1_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1449,6 +4211,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2,  y=SRMRW))+
     facet_grid(.~Model)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-srmrw-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-srmrw-2">
+Past versions of fac-m-box-srmrw-2.png
+</button>
+</p>
+<div id="fig-fac-m-box-srmrw-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-srmrw-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_ss_l2_facet_model.pdf&quot;,plot = p, scale=1)
 
 
@@ -1459,6 +4258,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov,  y=SRMRW))+
     facet_grid(.~Model)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-srmrw-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-srmrw-3">
+Past versions of fac-m-box-srmrw-3.png
+</button>
+</p>
+<div id="fig-fac-m-box-srmrw-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-srmrw-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_icc_ov_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1469,6 +4305,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=SRMRW))+
     facet_grid(.~Model)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-srmrw-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-srmrw-4">
+Past versions of fac-m-box-srmrw-4.png
+</button>
+</p>
+<div id="fig-fac-m-box-srmrw-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-srmrw-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_icc_lv_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="srmrb-2" class="section level4">
@@ -1481,6 +4354,43 @@ p</code></pre>
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-srmrb-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-srmrb-1">
+Past versions of fac-m-box-srmrb-1.png
+</button>
+</p>
+<div id="fig-fac-m-box-srmrb-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-srmrb-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_ss_l1_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1492,6 +4402,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2,  y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-srmrb-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-srmrb-2">
+Past versions of fac-m-box-srmrb-2.png
+</button>
+</p>
+<div id="fig-fac-m-box-srmrb-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-srmrb-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_ss_l2_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_ov,  y=SRMRB))+
@@ -1502,6 +4449,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov,  y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-srmrb-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-srmrb-3">
+Past versions of fac-m-box-srmrb-3.png
+</button>
+</p>
+<div id="fig-fac-m-box-srmrb-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-srmrb-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_icc_ov_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_lv, y=SRMRB))+
@@ -1512,6 +4496,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-m-box-srmrb-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-m-box-srmrb-4">
+Past versions of fac-m-box-srmrb-4.png
+</button>
+</p>
+<div id="fig-fac-m-box-srmrb-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-m-box-srmrb-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_icc_lv_facet_model.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 </div>
 </div>
@@ -1526,6 +4547,43 @@ p</code></pre>
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-cfi-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-cfi-1">
+Past versions of fac-em-box-cfi-1.png
+</button>
+</p>
+<div id="fig-fac-em-box-cfi-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-cfi-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_ssl1_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)
 
 
@@ -1536,6 +4594,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2, y=CFI))+
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-cfi-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-cfi-2">
+Past versions of fac-em-box-cfi-2.png
+</button>
+</p>
+<div id="fig-fac-em-box-cfi-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-cfi-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_ss_l2_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)
 
 
@@ -1546,6 +4641,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov, y=CFI))+
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-cfi-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-cfi-3">
+Past versions of fac-em-box-cfi-3.png
+</button>
+</p>
+<div id="fig-fac-em-box-cfi-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-cfi-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_icc_ov_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)
 
 
@@ -1556,6 +4688,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=CFI))+
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-cfi-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-cfi-4">
+Past versions of fac-em-box-cfi-4.png
+</button>
+</p>
+<div id="fig-fac-em-box-cfi-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-cfi-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_icc_lv_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="tli-3" class="section level4">
@@ -1567,6 +4736,43 @@ p</code></pre>
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-tli-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-tli-1">
+Past versions of fac-em-box-tli-1.png
+</button>
+</p>
+<div id="fig-fac-em-box-tli-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-tli-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_ss_l1_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)
 
 
@@ -1577,6 +4783,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2, y=TLI))+
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-tli-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-tli-2">
+Past versions of fac-em-box-tli-2.png
+</button>
+</p>
+<div id="fig-fac-em-box-tli-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-tli-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_ss_l2_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_ov, y=TLI))+
@@ -1586,6 +4829,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov, y=TLI))+
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-tli-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-tli-3">
+Past versions of fac-em-box-tli-3.png
+</button>
+</p>
+<div id="fig-fac-em-box-tli-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-tli-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_icc_ov_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_lv, y=TLI))+
@@ -1595,6 +4875,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=TLI))+
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-tli-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-tli-4">
+Past versions of fac-em-box-tli-4.png
+</button>
+</p>
+<div id="fig-fac-em-box-tli-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-tli-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_icc_lv_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="rmsea-3" class="section level4">
@@ -1606,6 +4923,43 @@ p</code></pre>
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-rmsea-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-rmsea-1">
+Past versions of fac-em-box-rmsea-1.png
+</button>
+</p>
+<div id="fig-fac-em-box-rmsea-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-rmsea-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_ss_l1_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)
 
 
@@ -1616,6 +4970,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2, y=RMSEA))+
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-rmsea-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-rmsea-2">
+Past versions of fac-em-box-rmsea-2.png
+</button>
+</p>
+<div id="fig-fac-em-box-rmsea-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-rmsea-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_ss_l2_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_ov, y=RMSEA))+
@@ -1625,6 +5016,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov, y=RMSEA))+
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-rmsea-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-rmsea-3">
+Past versions of fac-em-box-rmsea-3.png
+</button>
+</p>
+<div id="fig-fac-em-box-rmsea-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-rmsea-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_icc_ov_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)
 
 
@@ -1635,6 +5063,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=RMSEA))+
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-rmsea-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-rmsea-4">
+Past versions of fac-em-box-rmsea-4.png
+</button>
+</p>
+<div id="fig-fac-em-box-rmsea-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-rmsea-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_icc_lv_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="srmrw-3" class="section level4">
@@ -1646,6 +5111,43 @@ p</code></pre>
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-srmrw-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-srmrw-1">
+Past versions of fac-em-box-srmrw-1.png
+</button>
+</p>
+<div id="fig-fac-em-box-srmrw-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-srmrw-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_ss_l1_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)
 
 
@@ -1656,6 +5158,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2,  y=SRMRW))+
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-srmrw-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-srmrw-2">
+Past versions of fac-em-box-srmrw-2.png
+</button>
+</p>
+<div id="fig-fac-em-box-srmrw-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-srmrw-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_ss_l2_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)
 
 
@@ -1666,6 +5205,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov,  y=SRMRW))+
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-srmrw-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-srmrw-3">
+Past versions of fac-em-box-srmrw-3.png
+</button>
+</p>
+<div id="fig-fac-em-box-srmrw-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-srmrw-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_icc_ov_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)
 
 
@@ -1676,6 +5252,43 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=SRMRW))+
     facet_grid(Model~Estimator)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-srmrw-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-srmrw-4">
+Past versions of fac-em-box-srmrw-4.png
+</button>
+</p>
+<div id="fig-fac-em-box-srmrw-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-srmrw-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_icc_lv_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)</code></pre>
 </div>
 <div id="srmrb-3" class="section level4">
@@ -1688,6 +5301,43 @@ p</code></pre>
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-srmrb-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-srmrb-1">
+Past versions of fac-em-box-srmrb-1.png
+</button>
+</p>
+<div id="fig-fac-em-box-srmrb-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-srmrb-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_ss_l1_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)
 
 
@@ -1699,6 +5349,43 @@ p &lt;- ggplot(mydata, aes(x=ss_l2,  y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-srmrb-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-srmrb-2">
+Past versions of fac-em-box-srmrb-2.png
+</button>
+</p>
+<div id="fig-fac-em-box-srmrb-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-srmrb-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_ss_l2_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_ov,  y=SRMRB))+
@@ -1710,6 +5397,43 @@ p &lt;- ggplot(mydata, aes(x=icc_ov,  y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-srmrb-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-srmrb-3">
+Past versions of fac-em-box-srmrb-3.png
+</button>
+</p>
+<div id="fig-fac-em-box-srmrb-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-srmrb-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_icc_ov_facet_estimator_model.pdf&quot;,plot = p, width=9, height=6, units=&#39;in&#39;)
 
 p &lt;- ggplot(mydata, aes(x=icc_lv, y=SRMRB))+
@@ -1720,12 +5444,49 @@ p &lt;- ggplot(mydata, aes(x=icc_lv, y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/fac-em-box-srmrb-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fac-em-box-srmrb-4">
+Past versions of fac-em-box-srmrb-4.png
+</button>
+</p>
+<div id="fig-fac-em-box-srmrb-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/fac-em-box-srmrb-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_icc_lv_facet_estimator_model.pdf&quot;,plot = p,width=9, height=6, units=&#39;in&#39;)</code></pre>
 </div>
 </div>
 </div>
-<div id="fit-distribution-by-model-and-estimator-only" class="section level2">
-<h2>Fit distribution by Model and Estimator only</h2>
+<div id="fit-distribution-by-model-and-estimation-method-only" class="section level2">
+<h2>Fit distribution by Model and Estimation method only</h2>
 <pre class="r"><code>p &lt;- ggplot(mydata, aes(x=Model, y=CFI))+
     geom_boxplot(outlier.alpha = .1)+
     facet_grid(.~Estimator) +
@@ -1733,6 +5494,43 @@ p</code></pre>
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/box-est-model-thing-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-box-est-model-thing-1">
+Past versions of box-est-model-thing-1.png
+</button>
+</p>
+<div id="fig-box-est-model-thing-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/box-est-model-thing-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;cfi_marginal_model_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1743,6 +5541,43 @@ p &lt;- ggplot(mydata, aes(x=Model, y=TLI))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/box-est-model-thing-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-box-est-model-thing-2">
+Past versions of box-est-model-thing-2.png
+</button>
+</p>
+<div id="fig-box-est-model-thing-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/box-est-model-thing-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;tli_marginal_model_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1754,6 +5589,43 @@ p &lt;- ggplot(mydata, aes(x=Model, y=RMSEA))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/box-est-model-thing-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-box-est-model-thing-3">
+Past versions of box-est-model-thing-3.png
+</button>
+</p>
+<div id="fig-box-est-model-thing-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/box-est-model-thing-3.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;rmsea_marginal_model_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1765,6 +5637,43 @@ p &lt;- ggplot(mydata, aes(x=Model, y=SRMRW))+
                 linetype=&#39;dashed&#39;, color = &#39;red&#39;)
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/box-est-model-thing-4.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-box-est-model-thing-4">
+Past versions of box-est-model-thing-4.png
+</button>
+</p>
+<div id="fig-box-est-model-thing-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/box-est-model-thing-4.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrw_marginal_model_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
 
 
@@ -1776,22 +5685,133 @@ p &lt;- ggplot(mydata, aes(x=Model, y=SRMRB))+
     lims(y=c(0,1))
 p</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/box-est-model-thing-5.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-box-est-model-thing-5">
+Past versions of box-est-model-thing-5.png
+</button>
+</p>
+<div id="fig-box-est-model-thing-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/box-est-model-thing-5.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>if(save.fig == T) ggsave(&quot;srmrb_marginal_model_estimator.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 </div>
-<div id="interaction-between-estimator-and-number-of-groups" class="section level2">
-<h2>interaction between Estimator and number of groups</h2>
+<div id="interaction-between-estimation-method-and-number-of-groups" class="section level2">
+<h2>Interaction between Estimation method and number of groups</h2>
 <pre class="r"><code>p &lt;- ggplot(mydata, aes(x=ss_l2, y=RMSEA))+
     geom_boxplot()+
     facet_grid(.~Estimator)
 p</code></pre>
 <pre><code>Warning: Removed 111 rows containing non-finite values (stat_boxplot).</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/unnamed-chunk-3-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/unnamed-chunk-3-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>with(mydata, {
   interaction.plot(ss_l2, Estimator, RMSEA,
                    fun = function(x) mean(x, na.rm = TRUE),
                    main = &quot;RMSEA Interaction Plot&quot;)
 })</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/unnamed-chunk-3-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-2">
+Past versions of unnamed-chunk-3-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/unnamed-chunk-3-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="interaction-between-estimator-and-latent-icc-for-srmrw" class="section level2">
 <h2>Interaction between Estimator and Latent ICC for SRMRW</h2>
@@ -1801,12 +5821,144 @@ p</code></pre>
 p</code></pre>
 <pre><code>Warning: Removed 111 rows containing non-finite values (stat_boxplot).</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/unnamed-chunk-4-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/unnamed-chunk-4-1.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>with(mydata, {
   interaction.plot(icc_lv, Estimator, SRMRW,
                    fun = function(x) mean(x, na.rm = TRUE),
                    main = &quot;SRMRW Interaction Plot&quot;, ylab=&quot;SRMRW&quot;)
 })</code></pre>
 <p><img src="figure/fit_boxplots.Rmd/unnamed-chunk-4-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-2">
+Past versions of unnamed-chunk-4-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/a1b0dc16773f0106aaa2436282ffcd2cfb3f914c/docs/figure/fit_boxplots.Rmd/unnamed-chunk-4-2.png" target="_blank">a1b0dc1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="publication-figures" class="section level2">
+<h2>Publication Figures</h2>
+<pre class="r"><code>p &lt;- ggplot(mydata, aes(x=Model, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    facet_grid(.~Estimator) +
+    geom_abline(intercept = .95, slope=0,
+                linetype=&#39;dashed&#39;, color = &#39;red&#39;)
+p</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_boxplot).</code></pre>
+<p><img src="figure/fit_boxplots.Rmd/pub-fig-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>if(save.fig == T) ggsave(&quot;pub_fig_cfi.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
+
+p &lt;- ggplot(mydata, aes(x=Model, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    facet_grid(.~Estimator) +
+    geom_abline(intercept = .06, slope=0,
+                linetype=&#39;dashed&#39;, color = &#39;red&#39;)
+p</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_boxplot).</code></pre>
+<p><img src="figure/fit_boxplots.Rmd/pub-fig-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>if(save.fig == T) ggsave(&quot;pub_fig_rmsea.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
+
+
+
+p &lt;- ggplot(mydata, aes(x=Model, y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    facet_grid(.~Estimator) +
+    geom_abline(intercept = .08, slope=0,
+                linetype=&#39;dashed&#39;, color = &#39;red&#39;)
+p</code></pre>
+<pre><code>Warning: Removed 111 rows containing non-finite values (stat_boxplot).</code></pre>
+<p><img src="figure/fit_boxplots.Rmd/pub-fig-3.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>if(save.fig == T) ggsave(&quot;pub_fig_srmrw.pdf&quot;, plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
+<div id="srmrb-figures" class="section level3">
+<h3>SRMRB Figures</h3>
+<pre class="r"><code>p &lt;- ggplot(mydata, aes(x=Model, y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype=&#39;dashed&#39;, color = &#39;red&#39;)+
+    facet_grid(.~Estimator) +
+    lims(y=c(0,1))
+p</code></pre>
+<pre><code>Warning: Removed 130 rows containing non-finite values (stat_boxplot).</code></pre>
+<p><img src="figure/fit_boxplots.Rmd/srmrb-pub-fig-1.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>if(save.fig == T) ggsave(&quot;pub_fig_srmrb_a.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)
+
+
+p &lt;- ggplot(mydata, aes(x=Model,  y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype=&#39;dashed&#39;, color = &#39;red&#39;) +
+    facet_grid(.~ss_l2)+
+    lims(y=c(0,1))
+p</code></pre>
+<pre><code>Warning: Removed 130 rows containing non-finite values (stat_boxplot).</code></pre>
+<p><img src="figure/fit_boxplots.Rmd/srmrb-pub-fig-2.png" width="225%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>if(save.fig == T) ggsave(&quot;pub_fig_srmrb_b.pdf&quot;,plot = p, width=6, height=4, units=&#39;in&#39;)</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1856,6 +6008,7 @@ loaded via a namespace (and not attached):
 [49] rmarkdown_1.11    httr_1.4.0        rstudioapi_0.9.0 
 [52] R6_2.3.0          nlme_3.1-137      git2r_0.24.0     
 [55] compiler_3.5.2   </code></pre>
+</div>
 </div>
 </div>
 </div>

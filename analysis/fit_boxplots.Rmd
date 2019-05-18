@@ -1144,7 +1144,7 @@ if(save.fig == T) ggsave("srmrb_marginal_icc_lv_facet_estimator_model.pdf",plot 
 ```
 
 
-## Fit distribution by Model and Estimator only
+## Fit distribution by Model and Estimation method only
 
 
 ```{r box-est-model-thing,  warning=FALSE, message=FALSE, error=FALSE}
@@ -1199,7 +1199,7 @@ if(save.fig == T) ggsave("srmrb_marginal_model_estimator.pdf",plot = p, width=6,
 ```
 
 
-## interaction between Estimator and number of groups
+## Interaction between Estimation method and number of groups
 
 ```{r}
 
@@ -1229,4 +1229,65 @@ with(mydata, {
                    fun = function(x) mean(x, na.rm = TRUE),
                    main = "SRMRW Interaction Plot", ylab="SRMRW")
 })
+```
+
+
+
+## Publication Figures
+
+```{r pub-fig}
+
+p <- ggplot(mydata, aes(x=Model, y=CFI))+
+    geom_boxplot(outlier.alpha = .1)+
+    facet_grid(.~Estimator) +
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("pub_fig_cfi.pdf",plot = p, width=6, height=4, units='in')
+
+p <- ggplot(mydata, aes(x=Model, y=RMSEA))+
+    geom_boxplot(outlier.alpha = .1)+
+    facet_grid(.~Estimator) +
+    geom_abline(intercept = .06, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("pub_fig_rmsea.pdf",plot = p, width=6, height=4, units='in')
+
+
+
+p <- ggplot(mydata, aes(x=Model, y=SRMRW))+
+    geom_boxplot(outlier.alpha = .1)+
+    facet_grid(.~Estimator) +
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red')
+p
+if(save.fig == T) ggsave("pub_fig_srmrw.pdf", plot = p, width=6, height=4, units='in')
+
+
+```
+
+
+### SRMRB Figures
+
+```{r srmrb-pub-fig}
+
+p <- ggplot(mydata, aes(x=Model, y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red')+
+    facet_grid(.~Estimator) +
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("pub_fig_srmrb_a.pdf",plot = p, width=6, height=4, units='in')
+
+
+p <- ggplot(mydata, aes(x=Model,  y=SRMRB))+
+    geom_boxplot(outlier.alpha = .1)+
+    geom_abline(intercept = .08, slope=0,
+                linetype='dashed', color = 'red') +
+    facet_grid(.~ss_l2)+
+    lims(y=c(0,1))
+p
+if(save.fig == T) ggsave("pub_fig_srmrb_b.pdf",plot = p, width=6, height=4, units='in')
+
 ```

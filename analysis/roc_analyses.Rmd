@@ -31,7 +31,7 @@ library(kableExtra)
 library(xtable)
 # For plotting
 library(ggplot2)
-theme_set(theme_bw())
+theme_set(theme_bw() + theme(legend.position = 'bottom'))
 # Data manipulating
 library(dplyr)
 # ROC Analysis
@@ -166,7 +166,7 @@ fit_roc <- fit_roc_smooth <- list()
 roc_summary <- as.data.frame(matrix(0,ncol=13, nrow=5*3*4*4*5))
 colnames(roc_summary) <- c('Classification','Index', 'Estimator', 'Level-2 SS', 
                            'Level-1 SS', 'AUC',
-                           'partial-AUC','Smoothed-AUC', 'Optimal-Threshold',
+                           'partial-AUC','Smoothed-AUC', 'Threshold',
                            'Specificity','Sensitivity', 'Num-C', 'Num-Mis')
 roc_summary_gen <- as.data.frame(matrix(0,ncol=8, nrow=5)*3)
 colnames(roc_summary_gen) <- c('Classification','Index', 'AUC',
@@ -370,7 +370,7 @@ print(xtable(roc_summary_gen[1:5,c(2:3,6:8)], digits = 3), booktabs=T,include.ro
 ### More fine grained information within/across conditions
 
 ```{r roc-l1}
-
+i <- 401
 j <- 2 ## Which class?
 for(index in INDEX){
   for(est in EST){
@@ -416,7 +416,9 @@ for(index in INDEX){
     fit_roc[[key]] <-  roc(model, data=mydata,
                            plot =TRUE, ci=TRUE, print.auc=TRUE)
     ## Create a plot of "smoothed" curve for plotting
-    fit_roc_smooth[[key]] <-  smooth(roc(model, data=mydata))
+    fit_roc_smooth[[key]] <-  tryCatch(smooth(roc(model, data=mydata)),
+                                       error = function(e) NA)
+                                      
     ## Compute partial AUC for specificity .8-1
     p.auc <- auc(fit_roc[[key]], partial.auc = c(1,.8),
                  partial.auc.focus = 'sp', partial.auc.correct = T)
@@ -428,7 +430,11 @@ for(index in INDEX){
     roc_summary[i, 5] <- s1 ## level-1 sample size
     roc_summary[i, 6] <- fit_roc[[key]]$auc ## total AUC
     roc_summary[i, 7] <- p.auc ## corrected partial AUC (.5 is no discrimination)
-    roc_summary[i, 8] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
+    if(is.na(fit_roc_smooth[[key]]) == T){
+      roc_summary[i, 8] <- NA
+    } else {
+      roc_summary[i, 8] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
+    }
     roc_summary[i, 9:11] <- coords(fit_roc[[key]], "best", 
                                    ret=c("threshold", "specificity", 'sensitivity'))
     
@@ -590,55 +596,112 @@ kable(roc_summary[801:1200, ], format = 'html', digits=3) %>%
 
 ## Summarizing the Results
 
-```{r roc-summary}
-## SMALL summary table for the conditions of "all" estiamtors" and completely correct spec.
+So, I need to parse down 1200 rows of information into somethingthat can fit into a single page table.
+The above (and very large tables) are condensed to only include the AUC and optimal threshold.
+The remaining information is left here for reference.
 
-roc_sum_C_all <- filter(roc_summary, Estimator == "ALL", Classification == "C")
-kable(roc_sum_C_all, format = 'html', row.names = F) %>%
-  kable_styling(full_width = T)
+### Detecting Any Misspecification
 
-print(xtable(roc_sum_C_all[,c(2,4:5,7:9)], digits = 3), booktabs=T,include.rownames = F)
+```{r roc-sum}
 
+c <- filter(roc_summary, Classification == "C", `Level-2 SS` != 'ALL', `Level-1 SS` == 'ALL')
 
-## FULL Summary table
+# Next make the columns the estimator factor
+c1 <- cbind(c[ c$Estimator == 'MLR', c(2,4,6,9)],
+            c[ c$Estimator == 'ULSMV', c(6,9)],
+            c[ c$Estimator == 'WLSMV', c(6,9)])
 
-kable(roc_summary, format = 'html') %>%
-  kable_styling(full_width = T)
+kable(c1, format = 'html',digits=3, row.names = F) %>%
+  kable_styling(full_width = T) %>%
+  add_header_above(c(' '=2, 'MLR'=2, 'USLMV'=2, 'WLSMV'=2))
 
-print(xtable(roc_summary[,1:9], digits = 3), booktabs=T,include.rownames = F)
+print(xtable(c1, digits = 3), booktabs=T,include.rownames = F)
+
 
 ```
 
-## Combined Figures
+### Detecting Misspecification at level-1
 
-### First extract the data
+
+```{r roc-sum-l1}
+
+c <- filter(roc_summary, Classification == "CvM1", `Level-2 SS` != 'ALL', `Level-1 SS` == 'ALL')
+
+# Next make the columns the estimator factor
+c1 <- cbind(c[ c$Estimator == 'MLR', c(2,4,6,9)],
+            c[ c$Estimator == 'ULSMV', c(6,9)],
+            c[ c$Estimator == 'WLSMV', c(6,9)])
+
+kable(c1, format = 'html',digits=3, row.names = F) %>%
+  kable_styling(full_width = T) %>%
+  add_header_above(c(' '=2, 'MLR'=2, 'USLMV'=2, 'WLSMV'=2))
+
+print(xtable(c1, digits = 3), booktabs=T,include.rownames = F)
+
+```
+
+### Detecting Misspecification at level-2
+
+
+```{r roc-sum-l2}
+
+c <- filter(roc_summary, Classification == "CvM2", `Level-2 SS` != 'ALL', `Level-1 SS` == 'ALL')
+
+# Next make the columns the estimator factor
+c1 <- cbind(c[ c$Estimator == 'MLR', c(2,4,6,9)],
+            c[ c$Estimator == 'ULSMV', c(6,9)],
+            c[ c$Estimator == 'WLSMV', c(6,9)])
+
+kable(c1, format = 'html',digits=3, row.names = F) %>%
+  kable_styling(full_width = T) %>%
+  add_header_above(c(' '=2, 'MLR'=2, 'USLMV'=2, 'WLSMV'=2))
+
+print(xtable(c1, digits = 3), booktabs=T,include.rownames = F)
+
+```
+
+
+# ROC Curves
+
+## First extract the data
+
 ```{r roc-data-extract}
-roc_smooth_data <- as.data.frame(matrix(0,ncol=6, nrow=514*60))
-colnames(roc_smooth_data) <- c('Index', 'Classification', 'Estimator', 'AUC', 'Sensitivity', 'Specificity')
-CLASS <- c('C', 'C_Level_1','C_Level_2')
+roc_smooth_data <- as.data.frame(matrix(0,ncol=7, nrow=514*(3*4*5*5)))
+colnames(roc_smooth_data) <- c('Index', 'Classification', 'Estimator','Level-2 SS', 'AUC', 'Sensitivity', 'Specificity')
+
 i <- 1
 j <- 514
 for(index in INDEX){
   for(est in EST){
     for(class in CLASS){
-      key <- paste0(index,'.',class,'.',est)
+    for(s2 in SS_L2){
+    ## Set up iteration key
+    key <- paste0(index,'.',class,'.',est,'.', s2,'.ALL')
       ## update extracted data
       roc_smooth_data[i:j, 1] <- index
       roc_smooth_data[i:j, 2] <- class
       roc_smooth_data[i:j, 3] <- est
+      roc_smooth_data[i:j, 4] <- s2
       ## extract smooth fit object
       fit <- fit_roc_smooth[[key]]
-      ## update sen,spec, and auc
-      roc_smooth_data[i:j, 4] <- fit$auc
-      roc_smooth_data[i:j, 5] <- fit$sensitivities
-      roc_smooth_data[i:j, 6] <- fit$specificities
+      if(is.null(fit) == T){
+        ## update sen,spec, and auc
+        roc_smooth_data[i:j, 5] <- NA
+        roc_smooth_data[i:j, 6] <- NA
+        roc_smooth_data[i:j, 7] <- NA
+      } else {
+        ## update sen,spec, and auc
+        roc_smooth_data[i:j, 5] <- fit$auc
+        roc_smooth_data[i:j, 6] <- fit$sensitivities
+        roc_smooth_data[i:j, 7] <- fit$specificities
+      }
+      
       ## update iterators
       i <- i + 514
       j <- j + 514
     }
   }
-}
-
+}}
 
 ## Forcing factor orders
 roc_smooth_data$Index <- factor(
@@ -646,24 +709,24 @@ roc_smooth_data$Index <- factor(
   levels=c('CFI', 'TLI', 'RMSEA', 'SRMRW', 'SRMRB'))
 roc_smooth_data$Classification <- factor(
   roc_smooth_data$Classification,
-  levels=c('C','C_Level_1','C_Level_2'),
-  labels=c('Correct', 'Correct Level-1', 'Correct Level-2'),
+  levels=c('C','CvM1','CvM2'),
+  labels=c('Any Mis.', 'Level-1 Mis.', 'Level-2 Mis.'),
   ordered = T
 )
-# roc_smooth_data$Classification <- factor(
-#   roc_smooth_data$Classification,
-#   levels=c('C','C_L1_n','C_L2_n'),
-#   labels=c('Correct', 'Correct Level-1', 'Correct Level-2'),
-#   ordered = T
-# )
+roc_smooth_data$Estimator <- as.factor(roc_smooth_data$Estimator)
+roc_smooth_data$`Level-2 SS` <- factor(roc_smooth_data$`Level-2 SS`,
+                                       levels=c('ALL','30','50', '100', '200'),
+                                       ordered = T)
 ```
 
 
-### Plot figures
+## Plot by Misspecification and Estimation Method
 
 ```{r figures}
 
-p <- ggplot(roc_smooth_data, aes(x = Specificity, y=Sensitivity, group = Index)) +
+subdata <- filter(roc_smooth_data, `Level-2 SS`=='ALL', Estimator!='ALL')
+
+p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   geom_line(aes(linetype=Index, color=Index))+
   facet_grid(Estimator~Classification) +
   scale_x_reverse() +
@@ -672,17 +735,36 @@ p <- ggplot(roc_smooth_data, aes(x = Specificity, y=Sensitivity, group = Index))
          linetype=guide_legend(title="Fit Statistics"))
 
 p
-if(save.fig == T) ggsave('roc_full_plot.pdf', plot = p, height = 6,width = 9,units = 'in')
+if(save.fig == T) ggsave('roc_plot_mis_est.pdf', plot = p, height = 6,width = 9,units = 'in')
 
 ```
 
-### Subfigures
+## Plot by Misspecification and Level-2 Sample Size
 
-#### Figures by Classification Outcome
+```{r figures-1}
+
+subdata <- filter(roc_smooth_data, `Level-2 SS`!='ALL', Estimator=='ALL')
+
+p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
+  geom_line(aes(linetype=Index, color=Index))+
+  facet_grid(`Level-2 SS` ~Classification) +
+  scale_x_reverse() +
+  scale_color_brewer(palette="Set1") +
+  guides(color=guide_legend(title="Fit Statistics"),
+         linetype=guide_legend(title="Fit Statistics"))
+
+p
+if(save.fig == T) ggsave('roc_plot_mis_n2.pdf', plot = p, height = 6,width = 9, units = 'in')
+
+```
+
+## Figures of Subconditions and Smaller Plots for Exporting
+
+### Figures by Classification Outcome
 
 ```{r subfigs-class}
 
-subdata <- filter(roc_smooth_data, Estimator == "ALL")
+subdata <- filter(roc_smooth_data, `Level-2 SS`=='ALL',  Estimator == "ALL")
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   geom_line(aes(linetype=Index, color=Index))+
   facet_grid(.~Classification) +
@@ -691,11 +773,10 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   guides(color=guide_legend(title="Fit Statistics"),
          linetype=guide_legend(title="Fit Statistics"))
 p
-if(save.fig == T) ggsave('roc_class_all.pdf', plot = p, height = 4,width = 9,units = 'in')
+if(save.fig == T) ggsave('roc_class_all.pdf', plot = p, height = 4, width = 9, units = 'in')
 
 
-
-subdata <- filter(roc_smooth_data, Estimator == "MLR")
+subdata <- filter(roc_smooth_data, `Level-2 SS`=='ALL', Estimator == "MLR")
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   geom_line(aes(linetype=Index, color=Index))+
   facet_grid(.~Classification) +
@@ -708,7 +789,7 @@ if(save.fig == T) ggsave('roc_class_mlr.pdf', plot = p, height = 4,width = 9,uni
 
 
 
-subdata <- filter(roc_smooth_data, Estimator == "ULSMV")
+subdata <- filter(roc_smooth_data, `Level-2 SS`=='ALL', Estimator == "ULSMV")
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   geom_line(aes(linetype=Index, color=Index))+
   facet_grid(.~Classification) +
@@ -720,7 +801,7 @@ p
 if(save.fig == T) ggsave('roc_class_ulsmv.pdf', plot = p, height = 4,width = 9,units = 'in')
 
 
-subdata <- filter(roc_smooth_data, Estimator == "WLSMV")
+subdata <- filter(roc_smooth_data,`Level-2 SS`=='ALL',  Estimator == "WLSMV")
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   geom_line(aes(linetype=Index, color=Index))+
   facet_grid(.~Classification) +
@@ -733,11 +814,12 @@ if(save.fig == T) ggsave('roc_class_wlsmv.pdf', plot = p, height = 4,width = 9,u
 ```
 
 
-#### Figures by Estimator
+### Figures by Estimation Method
 
 ```{r subfigs-est}
 
-subdata <- filter(roc_smooth_data, Classification == "Correct")
+subdata <- filter(roc_smooth_data, `Level-2 SS`=='ALL', Estimator!='ALL',
+                  Classification == "Any Mis.")
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   geom_line(aes(linetype=Index, color=Index))+
   facet_grid(.~Estimator) +
@@ -750,7 +832,8 @@ if(save.fig == T) ggsave('roc_est_c.pdf', plot = p, height = 4,width = 9,units =
 
 
 
-subdata <- filter(roc_smooth_data, Classification == "Correct Level-1")
+subdata <- filter(roc_smooth_data, `Level-2 SS`=='ALL', Estimator!='ALL',
+                  Classification == "Level-1 Mis.")
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   geom_line(aes(linetype=Index, color=Index))+
   facet_grid(.~Estimator) +
@@ -763,7 +846,8 @@ if(save.fig == T) ggsave('roc_est_cl1.pdf', plot = p, height = 4,width = 9,units
 
 
 
-subdata <- filter(roc_smooth_data, Classification == "Correct Level-2")
+subdata <- filter(roc_smooth_data,`Level-2 SS`=='ALL', Estimator!='ALL',
+                  Classification == "Level-2 Mis.")
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   geom_line(aes(linetype=Index, color=Index))+
   facet_grid(.~Estimator) +
@@ -774,5 +858,50 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
 p
 if(save.fig == T) ggsave('roc_est_cl2.pdf', plot = p, height = 4,width = 9,units = 'in')
 
+```
+
+
+### Figures by Level-2 Sample Size
+
+```{r subfigs-est-l2}
+
+subdata <- filter(roc_smooth_data, Estimator=='ALL', Classification == "Any Mis.",
+                  `Level-2 SS`!='ALL')
+p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
+  geom_line(aes(linetype=Index, color=Index))+
+  facet_grid(.~`Level-2 SS`) +
+  scale_x_reverse() +
+  scale_color_brewer(palette="Set1") +
+  guides(color=guide_legend(title="Fit Statistics"),
+         linetype=guide_legend(title="Fit Statistics"))
+p
+if(save.fig == T) ggsave('roc_n2_c.pdf', plot = p, height = 4,width = 9,units = 'in')
+
+
+
+subdata <- filter(roc_smooth_data, `Level-2 SS`!='ALL', Estimator=='ALL',
+                  Classification == "Level-1 Mis.")
+p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
+  geom_line(aes(linetype=Index, color=Index))+
+  facet_grid(.~`Level-2 SS`) +
+  scale_x_reverse() +
+  scale_color_brewer(palette="Set1") +
+  guides(color=guide_legend(title="Fit Statistics"),
+         linetype=guide_legend(title="Fit Statistics"))
+p
+if(save.fig == T) ggsave('roc_n2_cl1.pdf', plot = p, height = 4,width = 9,units = 'in')
+
+
+
+subdata <- filter(roc_smooth_data,`Level-2 SS`!='ALL', Estimator=='ALL',  Classification == "Level-2 Mis.")
+p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
+  geom_line(aes(linetype=Index, color=Index))+
+  facet_grid(.~`Level-2 SS`) +
+  scale_x_reverse() +
+  scale_color_brewer(palette="Set1") +
+  guides(color=guide_legend(title="Fit Statistics"),
+         linetype=guide_legend(title="Fit Statistics"))
+p
+if(save.fig == T) ggsave('roc_n2_cl2.pdf', plot = p, height = 4,width = 9,units = 'in')
 
 ```

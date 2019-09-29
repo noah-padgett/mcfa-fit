@@ -1,0 +1,30 @@
+---
+title: "Fit Index: SRMR"
+date: "2019-05-08"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+
+## SRMR
+
+The standardized root mean square residual (SRMR) is an aggregate measure of the deviation of the observed correlation matrix to the model implied correlation matrix Joreskog1981. 
+Ideally, the average difference between the observed and expected correlations is minimal, and smaller values represent better fitting models.
+In MCFA, two difference SRMR are reported based on each level's covariance matrix.
+The level-1 SRMR is known as SRMR-Within (SRMRW).
+The level-2 SRMR is known as SRMR-Between (SRMRB).
+The computation of each of these measures is roughly equivalent conditional on which covariance matrix is under consideration.
+Generally, SRMR is computed as the standardized difference between the observed correlations and the model implied correlations about variables as shown below.
+\[
+SRMR = \sqrt{\frac{2 \sum_{j=1}^{p} \sum_{k=j}^{i} {\left( \frac{s_{jk} - \hat{\sigma}_{jk} }{ \sqrt{ s_{jj}s_{kk}}  } \right)}^2 }{p(p+1)}}
+\]
+where $p$ is the total number of variables in the model, $s_{jk}$ and $\sigma_{jk}$ are the sample and model implied, respectively, covariance between the $j^{th}$ and $k^{th}$ variables.
+For the SRMR, generally acceptable values less than .08 are used.
+However, Hu1999 suggested values less .06 alone or .08 in combination of other within recommended ranges are indicative of good fit.
+
+In M*plus*, SRMR is estimated slightly differently than shown in Equationeq:srmr.
+The computation extends the definition above by accounting for the meanstructure, multilevel structure, and categorical nature if applicable.
+The technical details of the computation of SRMRW and SRMRB in M*plus* v8.2 is out of scope for this article, and the interested reader is referred to MuthenSRMR for more details.
+

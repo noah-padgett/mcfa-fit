@@ -1,0 +1,22 @@
+---
+title: "Fit Statistics Investigated"
+date: "2019-05-08"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+## RMSEA
+
+The root mean square error of approximation (RMSEA) is a measure of lack of fit Steiger1980. 
+The RMSEA describes how well the hypothesized model is represented in the observed data.
+The comparison is accomplished by a measure of the deviation of what is observed
+\[
+RMSEA = \sqrt{\frac{\mathrm{max} \left(  \chi^2 - df,\ 0 \right)}{ df (N-1) }}
+\]
+The RMSEA has a known population distribution.
+Because the distribution is known based on a noncentral F-distribution, a confidence interval can be constructed.
+Usually, a 90\% confidence is reported for the RMSEA.
+The recommended minimum value for RMSEA is .06 Hu1999.
+

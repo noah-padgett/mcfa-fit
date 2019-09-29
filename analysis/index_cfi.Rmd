@@ -1,0 +1,26 @@
+---
+title: "Fit Statistics Investigated"
+date: "2019-05-08"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+The measures of fit are indicative of how much better of fit the hypothesized model provides over a null model.
+A null model refers to a measurement model where all items are assumed independent, which is the worst-case scenario and generally is the worst fitting model.
+The first measure of fit is the $\chi^2$ statistic and the associated $\chi^2$ test.
+Each model estimated has an associated model $\chi^2$, which is a statistical distribution that has an expected value equal to model degrees of freedom.
+The $\chi^2$ test is known to be sensitive to sample size, meaning that as sample size increases then test is likely to reject the null hypothesis that these data fit the hypothesized model even when the model is correctly specified Bollen1989.
+Because the $\chi^2$ statistic has limited applicability, numerous other statistics based on the $\chi^2$ are frequently used. 
+These statistics are transformations of the $\chi^2$ statistic that have seen broad applicability.
+
+## CFI
+
+The comparative fit index (CFI) is a commonly used fit statistic that is based on the model $\chi^2$ Bentler1990. 
+The CFI is a measure of improvement in fit over the null model with a fixed range of zero to one, where higher scores mean better fit.
+\[
+CFI =  1 - \frac{ \mathrm{max}\left( \chi^2_H - {df}_H,\ 0 \right) }{ \mathrm{max}\left( \chi^2_H - {df}_H ,\ \chi^2_N - {df}_N,\ 0 \right) } 
+\]
+The recommended minimum value for CFI is .95 \citep{Hu1999}.
+

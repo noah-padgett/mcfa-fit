@@ -1,0 +1,18 @@
+---
+title: "Fit Statistics Investigated"
+date: "2019-05-08"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+## TLI
+
+The Tucker-Lewis index (TLI) is another measure of fit over the null model that is non-normed Tucker1973, Bentler1980. 
+The TLI is non-normed because the range of possible values is not restricted, where values greater than one are possible.
+But, just like CFI, higher values of TLI are indicative of better fit.
+\[
+TLI = \frac{ \frac{\chi^2_N }{{df}_N} - \frac{\chi^2_H}{{df}_H}}{\frac{\chi^2_ N}{{df}_N} - 1} 
+\]
+The recommended minimum value for TLI is .95 Hu1999.

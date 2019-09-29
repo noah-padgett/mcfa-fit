@@ -1,6 +1,6 @@
 ---
 title: "Convergence, Admissibility, and Fit Descriptive Statistics"
-date: "2019-05-07"
+date: "2019-09-27"
 output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console

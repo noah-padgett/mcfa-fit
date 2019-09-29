@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2019-05-07" />
+<meta name="date" content="2019-09-27" />
 
 <title>Convergence, Admissibility, and Fit Descriptive Statistics</title>
 
@@ -74,9 +74,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -194,8 +192,6 @@ $(document).ready(function () {
   menuAnchor.closest('li.dropdown').addClass('active');
 });
 </script>
-
-<div class="container-fluid main-container">
 
 <!-- tabsets -->
 
@@ -343,8 +339,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -353,6 +347,16 @@ div.tocify {
 
 
 </style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -407,14 +411,14 @@ div.section {
 
 
 <h1 class="title toc-ignore">Convergence, Admissibility, and Fit Descriptive Statistics</h1>
-<h4 class="date"><em>2019-05-07</em></h4>
+<h4 class="date">2019-09-27</h4>
 
 </div>
 
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -423,7 +427,7 @@ div.section {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -432,17 +436,17 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-05-18
+<strong>Last updated:</strong> 2019-09-28
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>mcfa-fit/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.3.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.4.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -451,12 +455,12 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
 </div>
 </div>
 </div>
@@ -511,29 +515,45 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree4a2f40d1fcb790f157656be30a1670345f67b177targetblank4a2f40da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/noah-padgett/mcfa-fit/tree/4a2f40d1fcb790f157656be30a1670345f67b177" target="_blank">4a2f40d</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree4a2f40d1fcb790f157656be30a1670345f67b177targetblank4a2f40da" class="panel-collapse collapse">
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree52c68f91ce7fcee480e3917a1e33d76d4faa0a47targetblank52c68f9a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/noah-padgett/mcfa-fit/tree/52c68f91ce7fcee480e3917a1e33d76d4faa0a47" target="_blank">52c68f9</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree52c68f91ce7fcee480e3917a1e33d76d4faa0a47targetblank52c68f9a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .RData
+    Ignored:    .RDataTmp
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
 
 Untracked files:
-    Untracked:  .RDataTmp
-    Untracked:  docs/figure/roc_analyses.Rmd/
+    Untracked:  analysis/est_mlr.Rmd
+    Untracked:  analysis/fit_index_stats.Rmd
+    Untracked:  analysis/index_cfi.Rmd
+    Untracked:  analysis/index_rmsea.Rmd
+    Untracked:  analysis/index_srmr.Rmd
+    Untracked:  analysis/index_tli.Rmd
 
 Unstaged changes:
-    Modified:   analysis/about.Rmd
-    Modified:   analysis/fit_boxplots.Rmd
     Modified:   analysis/index.Rmd
     Modified:   analysis/roc_analyses.Rmd
-    Deleted:    docs/.nojekyll
+    Modified:   analysis/summary_stats_tables.Rmd
 
 </code></pre>
 <p>
@@ -572,6 +592,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/noah-padgett/mcfa-fit/982c8f193f55feaf39a421df93b9f860a65ec367/docs/summary_stats_tables.html" target="_blank">982c8f1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-18
+</td>
+<td>
+roc analyses completed
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -651,7 +688,7 @@ html
 noah-padgett
 </td>
 <td>
-2019-05-07
+2019-05-08
 </td>
 <td>
 Build site.
@@ -668,7 +705,7 @@ Rmd
 noah-padgett
 </td>
 <td>
-2019-05-07
+2019-05-08
 </td>
 <td>
 summary tables recreated
@@ -691,20 +728,20 @@ summary tables recreated
 <p>The output is mostly just a lot of latex ready tables. Not all of these tables are included in the final publication, but we wanted to be as precise as possible with respect to the summary of the fit statistics.</p>
 <div id="packages-and-set-up" class="section level1">
 <h1>Packages and Set-Up</h1>
-<pre class="r"><code>## Chunk iptions
+<pre class="r"><code>##Chunk iptions
 knitr::opts_chunk$set(out.width = &quot;225%&quot;)
 
-# setwd(&#39;C:/Users/noahp/Dropbox/MCFA Thesis/Code Results&#39;)
+#setwd(&#39;C:/Users/noahp/Dropbox/MCFA Thesis/Code Results&#39;)
 
-## Packages General Packages
+## Packages
+## General Packages
 library(tidyverse)</code></pre>
-<pre><code>-- Attaching packages ---------------------------------------------- tidyverse 1.2.1 --</code></pre>
-<pre><code>v ggplot2 3.1.0       v purrr   0.2.5  
-v tibble  2.0.1       v dplyr   0.8.0.1
-v tidyr   0.8.2       v stringr 1.3.1  
-v readr   1.3.1       v forcats 0.3.0  </code></pre>
-<pre><code>Warning: package &#39;dplyr&#39; was built under R version 3.5.3</code></pre>
-<pre><code>-- Conflicts ------------------------------------------------- tidyverse_conflicts() --
+<pre><code>-- Attaching packages ------------------------------------------------------------ tidyverse 1.2.1 --</code></pre>
+<pre><code>v ggplot2 3.2.0     v purrr   0.3.2
+v tibble  2.1.1     v dplyr   0.8.1
+v tidyr   0.8.3     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.4.0</code></pre>
+<pre><code>-- Conflicts --------------------------------------------------------------- tidyverse_conflicts() --
 x dplyr::filter() masks stats::filter()
 x dplyr::lag()    masks stats::lag()</code></pre>
 <pre class="r"><code># Formatting and Tables
@@ -723,24 +760,19 @@ library(dplyr)</code></pre>
 </div>
 <div id="data-management" class="section level1">
 <h1>Data Management</h1>
-<pre class="r"><code>sim_results &lt;- as_tibble(read.table(&quot;data/compiled_fit_results.txt&quot;, header = T, 
-    sep = &quot;\t&quot;))
+<pre class="r"><code>sim_results &lt;- as_tibble(read.table(&#39;data/compiled_fit_results.txt&#39;, header=T,sep=&#39;\t&#39;))
 
 ## Next, turn condition into a factor for plotting
 sim_results$Condition &lt;- as.factor(sim_results$Condition)
 
-## Next, since TLI is non-normed, any value greater than 1 needs to be
-## rescaled to 1.
+## Next, since TLI is non-normed, any value greater than 1 needs to be rescaled to 1.
 sim_results$TLI &lt;- ifelse(sim_results$TLI &gt; 1, 1, sim_results$TLI)
 sim_results$TLI &lt;- ifelse(sim_results$TLI &lt; 0, 0, sim_results$TLI)
-## Next, summarize the results of the chi-square test of model fit. This is
-## done simply by comparing the p-value to alpha (0.05) and indicating
-## whether the model was flagged as fitting or not.  Note: if p &lt; 0.05 then
-## this variable is flagged as 0, and 1 otherwise
-sim_results$Chi2_pvalue_decision &lt;- ifelse(sim_results$chisqu_pvalue &lt; 0.05, 
-    0, 1)
-# 0 = rejected that these data fit this model 1 = failed to reject that
-# these data fit this model</code></pre>
+## Next, summarize the results of the chi-square test of model fit. This is done simply by comparing the p-value to alpha (0.05) and indicating whether the model was flagged as fitting or not.
+# Note: if  p &lt; 0.05 then this variable is flagged as 0, and 1 otherwise
+sim_results$Chi2_pvalue_decision &lt;- ifelse(sim_results$chisqu_pvalue &lt; 0.05, 0, 1)
+# 0 = rejected that these data fit this model
+# 1 = failed to reject that these data fit this model</code></pre>
 <div id="adding-labels-to-conditions" class="section level2">
 <h2>Adding Labels to Conditions</h2>
 <p>Currently, each condition is kind of like a hidden id that we don’t know what the actual factor is. So, first thing isto create meaningful labels for us to use. Remember, the 72 conditions for the this study were</p>
@@ -889,8 +921,8 @@ WLSMV
 </table>
 <pre class="r"><code>## Print out in tex
 print(xtable(c, digits = 3), booktabs = T, include.rownames = T)</code></pre>
-<pre><code>% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:26 2019
+<pre><code>% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:34 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrrrr}
@@ -1789,8 +1821,8 @@ WLSMV
 </table>
 <pre class="r"><code>## Print out in tex
 print(xtable(c1, digits = 3), booktabs = T, include.rownames = F)</code></pre>
-<pre><code>% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:26 2019
+<pre><code>% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:34 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllrrrr}
@@ -5544,8 +5576,8 @@ WLSMV
 </table>
 <pre class="r"><code>## Print out in tex
 print(xtable(c1, digits = 3), booktabs = T, include.rownames = F)</code></pre>
-<pre><code>% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:26 2019
+<pre><code>% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:34 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{llllrrrrrrrrrrrr}
@@ -5734,8 +5766,8 @@ WLSMV
 </table>
 <pre class="r"><code>## Print out in tex
 print(xtable(c1, digits = 3), booktabs = T, include.rownames = T)</code></pre>
-<pre><code>% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:27 2019
+<pre><code>% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:34 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrrrr}
@@ -6634,8 +6666,8 @@ WLSMV
 </table>
 <pre class="r"><code>## Print out in tex
 print(xtable(c1, digits = 3), booktabs = T, include.rownames = F)</code></pre>
-<pre><code>% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:27 2019
+<pre><code>% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:34 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllrrrr}
@@ -10389,8 +10421,8 @@ WLSMV
 </table>
 <pre class="r"><code>## Print out in tex
 print(xtable(c1, digits = 3), booktabs = T, include.rownames = F)</code></pre>
-<pre><code>% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:27 2019
+<pre><code>% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:34 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{llllrrrrrrrrrrrr}
@@ -11059,8 +11091,8 @@ for(i in 1:nrow(a)){
 a1[,1:2] &lt;- a[,1:2]## add factors back
 ## Print out in tex
 print(xtable(a1, digits = 3), booktabs = T, include.rownames = F)</code></pre>
-<pre><code>% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:28 2019
+<pre><code>% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:34 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{llllllll}
@@ -18375,8 +18407,8 @@ for(i in 1:nrow(a)){
 a1[,1:4] &lt;- a[,1:4]## add factors back
 ## Print out in tex
 print(xtable(a1, digits = 3), booktabs = T, include.rownames = F)</code></pre>
-<pre><code>% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:29 2019
+<pre><code>% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:35 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllllll}
@@ -18612,8 +18644,8 @@ Model:   C
 Estimator:   MLR
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:29 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:35 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -18643,8 +18675,8 @@ Model:   C
 Estimator:   MLR
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:29 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:35 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -18674,8 +18706,8 @@ Model:   C
 Estimator:   MLR
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:29 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:35 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -18705,8 +18737,8 @@ Model:   C
 Estimator:   MLR
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:29 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:35 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -18736,8 +18768,8 @@ Model:   C
 Estimator:   MLR
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:29 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:35 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -18767,8 +18799,8 @@ Model:   C
 Estimator:   MLR
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:29 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:35 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -18804,8 +18836,8 @@ Model:   C
 Estimator:   ULSMV
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:29 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:35 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -18835,8 +18867,8 @@ Model:   C
 Estimator:   ULSMV
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:29 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:35 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -18866,8 +18898,8 @@ Model:   C
 Estimator:   ULSMV
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:29 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:35 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -18897,8 +18929,8 @@ Model:   C
 Estimator:   ULSMV
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:29 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:35 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -18928,8 +18960,8 @@ Model:   C
 Estimator:   ULSMV
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:29 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:35 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -18959,8 +18991,8 @@ Model:   C
 Estimator:   ULSMV
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:29 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -18996,8 +19028,8 @@ Model:   C
 Estimator:   WLSMV
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19027,8 +19059,8 @@ Model:   C
 Estimator:   WLSMV
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19058,8 +19090,8 @@ Model:   C
 Estimator:   WLSMV
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19089,8 +19121,8 @@ Model:   C
 Estimator:   WLSMV
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19120,8 +19152,8 @@ Model:   C
 Estimator:   WLSMV
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19151,8 +19183,8 @@ Model:   C
 Estimator:   WLSMV
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19188,8 +19220,8 @@ Model:   M1
 Estimator:   MLR
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19219,8 +19251,8 @@ Model:   M1
 Estimator:   MLR
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19250,8 +19282,8 @@ Model:   M1
 Estimator:   MLR
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19281,8 +19313,8 @@ Model:   M1
 Estimator:   MLR
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19312,8 +19344,8 @@ Model:   M1
 Estimator:   MLR
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19343,8 +19375,8 @@ Model:   M1
 Estimator:   MLR
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19380,8 +19412,8 @@ Model:   M1
 Estimator:   ULSMV
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19411,8 +19443,8 @@ Model:   M1
 Estimator:   ULSMV
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19439,8 +19471,8 @@ Model:   M1
 Estimator:   ULSMV
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19470,8 +19502,8 @@ Model:   M1
 Estimator:   ULSMV
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19501,8 +19533,8 @@ Model:   M1
 Estimator:   ULSMV
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19532,8 +19564,8 @@ Model:   M1
 Estimator:   ULSMV
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19569,8 +19601,8 @@ Model:   M1
 Estimator:   WLSMV
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19600,8 +19632,8 @@ Model:   M1
 Estimator:   WLSMV
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19625,8 +19657,8 @@ Model:   M1
 Estimator:   WLSMV
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:30 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19656,8 +19688,8 @@ Model:   M1
 Estimator:   WLSMV
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19687,8 +19719,8 @@ Model:   M1
 Estimator:   WLSMV
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19718,8 +19750,8 @@ Model:   M1
 Estimator:   WLSMV
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19755,8 +19787,8 @@ Model:   M2
 Estimator:   MLR
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19786,8 +19818,8 @@ Model:   M2
 Estimator:   MLR
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19817,8 +19849,8 @@ Model:   M2
 Estimator:   MLR
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19848,8 +19880,8 @@ Model:   M2
 Estimator:   MLR
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19879,8 +19911,8 @@ Model:   M2
 Estimator:   MLR
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19910,8 +19942,8 @@ Model:   M2
 Estimator:   MLR
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19947,8 +19979,8 @@ Model:   M2
 Estimator:   ULSMV
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -19978,8 +20010,8 @@ Model:   M2
 Estimator:   ULSMV
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20009,8 +20041,8 @@ Model:   M2
 Estimator:   ULSMV
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:36 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20040,8 +20072,8 @@ Model:   M2
 Estimator:   ULSMV
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20071,8 +20103,8 @@ Model:   M2
 Estimator:   ULSMV
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20102,8 +20134,8 @@ Model:   M2
 Estimator:   ULSMV
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20139,8 +20171,8 @@ Model:   M2
 Estimator:   WLSMV
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20170,8 +20202,8 @@ Model:   M2
 Estimator:   WLSMV
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20201,8 +20233,8 @@ Model:   M2
 Estimator:   WLSMV
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20232,8 +20264,8 @@ Model:   M2
 Estimator:   WLSMV
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20263,8 +20295,8 @@ Model:   M2
 Estimator:   WLSMV
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20294,8 +20326,8 @@ Model:   M2
 Estimator:   WLSMV
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:31 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20331,8 +20363,8 @@ Model:   M12
 Estimator:   MLR
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20362,8 +20394,8 @@ Model:   M12
 Estimator:   MLR
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20393,8 +20425,8 @@ Model:   M12
 Estimator:   MLR
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20424,8 +20456,8 @@ Model:   M12
 Estimator:   MLR
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20455,8 +20487,8 @@ Model:   M12
 Estimator:   MLR
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20486,8 +20518,8 @@ Model:   M12
 Estimator:   MLR
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20523,8 +20555,8 @@ Model:   M12
 Estimator:   ULSMV
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20554,8 +20586,8 @@ Model:   M12
 Estimator:   ULSMV
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20584,8 +20616,8 @@ Model:   M12
 Estimator:   ULSMV
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20615,8 +20647,8 @@ Model:   M12
 Estimator:   ULSMV
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20646,8 +20678,8 @@ Model:   M12
 Estimator:   ULSMV
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20677,8 +20709,8 @@ Model:   M12
 Estimator:   ULSMV
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20714,8 +20746,8 @@ Model:   M12
 Estimator:   WLSMV
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20745,8 +20777,8 @@ Model:   M12
 Estimator:   WLSMV
 ICC Obs. Var.:   0.1
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20776,8 +20808,8 @@ Model:   M12
 Estimator:   WLSMV
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20807,8 +20839,8 @@ Model:   M12
 Estimator:   WLSMV
 ICC Obs. Var.:   0.3
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20838,8 +20870,8 @@ Model:   M12
 Estimator:   WLSMV
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.1 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20869,8 +20901,8 @@ Model:   M12
 Estimator:   WLSMV
 ICC Obs. Var.:   0.5
 ICC Lat. Var.:   0.5 
-% latex table generated in R 3.5.2 by xtable 1.8-3 package
-% Sat May 18 04:01:32 2019
+% latex table generated in R 3.6.0 by xtable 1.8-4 package
+% Sat Sep 28 23:07:37 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lllllllll}
@@ -20901,9 +20933,9 @@ N2 &amp; N1 &amp; Num\_Rep &amp; chi2 &amp; CFI &amp; TLI &amp; RMSEA &amp; SRMR
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 3.5.2 (2018-12-20)
+<pre><code>R version 3.6.0 (2019-04-26)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
-Running under: Windows 10 x64 (build 17134)
+Running under: Windows 10 x64 (build 18362)
 
 Matrix products: default
 
@@ -20918,29 +20950,29 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] xtable_1.8-3     kableExtra_1.0.1 forcats_0.3.0    stringr_1.3.1   
- [5] dplyr_0.8.0.1    purrr_0.2.5      readr_1.3.1      tidyr_0.8.2     
- [9] tibble_2.0.1     ggplot2_3.1.0    tidyverse_1.2.1 
+ [1] xtable_1.8-4     kableExtra_1.1.0 forcats_0.4.0    stringr_1.4.0   
+ [5] dplyr_0.8.1      purrr_0.3.2      readr_1.3.1      tidyr_0.8.3     
+ [9] tibble_2.1.1     ggplot2_3.2.0    tidyverse_1.2.1 
 
 loaded via a namespace (and not attached):
- [1] tidyselect_0.2.5  xfun_0.4          haven_2.0.0      
- [4] lattice_0.20-38   colorspace_1.4-0  generics_0.0.2   
+ [1] tidyselect_0.2.5  xfun_0.7          haven_2.1.0      
+ [4] lattice_0.20-38   colorspace_1.4-1  generics_0.0.2   
  [7] htmltools_0.3.6   viridisLite_0.3.0 yaml_2.2.0       
-[10] rlang_0.3.1       pillar_1.3.1      glue_1.3.0       
-[13] withr_2.1.2       modelr_0.1.2      readxl_1.2.0     
-[16] plyr_1.8.4        munsell_0.5.0     gtable_0.2.0     
-[19] workflowr_1.3.0   cellranger_1.1.0  rvest_0.3.2      
-[22] evaluate_0.12     knitr_1.21        highr_0.7        
-[25] broom_0.5.1       Rcpp_1.0.0        scales_1.0.0     
-[28] backports_1.1.3   formatR_1.5       webshot_0.5.1    
-[31] jsonlite_1.6      fs_1.2.6          hms_0.4.2        
-[34] digest_0.6.18     stringi_1.2.4     grid_3.5.2       
-[37] rprojroot_1.3-2   cli_1.0.1         tools_3.5.2      
-[40] magrittr_1.5      lazyeval_0.2.1    crayon_1.3.4     
-[43] whisker_0.3-2     pkgconfig_2.0.2   xml2_1.2.0       
-[46] lubridate_1.7.4   assertthat_0.2.0  rmarkdown_1.11   
-[49] httr_1.4.0        rstudioapi_0.9.0  R6_2.3.0         
-[52] nlme_3.1-137      git2r_0.24.0      compiler_3.5.2   </code></pre>
+[10] rlang_0.3.4       pillar_1.4.1      glue_1.3.1       
+[13] withr_2.1.2       modelr_0.1.4      readxl_1.3.1     
+[16] munsell_0.5.0     gtable_0.3.0      workflowr_1.4.0  
+[19] cellranger_1.1.0  rvest_0.3.4       evaluate_0.14    
+[22] knitr_1.23        highr_0.8         broom_0.5.2      
+[25] Rcpp_1.0.1        scales_1.0.0      backports_1.1.4  
+[28] webshot_0.5.1     jsonlite_1.6      fs_1.3.1         
+[31] hms_0.4.2         digest_0.6.19     stringi_1.4.3    
+[34] grid_3.6.0        rprojroot_1.3-2   cli_1.1.0        
+[37] tools_3.6.0       magrittr_1.5      lazyeval_0.2.2   
+[40] crayon_1.3.4      whisker_0.3-2     pkgconfig_2.0.2  
+[43] xml2_1.2.0        lubridate_1.7.4   assertthat_0.2.1 
+[46] rmarkdown_1.13    httr_1.4.0        rstudioapi_0.10  
+[49] R6_2.4.0          nlme_3.1-139      git2r_0.26.1     
+[52] compiler_3.6.0   </code></pre>
 </div>
 </div>
 </div>

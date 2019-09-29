@@ -18,9 +18,7 @@ Purpose of this file:
 ```{r set-up, tidy=T}
 ##Chunk iptions
 knitr::opts_chunk$set(out.width="225%")
-
 #setwd('C:/Users/noahp/Dropbox/MCFA Thesis/Code Results')
-
 ## Packages
 ## General Packages
 library(tidyverse)
@@ -36,25 +34,19 @@ theme_set(theme_bw() + theme(legend.position = 'bottom'))
 library(dplyr)
 # ROC Analysis
 library(pROC)
-
 ## One global parameter for printing figures
 save.fig <- F
-
 ## Load up the functions needed for ANOVA and Assumption checking
 source('code/r_functions.R')
-
 ```
 
 
 # Data Management
 
 ```{r data, tidy=T}
-
 sim_results <- as_tibble(read.table('data/compiled_fit_results.txt', header=T,sep='\t'))
-
 ## Next, turn condition into a factor for plotting
 sim_results$Condition <- as.factor(sim_results$Condition)
-
 ## Next, since TLI is non-normed, any value greater than 1 needs to be rescaled to 1.
 sim_results$TLI <- ifelse(sim_results$TLI > 1, 1, sim_results$TLI)
 sim_results$TLI <- ifelse(sim_results$TLI < 0, 0, sim_results$TLI)
@@ -63,7 +55,6 @@ sim_results$TLI <- ifelse(sim_results$TLI < 0, 0, sim_results$TLI)
 sim_results$Chi2_pvalue_decision <- ifelse(sim_results$chisqu_pvalue > 0.05, 1, 0)
 # 0 = rejected that these data fit this model
 # 1 = failed to reject that these data fit this model
-
 ```
 
 ## Adding Labels to Conditions
@@ -99,14 +90,12 @@ icc_lv <- matrix(icc_lv, ncol=1)
 ## Add the labels to the results data frame
 sim_results <- sim_results[order(sim_results$Condition),]
 sim_results <- cbind(sim_results, ss_l1, ss_l2, icc_ov, icc_lv)
-
 ## Force the conditions to be factors
 sim_results$ss_l1 <- as.factor(sim_results$ss_l1)
 sim_results$ss_l2 <- as.factor(sim_results$ss_l2)
 sim_results$icc_ov <- as.factor(sim_results$icc_ov)
 sim_results$icc_lv <- as.factor(sim_results$icc_lv)
 sim_results$Model <- factor(sim_results$Model, levels = c('C','M1','M2','M12'), ordered = T)
-
 ```
 
 ## ROC Analysis Labels
@@ -120,7 +109,6 @@ The coding is as follows:
 2. CvM2 = when only the level-2 model is misspecified (Model C vs. M2)
 
 ```{r}
-
 ## Need to make codes for the ROC analyses outcomes
 # first, C vs. M1,M2,M12 - Perfect specification
 sim_results$C <- ifelse(sim_results$Model == 'C', 1, 0)
@@ -161,7 +149,6 @@ Setting up the objects to store the individual results so that we can use them a
 First, we run over each condition separately then go into the conditional ROC analyses.
 
 ```{r}
-
 fit_roc <- fit_roc_smooth <- list()
 roc_summary <- as.data.frame(matrix(0,ncol=13, nrow=5*3*4*4*5))
 colnames(roc_summary) <- c('Classification','Index', 'Estimator', 'Level-2 SS', 
@@ -178,8 +165,6 @@ INDEX <- c('CFI', 'TLI', 'RMSEA', 'SRMRW', 'SRMRB')
 EST <- c('ALL','MLR', 'ULSMV', 'WLSMV')
 SS_L1 <- c('ALL', 5, 10, 30)
 SS_L2 <- c('ALL', 30, 50, 100, 200)
-
-
 ## Subset to the usable cases
 sim_results <- filter(sim_results, Converge == 1 & Admissible == 1)
 ```
@@ -189,11 +174,9 @@ sim_results <- filter(sim_results, Converge == 1 & Admissible == 1)
 ### General overview over all conditions
 
 ```{r roc-any-gen}
-
 ig <- 1 ## counter for roc_summary
 j <- 1 ## Which class?
 for(index in INDEX){
-
     ## Print out which iteration so we know what we am looking at
     cat('\n\nROC Analysis in')
     cat('\nIndex:\t', index)
@@ -224,26 +207,20 @@ for(index in INDEX){
     ## add to summary iterator
     ig <- ig + 1
 } ## End loop round index
-
 kable(roc_summary_gen[1:5,], format = 'html', digits=3) %>%
   kable_styling(full_width = T)
-
 print(xtable(roc_summary_gen[1:5,c(2:3,6:8)], digits = 3), booktabs=T,include.rownames = F)
-
 ```
 
 ### More fine grained information within/across conditions
 
 ```{r roc-any}
-
-
 i <- 1 ## counter for roc_summary
 j <- 1 ## Which class?
 for(index in INDEX){
   for(est in EST){
     for(s2 in SS_L2){
       for(s1 in SS_L1){
-
     ## Print out which iteration so we know what we are looking at
     cat('\n\nROC Analysis in')
     cat('\nIndex:\t', index)
@@ -255,7 +232,6 @@ for(index in INDEX){
     key <- paste0(index,'.',CLASS[j],'.',est,'.', s2,'.',s1)
     # Subset data as  needed
     if(est == 'ALL' & s2 == 'ALL' & s1 == 'ALL') mydata <- sim_results
-
     if(est != 'ALL' & s2 == 'ALL' & s1 == 'ALL'){
       mydata <- filter(sim_results, Estimator == est)
     }
@@ -314,10 +290,8 @@ for(index in INDEX){
     } ## End loop around ss l2
   } ## End loop around estimator
 } ## End loop round index
-
 kable(roc_summary[1:400, ], format = 'html', digits=3) %>%
   kable_styling(full_width = T)
-
 ```
 
 ## Detecting Misspecification at Level-1
@@ -325,10 +299,8 @@ kable(roc_summary[1:400, ], format = 'html', digits=3) %>%
 ### General overview over all conditions
 
 ```{r roc-l1-gen}
-
 j <- 2 ## Which class?
 for(index in INDEX){
-
     ## Print out which iteration so we know what we am looking at
     cat('\n\nROC Analysis in')
     cat('\nIndex:\t', index)
@@ -359,12 +331,9 @@ for(index in INDEX){
     ## add to summary iterator
     ig <- ig + 1
 } ## End loop round index
-
 kable(roc_summary_gen[1:5,], format = 'html', digits=3) %>%
   kable_styling(full_width = T)
-
 print(xtable(roc_summary_gen[1:5,c(2:3,6:8)], digits = 3), booktabs=T,include.rownames = F)
-
 ```
 
 ### More fine grained information within/across conditions
@@ -376,7 +345,6 @@ for(index in INDEX){
   for(est in EST){
     for(s2 in SS_L2){
       for(s1 in SS_L1){
-
     ## Print out which iteration so we know what we are looking at
     cat('\n\nROC Analysis in')
     cat('\nIndex:\t', index)
@@ -388,7 +356,6 @@ for(index in INDEX){
     key <- paste0(index,'.',CLASS[j],'.',est,'.', s2,'.',s1)
     # Subset data as  needed
     if(est == 'ALL' & s2 == 'ALL' & s1 == 'ALL') mydata <- sim_results
-
     if(est != 'ALL' & s2 == 'ALL' & s1 == 'ALL'){
       mydata <- filter(sim_results, Estimator == est)
     }
@@ -453,10 +420,8 @@ for(index in INDEX){
     } ## End loop around ss l2
   } ## End loop around estimator
 } ## End loop round index
-
 kable(roc_summary[401:800, ], format = 'html', digits=3) %>%
   kable_styling(full_width = T)
-
 ```
 
 
@@ -466,10 +431,8 @@ kable(roc_summary[401:800, ], format = 'html', digits=3) %>%
 ### General overview over all conditions
 
 ```{r roc-l2-gen}
-
 j <- 3 ## Which class?
 for(index in INDEX){
-
     ## Print out which iteration so we know what we am looking at
     cat('\n\nROC Analysis in')
     cat('\nIndex:\t', index)
@@ -500,24 +463,19 @@ for(index in INDEX){
     ## add to summary iterator
     ig <- ig + 1
 } ## End loop round index
-
 kable(roc_summary_gen[11:15,], format = 'html', digits=3) %>%
   kable_styling(full_width = T)
-
 print(xtable(roc_summary_gen[11:15,c(2:3,6:8)], digits = 3), booktabs=T,include.rownames = F)
-
 ```
 
 ### More fine grained information within/across conditions
 
 ```{r roc-l2}
-
 j <- 3 ## Which class?
 for(index in INDEX){
   for(est in EST){
     for(s2 in SS_L2){
       for(s1 in SS_L1){
-
     ## Print out which iteration so we know what we are looking at
     cat('\n\nROC Analysis in')
     cat('\nIndex:\t', index)
@@ -529,7 +487,6 @@ for(index in INDEX){
     key <- paste0(index,'.',CLASS[j],'.',est,'.', s2,'.',s1)
     # Subset data as  needed
     if(est == 'ALL' & s2 == 'ALL' & s1 == 'ALL') mydata <- sim_results
-
     if(est != 'ALL' & s2 == 'ALL' & s1 == 'ALL'){
       mydata <- filter(sim_results, Estimator == est)
     }
@@ -588,10 +545,8 @@ for(index in INDEX){
     } ## End loop around ss l2
   } ## End loop around estimator
 } ## End loop round index
-
 kable(roc_summary[801:1200, ], format = 'html', digits=3) %>%
   kable_styling(full_width = T)
-
 ```
 
 ## Summarizing the Results
@@ -603,61 +558,45 @@ The remaining information is left here for reference.
 ### Detecting Any Misspecification
 
 ```{r roc-sum}
-
 c <- filter(roc_summary, Classification == "C", `Level-2 SS` != 'ALL', `Level-1 SS` == 'ALL')
-
 # Next make the columns the estimator factor
 c1 <- cbind(c[ c$Estimator == 'MLR', c(2,4,6,9)],
             c[ c$Estimator == 'ULSMV', c(6,9)],
             c[ c$Estimator == 'WLSMV', c(6,9)])
-
 kable(c1, format = 'html',digits=3, row.names = F) %>%
   kable_styling(full_width = T) %>%
   add_header_above(c(' '=2, 'MLR'=2, 'USLMV'=2, 'WLSMV'=2))
-
 print(xtable(c1, digits = 3), booktabs=T,include.rownames = F)
-
-
 ```
 
 ### Detecting Misspecification at level-1
 
 
 ```{r roc-sum-l1}
-
 c <- filter(roc_summary, Classification == "CvM1", `Level-2 SS` != 'ALL', `Level-1 SS` == 'ALL')
-
 # Next make the columns the estimator factor
 c1 <- cbind(c[ c$Estimator == 'MLR', c(2,4,6,9)],
             c[ c$Estimator == 'ULSMV', c(6,9)],
             c[ c$Estimator == 'WLSMV', c(6,9)])
-
 kable(c1, format = 'html',digits=3, row.names = F) %>%
   kable_styling(full_width = T) %>%
   add_header_above(c(' '=2, 'MLR'=2, 'USLMV'=2, 'WLSMV'=2))
-
 print(xtable(c1, digits = 3), booktabs=T,include.rownames = F)
-
 ```
 
 ### Detecting Misspecification at level-2
 
 
 ```{r roc-sum-l2}
-
 c <- filter(roc_summary, Classification == "CvM2", `Level-2 SS` != 'ALL', `Level-1 SS` == 'ALL')
-
 # Next make the columns the estimator factor
 c1 <- cbind(c[ c$Estimator == 'MLR', c(2,4,6,9)],
             c[ c$Estimator == 'ULSMV', c(6,9)],
             c[ c$Estimator == 'WLSMV', c(6,9)])
-
 kable(c1, format = 'html',digits=3, row.names = F) %>%
   kable_styling(full_width = T) %>%
   add_header_above(c(' '=2, 'MLR'=2, 'USLMV'=2, 'WLSMV'=2))
-
 print(xtable(c1, digits = 3), booktabs=T,include.rownames = F)
-
 ```
 
 
@@ -668,7 +607,6 @@ print(xtable(c1, digits = 3), booktabs=T,include.rownames = F)
 ```{r roc-data-extract}
 roc_smooth_data <- as.data.frame(matrix(0,ncol=7, nrow=514*(3*4*5*5)))
 colnames(roc_smooth_data) <- c('Index', 'Classification', 'Estimator','Level-2 SS', 'AUC', 'Sensitivity', 'Specificity')
-
 i <- 1
 j <- 514
 for(index in INDEX){
@@ -702,7 +640,6 @@ for(index in INDEX){
     }
   }
 }}
-
 ## Forcing factor orders
 roc_smooth_data$Index <- factor(
   roc_smooth_data$Index, ordered = T,
@@ -723,9 +660,7 @@ roc_smooth_data$`Level-2 SS` <- factor(roc_smooth_data$`Level-2 SS`,
 ## Plot by Misspecification and Estimation Method
 
 ```{r figures}
-
 subdata <- filter(roc_smooth_data, `Level-2 SS`=='ALL', Estimator!='ALL')
-
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   geom_line(aes(linetype=Index, color=Index))+
   facet_grid(Estimator~Classification) +
@@ -733,18 +668,14 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   scale_color_brewer(palette="Set1") +
   guides(color=guide_legend(title="Fit Statistics"),
          linetype=guide_legend(title="Fit Statistics"))
-
 p
 if(save.fig == T) ggsave('roc_plot_mis_est.pdf', plot = p, height = 6,width = 9,units = 'in')
-
 ```
 
 ## Plot by Misspecification and Level-2 Sample Size
 
 ```{r figures-1}
-
 subdata <- filter(roc_smooth_data, `Level-2 SS`!='ALL', Estimator=='ALL')
-
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   geom_line(aes(linetype=Index, color=Index))+
   facet_grid(`Level-2 SS` ~Classification) +
@@ -752,10 +683,8 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   scale_color_brewer(palette="Set1") +
   guides(color=guide_legend(title="Fit Statistics"),
          linetype=guide_legend(title="Fit Statistics"))
-
 p
 if(save.fig == T) ggsave('roc_plot_mis_n2.pdf', plot = p, height = 6,width = 9, units = 'in')
-
 ```
 
 ## Figures of Subconditions and Smaller Plots for Exporting
@@ -763,7 +692,6 @@ if(save.fig == T) ggsave('roc_plot_mis_n2.pdf', plot = p, height = 6,width = 9, 
 ### Figures by Classification Outcome
 
 ```{r subfigs-class}
-
 subdata <- filter(roc_smooth_data, `Level-2 SS`=='ALL',  Estimator == "ALL")
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   geom_line(aes(linetype=Index, color=Index))+
@@ -774,8 +702,6 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
          linetype=guide_legend(title="Fit Statistics"))
 p
 if(save.fig == T) ggsave('roc_class_all.pdf', plot = p, height = 4, width = 9, units = 'in')
-
-
 subdata <- filter(roc_smooth_data, `Level-2 SS`=='ALL', Estimator == "MLR")
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   geom_line(aes(linetype=Index, color=Index))+
@@ -786,9 +712,6 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
          linetype=guide_legend(title="Fit Statistics"))
 p
 if(save.fig == T) ggsave('roc_class_mlr.pdf', plot = p, height = 4,width = 9,units = 'in')
-
-
-
 subdata <- filter(roc_smooth_data, `Level-2 SS`=='ALL', Estimator == "ULSMV")
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   geom_line(aes(linetype=Index, color=Index))+
@@ -799,8 +722,6 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
          linetype=guide_legend(title="Fit Statistics"))
 p
 if(save.fig == T) ggsave('roc_class_ulsmv.pdf', plot = p, height = 4,width = 9,units = 'in')
-
-
 subdata <- filter(roc_smooth_data,`Level-2 SS`=='ALL',  Estimator == "WLSMV")
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   geom_line(aes(linetype=Index, color=Index))+
@@ -817,7 +738,6 @@ if(save.fig == T) ggsave('roc_class_wlsmv.pdf', plot = p, height = 4,width = 9,u
 ### Figures by Estimation Method
 
 ```{r subfigs-est}
-
 subdata <- filter(roc_smooth_data, `Level-2 SS`=='ALL', Estimator!='ALL',
                   Classification == "Any Mis.")
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
@@ -829,9 +749,6 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
          linetype=guide_legend(title="Fit Statistics"))
 p
 if(save.fig == T) ggsave('roc_est_c.pdf', plot = p, height = 4,width = 9,units = 'in')
-
-
-
 subdata <- filter(roc_smooth_data, `Level-2 SS`=='ALL', Estimator!='ALL',
                   Classification == "Level-1 Mis.")
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
@@ -843,9 +760,6 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
          linetype=guide_legend(title="Fit Statistics"))
 p
 if(save.fig == T) ggsave('roc_est_cl1.pdf', plot = p, height = 4,width = 9,units = 'in')
-
-
-
 subdata <- filter(roc_smooth_data,`Level-2 SS`=='ALL', Estimator!='ALL',
                   Classification == "Level-2 Mis.")
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
@@ -857,14 +771,12 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
          linetype=guide_legend(title="Fit Statistics"))
 p
 if(save.fig == T) ggsave('roc_est_cl2.pdf', plot = p, height = 4,width = 9,units = 'in')
-
 ```
 
 
 ### Figures by Level-2 Sample Size
 
 ```{r subfigs-est-l2}
-
 subdata <- filter(roc_smooth_data, Estimator=='ALL', Classification == "Any Mis.",
                   `Level-2 SS`!='ALL')
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
@@ -876,9 +788,6 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
          linetype=guide_legend(title="Fit Statistics"))
 p
 if(save.fig == T) ggsave('roc_n2_c.pdf', plot = p, height = 4,width = 9,units = 'in')
-
-
-
 subdata <- filter(roc_smooth_data, `Level-2 SS`!='ALL', Estimator=='ALL',
                   Classification == "Level-1 Mis.")
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
@@ -890,9 +799,6 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
          linetype=guide_legend(title="Fit Statistics"))
 p
 if(save.fig == T) ggsave('roc_n2_cl1.pdf', plot = p, height = 4,width = 9,units = 'in')
-
-
-
 subdata <- filter(roc_smooth_data,`Level-2 SS`!='ALL', Estimator=='ALL',  Classification == "Level-2 Mis.")
 p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   geom_line(aes(linetype=Index, color=Index))+
@@ -903,5 +809,4 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
          linetype=guide_legend(title="Fit Statistics"))
 p
 if(save.fig == T) ggsave('roc_n2_cl2.pdf', plot = p, height = 4,width = 9,units = 'in')
-
 ```

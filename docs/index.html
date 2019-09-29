@@ -19,6 +19,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -69,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -190,8 +191,6 @@ $(document).ready(function () {
 });
 </script>
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
 
 <style type="text/css">
@@ -264,6 +263,109 @@ $(document).ready(function () {
 
 
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
 
 
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
@@ -331,7 +433,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-05-17
+<strong>Last updated:</strong> 2019-09-28
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 1 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
@@ -341,7 +443,7 @@ div.section {
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.3.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.4.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -362,28 +464,33 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree4a2f40d1fcb790f157656be30a1670345f67b177targetblank4a2f40da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/noah-padgett/mcfa-fit/tree/4a2f40d1fcb790f157656be30a1670345f67b177" target="_blank">4a2f40d</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree52c68f91ce7fcee480e3917a1e33d76d4faa0a47targetblank52c68f9a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/noah-padgett/mcfa-fit/tree/52c68f91ce7fcee480e3917a1e33d76d4faa0a47" target="_blank">52c68f9</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree4a2f40d1fcb790f157656be30a1670345f67b177targetblank4a2f40da" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree52c68f91ce7fcee480e3917a1e33d76d4faa0a47targetblank52c68f9a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .RData
+    Ignored:    .RDataTmp
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
 
 Untracked files:
-    Untracked:  .RDataTmp
+    Untracked:  analysis/est_mlr.Rmd
+    Untracked:  analysis/fit_index_stats.Rmd
+    Untracked:  analysis/index_cfi.Rmd
+    Untracked:  analysis/index_rmsea.Rmd
+    Untracked:  analysis/index_srmr.Rmd
+    Untracked:  analysis/index_tli.Rmd
 
 Unstaged changes:
-    Modified:   analysis/about.Rmd
-    Modified:   analysis/fit_boxplots.Rmd
     Modified:   analysis/index.Rmd
     Modified:   analysis/roc_analyses.Rmd
-    Deleted:    docs/.nojekyll
+    Modified:   analysis/summary_stats_tables.Rmd
 
 </code></pre>
 <p>
@@ -424,6 +531,23 @@ Message
 <tbody>
 <tr>
 <td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/noah-padgett/mcfa-fit/982c8f193f55feaf39a421df93b9f860a65ec367/docs/index.html" target="_blank">982c8f1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-18
+</td>
+<td>
+roc analyses completed
+</td>
+</tr>
+<tr>
+<td>
 Rmd
 </td>
 <td>
@@ -433,7 +557,7 @@ Rmd
 noah-padgett
 </td>
 <td>
-2019-05-09
+2019-05-10
 </td>
 <td>
 fixed index page and updated roc file
@@ -603,7 +727,7 @@ html
 noah-padgett
 </td>
 <td>
-2019-05-07
+2019-05-08
 </td>
 <td>
 Build site.
@@ -620,7 +744,7 @@ Rmd
 noah-padgett
 </td>
 <td>
-2019-05-07
+2019-05-08
 </td>
 <td>
 summary tables recreated
@@ -718,14 +842,42 @@ Start workflowr project.
 </div>
 </div>
 </div>
-<p>Welcome to our research website. This site contains the results of our Monte Carlo simulation study that compares fit statistics across robust estimation methods in multilevel confirmatory factor analysis (MCFA) models. There are few studies that have examined these complex models and even fewer that have focused on the performance of fit staitistcs.</p>
+<p>Welcome to our research website. This site contains the results of our Monte Carlo simulation study that compares fit statistics across robust estimation methods in multilevel confirmatory factor analysis (ML-CFA) models. There are few studies that have examined these complex models and even fewer that have focused on the performance of fit staitistcs.</p>
 <p>Below contains various pages for the different aspects of the output. The pages are broken up into what we considered logical sections of the results. Not all of the results shown here are reported in the manuscript. This limitation is mostly due to space restrictions in the actual manuscript.</p>
 <div id="study-results" class="section level1">
 <h1>Study Results</h1>
-<p>*<a href="summary_stats_tables.html">Convergence, Admissibility, and Fit Descriptive Statistics</a></p>
+<p>*<a href="summary_stats_tables.html">Convergence and Admissibility</a></p>
+<p>*<a href="fit_index_stats.html">Fit Index Descriptive Statistics</a></p>
 <p>*<a href="fit_boxplots.html">Fit Statistic Distribution</a></p>
 <p>*<a href="anova.html">ANOVA Results</a></p>
 <p>*<a href="roc_analyses.html">ROC Analysis Results</a></p>
+<!-- *[Publication Figures](publication_figures.html) -->
+<!-- *[Publication Tables](publication_tabless.html) -->
+</div>
+<div id="fit-index-information" class="section level1">
+<h1>Fit Index Information</h1>
+<p>Below are links to pages that give more technical details on each of the fit indices investigatedin our study. We have tried to include much of the information that we could not include in the actual manuscript given the space limitations specified by the journal. Each page goes through the following information.</p>
+<ol style="list-style-type: decimal">
+<li><p>A description of the fit index in the conventional case of single-level SEM. This will include the basic information about how each index is computed and what features are known to have an effect on the performance of the index from single-level perspective.</p></li>
+<li><p>A detailed explanation of which parts of the computation of the index changes in a multilevel scenario. This part will necessary have to discuss the impact of the estimation method chosen because the choice of estimation method will affect the impact the index in different ways.</p></li>
+<li><p>A quick conclusion as to the expected utility of the index in multilevel settings.</p></li>
+</ol>
+<p>*<a href="index_cfi.html">Comparative Fit Index (CFI)</a></p>
+<p>*<a href="index_tli.html">Comparative Fit Index (TLI)</a></p>
+<p>*<a href="index_rmsea.html">Root Mean Square Error of Approximation (RMSEA)</a></p>
+<p>*<a href="index_srmr.html">Standardized Root Mean Square Residual (SRMR)</a></p>
+</div>
+<div id="estimation-method-technical-details" class="section level1">
+<h1>Estimation Method Technical Details</h1>
+<p>One downside of writing this article from a practicioner oriented perspective is that many of the technical details on estimation were severely glossed over in the actual manuscript. We know many readers of SEM will find interest in a deeper discussion of this part of the research which we did not dive deeply into in this paper. In the following pages, we will outline more of the technical details of each of the estimation methods chosen and discuss what potential benefits/limitations each has on the fit indices investigated. We try to treat this part as rigorously as possible, but understand that this is a very complex topic and we try to break down each estimation method to the major differences for discussion purposes.</p>
+<p>*<a href="est_mlr.html">Maximum Likelihood (MLR)</a></p>
+<!-- In general, All models were estimated using M\textit{plus} v8.2 [@Muthen2017]. -->
+<!-- Researchers have the choice of many potential estimation methods in M\textit{plus}, and each was initially developed to solve a particular estimation limitation of another estimation methods.  -->
+<!-- A full list of the available estimation methods for models in M\textit{plus} can be found in the User's Guide [@Muthen2017].  -->
+<!-- In this project, we focused on ordered categorical responses, for which the maximum likelihood with robust standard errors (MLR) and weighted least squares mean and variance adjusted (WLSMV) estimation methods have been tested for ML-CFA models. -->
+<!-- However, for single level CFAs with categorical data, there is evidence that unweighted least squares (ULS) performs well [@Forero2009].  -->
+<!-- But, the ULS estimation method is not available for multilevel models in M\textit{plus}, so instead, we used the unweighted least squares mean and variance adjusted (ULSMV) method. -->
+<!-- Therefore, we investigated three estimation methods (MLR, WLSMV, and ULSMV). -->
 </div>
 
 
@@ -742,6 +894,8 @@ footer is added to webpages before the MathJax javascript. -->
 </script>
 
 
+</div>
+</div>
 
 </div>
 

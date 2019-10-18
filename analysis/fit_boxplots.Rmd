@@ -1241,17 +1241,29 @@ p <- ggplot(mydata, aes(x=Model, y=CFI))+
     geom_boxplot(outlier.alpha = .1)+
     facet_grid(.~Estimator) +
     geom_abline(intercept = .95, slope=0,
-                linetype='dashed', color = 'red')
+                linetype='dashed', color = 'red') +
+    lims(y=c(0.5,1))
 p
-if(save.fig == T) ggsave("pub_fig_cfi.pdf",plot = p, width=6, height=4, units='in')
+if(save.fig == T) ggsave("pub_fig_cfi.pdf",plot = p, width=6, height=3.5, units='in')
+
+p <- ggplot(mydata, aes(x=Model, y=TLI))+
+    geom_boxplot(outlier.alpha = .1)+
+    facet_grid(.~Estimator) +
+    geom_abline(intercept = .95, slope=0,
+                linetype='dashed', color = 'red')+
+    lims(y=c(0.5,1))
+p
+if(save.fig == T) ggsave("pub_fig_tli.pdf",plot = p, width=6, height=3.5, units='in')
+
 
 p <- ggplot(mydata, aes(x=Model, y=RMSEA))+
     geom_boxplot(outlier.alpha = .1)+
     facet_grid(.~Estimator) +
     geom_abline(intercept = .06, slope=0,
-                linetype='dashed', color = 'red')
+                linetype='dashed', color = 'red')+
+    lims(y=c(0,0.5))
 p
-if(save.fig == T) ggsave("pub_fig_rmsea.pdf",plot = p, width=6, height=4, units='in')
+if(save.fig == T) ggsave("pub_fig_rmsea.pdf",plot = p, width=6, height=3.5, units='in')
 
 
 
@@ -1259,9 +1271,10 @@ p <- ggplot(mydata, aes(x=Model, y=SRMRW))+
     geom_boxplot(outlier.alpha = .1)+
     facet_grid(.~Estimator) +
     geom_abline(intercept = .08, slope=0,
-                linetype='dashed', color = 'red')
+                linetype='dashed', color = 'red')+
+    lims(y=c(0,0.5))
 p
-if(save.fig == T) ggsave("pub_fig_srmrw.pdf", plot = p, width=6, height=4, units='in')
+if(save.fig == T) ggsave("pub_fig_srmrw.pdf", plot = p, width=6, height=3.5, units='in')
 
 
 ```
@@ -1276,9 +1289,9 @@ p <- ggplot(mydata, aes(x=Model, y=SRMRB))+
     geom_abline(intercept = .08, slope=0,
                 linetype='dashed', color = 'red')+
     facet_grid(.~Estimator) +
-    lims(y=c(0,1))
+    lims(y=c(0,0.5))
 p
-if(save.fig == T) ggsave("pub_fig_srmrb_a.pdf",plot = p, width=6, height=4, units='in')
+if(save.fig == T) ggsave("pub_fig_srmrb_a.pdf",plot = p, width=6, height=3.5, units='in')
 
 
 p <- ggplot(mydata, aes(x=Model,  y=SRMRB))+
@@ -1286,8 +1299,8 @@ p <- ggplot(mydata, aes(x=Model,  y=SRMRB))+
     geom_abline(intercept = .08, slope=0,
                 linetype='dashed', color = 'red') +
     facet_grid(.~ss_l2)+
-    lims(y=c(0,1))
+    lims(y=c(0,0.5))
 p
-if(save.fig == T) ggsave("pub_fig_srmrb_b.pdf",plot = p, width=6, height=4, units='in')
+if(save.fig == T) ggsave("pub_fig_srmrb_b.pdf",plot = p, width=6, height=3.5, units='in')
 
 ```

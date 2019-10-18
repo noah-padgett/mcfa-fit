@@ -10,7 +10,6 @@
 
 
 
-<meta name="date" content="2019-05-08" />
 
 <title>Fit Index: SRMR</title>
 
@@ -410,14 +409,13 @@ div.section {
 
 
 <h1 class="title toc-ignore">Fit Index: SRMR</h1>
-<h4 class="date">2019-05-08</h4>
 
 </div>
 
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -426,7 +424,7 @@ div.section {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -435,10 +433,10 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-09-29
+<strong>Last updated:</strong> 2019-10-18
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 1 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>mcfa-fit/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -454,22 +452,22 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree6457362e585461b9bb81e577c9c8488b482c1707targetblank6457362a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/noah-padgett/mcfa-fit/tree/6457362e585461b9bb81e577c9c8488b482c1707" target="_blank">6457362</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittreeb534b90c4bb07188e5fa1f5ec2e9ea788daee665targetblankb534b90a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/noah-padgett/mcfa-fit/tree/b534b90c4bb07188e5fa1f5ec2e9ea788daee665" target="_blank">b534b90</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree6457362e585461b9bb81e577c9c8488b482c1707targetblank6457362a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittreeb534b90c4bb07188e5fa1f5ec2e9ea788daee665targetblankb534b90a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -480,6 +478,20 @@ Ignored files:
     Ignored:    .RDataTmp
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  analysis/est_ulsmv.Rmd
+    Untracked:  analysis/est_wlsmv.Rmd
+
+Unstaged changes:
+    Modified:   analysis/est_mlr.Rmd
+    Modified:   analysis/fit_boxplots.Rmd
+    Modified:   analysis/index.Rmd
+    Modified:   analysis/index_cfi.Rmd
+    Modified:   analysis/index_rmsea.Rmd
+    Modified:   analysis/index_srmr.Rmd
+    Modified:   analysis/index_tli.Rmd
+    Modified:   analysis/roc_analyses.Rmd
 
 </code></pre>
 <p>
@@ -518,6 +530,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/noah-padgett/mcfa-fit/b534b90c4bb07188e5fa1f5ec2e9ea788daee665/docs/index_srmr.html" target="_blank">b534b90</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-09-29
+</td>
+<td>
+updated publish
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -559,12 +588,39 @@ general update after first SEM review
 </div>
 </div>
 </div>
-<div id="srmr" class="section level2">
-<h2>SRMR</h2>
-<p>The standardized root mean square residual (SRMR) is an aggregate measure of the deviation of the observed correlation matrix to the model implied correlation matrix Joreskog1981. Ideally, the average difference between the observed and expected correlations is minimal, and smaller values represent better fitting models. In MCFA, two difference SRMR are reported based on each level’s covariance matrix. The level-1 SRMR is known as SRMR-Within (SRMRW). The level-2 SRMR is known as SRMR-Between (SRMRB). The computation of each of these measures is roughly equivalent conditional on which covariance matrix is under consideration. Generally, SRMR is computed as the standardized difference between the observed correlations and the model implied correlations about variables as shown below. <span class="math display">\[
+<div id="srmr-general" class="section level1">
+<h1>SRMR (General)</h1>
+<p>The standardized root mean square residual (SRMR) is an aggregate measure of the deviation of the observed correlation matrix to the model implied correlation matrix (Joreskog, 1981). Ideally, the average difference between the observed and expected correlations is minimal, and smaller values represent better fitting models. Generally, SRMR is computed as the standardized difference between the observed correlations and the model implied correlations about variables as shown below. <span class="math display">\[
 SRMR = \sqrt{\frac{2 \sum_{j=1}^{p} \sum_{k=j}^{i} {\left( \frac{s_{jk} - \hat{\sigma}_{jk} }{ \sqrt{ s_{jj}s_{kk}}  } \right)}^2 }{p(p+1)}}
-\]</span> where <span class="math inline">\(p\)</span> is the total number of variables in the model, <span class="math inline">\(s_{jk}\)</span> and <span class="math inline">\(\sigma_{jk}\)</span> are the sample and model implied, respectively, covariance between the <span class="math inline">\(j^{th}\)</span> and <span class="math inline">\(k^{th}\)</span> variables. For the SRMR, generally acceptable values less than .08 are used. However, Hu1999 suggested values less .06 alone or .08 in combination of other within recommended ranges are indicative of good fit.</p>
-<p>In M<em>plus</em>, SRMR is estimated slightly differently than shown in Equationeq:srmr. The computation extends the definition above by accounting for the meanstructure, multilevel structure, and categorical nature if applicable. The technical details of the computation of SRMRW and SRMRB in M<em>plus</em> v8.2 is out of scope for this article, and the interested reader is referred to MuthenSRMR for more details.</p>
+\]</span> where <span class="math inline">\(p\)</span> is the total number of variables in the model, <span class="math inline">\(s_{jk}\)</span> and <span class="math inline">\(\sigma_{jk}\)</span> are the sample and model implied, respectively, covariance between the <span class="math inline">\(j^{th}\)</span> and <span class="math inline">\(k^{th}\)</span> variables. For the SRMR, generally acceptable values less than .08 are used. However, Hu &amp; Bentler (1999) suggested values less .06 alone or .08 in combination of other indices within recommended ranges are indicative of good fit.</p>
+</div>
+<div id="srmr-in-mplus" class="section level1">
+<h1>SRMR in M<em>plus</em></h1>
+<p>In M<em>plus</em>, SRMR is estimated slightly differently than shown above. The computation extends the definition above by accounting for the meanstructure, multilevel structure, and categorical nature of the data if applicable. Additionally, in ML-CFA, SRMR is differentiated into two different SRMR indices corresponding to each level’s covariance matrix. The level-1 SRMR is known as SRMR Within (SRMRW). The level-2 SRMR is known as SRMR Between (SRMRB). The computation of each of these measures is roughly equivalent conditional on which covariance matrix is under consideration.</p>
+<div id="srmr-for-categorical-and-multilevel-data" class="section level2">
+<h2>SRMR for Categorical and Multilevel Data</h2>
+<p>The computation of SRMR under the conditions of categorical and multilevel data are described in detail in (Asparouhov &amp; Muthén, 2018). Here is the idea behind the computation. First, we need to compute the polychoric correlations (<span class="math inline">\(s_{jk}\)</span>) and the variances (<span class="math inline">\(s_{jj}\)</span>) of the items which are the sample estimates that are approximated by the model implied correlations (<span class="math inline">\(\sigma_{jk}\)</span>) and variances (<span class="math inline">\(\sigma_{jj}\)</span>). This is not a straightforward task and is abstracted away for this discussion (interested reader is referred to Bandalos (2014), Muthén, du Toit &amp; Spisic (1997), and Muthén (1978) for more details). We also need to have the category response probabilities for the observed data (<span class="math inline">\(p_{ij}\)</span>) and model implied (<span class="math inline">\(q_{ij}\)</span>) for the <span class="math inline">\(i^{th}\)</span> category of the <span class="math inline">\(j^{th}\)</span> item where <span class="math inline">\(i = 1, ..., l_j\)</span> (number of categories for the <span class="math inline">\(j^{th}\)</span> item, and <span class="math inline">\(j=1, ..., m\)</span> (number of items). Then, we can define the SRMR to account for the categorical data by:</p>
+<p><span class="math display">\[SRMR = \sqrt{\frac{S}{d}}\]</span> where, <span class="math display">\[S = \sum_{j=1}^{m}\sum_{k=1}^{j-1}\left(\frac{s_{jk}}{\sqrt{s_{jj}s_{kk}}} -\frac{\sigma_{jk}}{\sqrt{\sigma_{jj}\sigma_{kk}}}\right)^2 + \sum_{j=1}^{m}\left(\frac{s_{jj} -\sigma_{jj}}{s_{jj}}\right)^2 + \sum_{j=1}^{m}\sum_{i=1}^{l_j}\left(p_{ij} -q_{ij}\right)^2\\
+d=m(m+3)/2 + \sum_{j=1}^{m}l_j -2m\]</span> where k is simply an indicator to sum over for items.</p>
+<p>The computation of the response probabilities (<span class="math inline">\(p_{ij}\)</span>) are the only major difference between the above equation for SRMR when the multilevel nature of that is accounted for. This is because the response probabilities for single level SRMR is <span class="math display">\[P(Y_j = i) = \Phi\left(\frac{\tau_{ij}}{\sqrt{V_{jj}}}\right) - \Phi\left(\frac{\tau_{(i-1)j}}{\sqrt{V_{jj}}}\right)\]</span> where <span class="math inline">\(\tau_{ij}\)</span> is the <span class="math inline">\(i^{th}\)</span> threshold of the <span class="math inline">\(j^{th}\)</span> item. Note that the thresholds are: <span class="math inline">\(\tau_{0j}=-\infty, \tau_{1j}=1, ..., \tau_{ij}=i, ...\)</span>. In the situation with multilevel data, the response probabilities account for the variance at both levels (<span class="math inline">\(V_{B, jj}\)</span> and <span class="math inline">\(V_{W,jj}\)</span>). Therefore, the response probability becomes <span class="math display">\[P(Y_j = i) = \Phi\left(\frac{\tau_{ij}}{\sqrt{V_{B, jj}+V_{W, jj}}}\right) - \Phi\left(\frac{\tau_{(i-1)j}}{\sqrt{V_{B, jj}+V_{W, jj}}}\right)\]</span></p>
+<p>The more technical details of the computation of SRMRW and SRMRB in M<em>plus</em> v8.2 is described more detail in (Asparouhov &amp; Muthén, 2018).</p>
+</div>
+</div>
+<div id="conclusions-for-ml-cfa" class="section level1">
+<h1>Conclusions for ML-CFA</h1>
+<p>For SRMRW and SRMRB, We align our expectations with other methodologists on the untility of these indices in ML-CFA. We expect that SRMRW will only be sensitive to misspecification of the model for the level-1 (pooled within-group) covariance matrix.</p>
+<p>While we expect SRMRB to only be sensitive to misspecification of the model for the level-2 (between-group) covariance matrix. However, given the very drastic difference in sample size for each of these fit indices, we expect that SRMRB will yield much more variable estimates across conditions and replications, particularly when the number of level-2 units is below 100. We expect this decline in performance under smaller sample sizes due to the normalizing factor being reduced and other authors have suggested large values are plausible (Asparouhov &amp; Muthen, 2018).</p>
+</div>
+<div id="references" class="section level1">
+<h1>References</h1>
+<ol style="list-style-type: decimal">
+<li>Asparouhov, T., &amp; Muthén, B. (2018). SRMR in Mplus. Retrieved from <a href="http://www.statmodel.com/download/SRMR2.pdf" class="uri">http://www.statmodel.com/download/SRMR2.pdf</a></li>
+<li>Hu, L. T., &amp; Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance structure analysis: Conventional criteria versus new alternatives. Structural Equation Modeling, 6(1), 1–55.</li>
+<li>Jöreskog, K., &amp; Sörbom, D. (1981). LISREL V: Analysis of linear structural relationships by maximum likelihood and least squares methods. Chicago, IL: National Educational Resources.</li>
+<li>Bandalos, D. L. (2014). Relative Performance of Categorical Diagonally Weighted Least Squares and Robust Maximum Likelihood Estimation. Structural Equation Modeling, 21(1), 102–116. <a href="https://doi.org/10.1080/10705511.2014.859510" class="uri">https://doi.org/10.1080/10705511.2014.859510</a></li>
+<li>Muthén, B., du Toit, S. H. C., &amp; Spisic, D. (1997). Robust inference using weighted least squares and quadratic estimating equations in latent variable modeling with categorical and continuous outcomes.</li>
+<li>Muthén, B. (1978). Contributions to factor analysis of dichotomous variables. Psychometrika, 43(4), 551–560. <a href="https://doi.org/10.1007/BF02293813" class="uri">https://doi.org/10.1007/BF02293813</a></li>
+</ol>
 </div>
 
 

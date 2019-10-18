@@ -9,10 +9,10 @@ editor_options:
 ---
 
 Welcome to our research website.
-This site contains the results of our Monte Carlo simulation study that compares fit statistics across robust estimation methods in multilevel confirmatory factor analysis (ML-CFA) models.
-There are few studies that have examined these complex models and even fewer that have focused on the performance of fit staitistcs.
+This site contains the results of our Monte Carlo simulation study that compares fit indices across robust estimation methods in multilevel confirmatory factor analysis (ML-CFA) models.
+There are few studies that have examined these complex models and even fewer that have focused on the performance of fit indices.
 
-Below contains various pages for the different aspects of the output. 
+Below contains various pages for the different aspects of the project. 
 The pages are broken up into what we considered logical sections of the results.
 Not all of the results shown here are reported in the manuscript.
 This limitation is mostly due to space restrictions in the actual manuscript.
@@ -37,14 +37,7 @@ This limitation is mostly due to space restrictions in the actual manuscript.
 
 Below are links to pages that give more technical details on each of the fit indices investigatedin our study. 
 We have tried to include much of the information that we could not include in the actual manuscript given the space limitations specified by the journal.
-Each page goes through the following information.
-
-1. A description of the fit index in the conventional case of single-level SEM. This will include the basic information about how each index is computed and what features are known to have an effect on the performance of the index from single-level perspective. 
-
-2. A detailed explanation of which parts of the computation of the index changes in a multilevel scenario. 
-This part will necessary have to discuss the impact of the estimation method chosen because the choice of estimation method will affect the impact the index in different ways. 
-
-3. A quick conclusion as to the expected utility of the index in multilevel settings. 
+Each page goes through the how the index designed and a basic description of what conclusion we expected for the utility of the index in multilevel settings. 
 
 *[Comparative Fit Index (CFI)](index_cfi.html)
 
@@ -63,11 +56,6 @@ We try to treat this part as rigorously as possible, but understand that this is
 
 *[Maximum Likelihood (MLR)](est_mlr.html)
 
-<!-- In general, All models were estimated using M\textit{plus} v8.2 [@Muthen2017]. -->
-<!-- Researchers have the choice of many potential estimation methods in M\textit{plus}, and each was initially developed to solve a particular estimation limitation of another estimation methods.  -->
-<!-- A full list of the available estimation methods for models in M\textit{plus} can be found in the User's Guide [@Muthen2017].  -->
-<!-- In this project, we focused on ordered categorical responses, for which the maximum likelihood with robust standard errors (MLR) and weighted least squares mean and variance adjusted (WLSMV) estimation methods have been tested for ML-CFA models. -->
-<!-- However, for single level CFAs with categorical data, there is evidence that unweighted least squares (ULS) performs well [@Forero2009].  -->
-<!-- But, the ULS estimation method is not available for multilevel models in M\textit{plus}, so instead, we used the unweighted least squares mean and variance adjusted (ULSMV) method. -->
-<!-- Therefore, we investigated three estimation methods (MLR, WLSMV, and ULSMV). -->
+*[Weighted Least Squares Mean and Variance Adjusted (WLSMV)](est_wlsmv.html)
 
+*[Unweighted Least Squares Mean and Variance Adjusted (ULSMV)](est_ulsmv.html)

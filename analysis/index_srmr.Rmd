@@ -1,30 +1,78 @@
 ---
 title: "Fit Index: SRMR"
-date: "2019-05-08"
-output: workflowr::wflow_html
+site: workflowr::wflow_site
+output:
+  workflowr::wflow_html:
+    toc: true
 editor_options:
   chunk_output_type: console
 ---
 
 
 
-## SRMR
+# SRMR (General)
 
-The standardized root mean square residual (SRMR) is an aggregate measure of the deviation of the observed correlation matrix to the model implied correlation matrix Joreskog1981. 
+The standardized root mean square residual (SRMR) is an aggregate measure of the deviation of the observed correlation matrix to the model implied correlation matrix (Joreskog, 1981). 
 Ideally, the average difference between the observed and expected correlations is minimal, and smaller values represent better fitting models.
-In MCFA, two difference SRMR are reported based on each level's covariance matrix.
-The level-1 SRMR is known as SRMR-Within (SRMRW).
-The level-2 SRMR is known as SRMR-Between (SRMRB).
-The computation of each of these measures is roughly equivalent conditional on which covariance matrix is under consideration.
 Generally, SRMR is computed as the standardized difference between the observed correlations and the model implied correlations about variables as shown below.
 \[
 SRMR = \sqrt{\frac{2 \sum_{j=1}^{p} \sum_{k=j}^{i} {\left( \frac{s_{jk} - \hat{\sigma}_{jk} }{ \sqrt{ s_{jj}s_{kk}}  } \right)}^2 }{p(p+1)}}
 \]
 where $p$ is the total number of variables in the model, $s_{jk}$ and $\sigma_{jk}$ are the sample and model implied, respectively, covariance between the $j^{th}$ and $k^{th}$ variables.
 For the SRMR, generally acceptable values less than .08 are used.
-However, Hu1999 suggested values less .06 alone or .08 in combination of other within recommended ranges are indicative of good fit.
+However, Hu \& Bentler (1999) suggested values less .06 alone or .08 in combination of other indices within recommended ranges are indicative of good fit.
 
-In M*plus*, SRMR is estimated slightly differently than shown in Equationeq:srmr.
-The computation extends the definition above by accounting for the meanstructure, multilevel structure, and categorical nature if applicable.
-The technical details of the computation of SRMRW and SRMRB in M*plus* v8.2 is out of scope for this article, and the interested reader is referred to MuthenSRMR for more details.
 
+# SRMR in M*plus*
+
+In M*plus*, SRMR is estimated slightly differently than shown above.
+The computation extends the definition above by accounting for the meanstructure, multilevel structure, and categorical nature of the data if applicable.
+Additionally, in ML-CFA, SRMR is differentiated into two different SRMR indices corresponding to each level's covariance matrix.
+The level-1 SRMR is known as SRMR Within (SRMRW).
+The level-2 SRMR is known as SRMR Between (SRMRB).
+The computation of each of these measures is roughly equivalent conditional on which covariance matrix is under consideration.
+
+## SRMR for Categorical and Multilevel Data
+
+The computation of SRMR under the conditions of categorical and multilevel data are described in detail in (Asparouhov & Muthén, 2018). 
+Here is the idea behind the computation.
+First, we need to compute the polychoric correlations ($s_{jk}$) and the variances ($s_{jj}$) of the items which are the sample estimates that are approximated by the model implied correlations ($\sigma_{jk}$) and variances ($\sigma_{jj}$). 
+This is not a straightforward task and is abstracted away for this discussion (interested reader is referred to Bandalos (2014), Muthén, du Toit \& Spisic (1997), and Muthén (1978) for more details).
+We also need to have the category response probabilities for the observed data ($p_{ij}$) and model implied ($q_{ij}$) for the $i^{th}$ category of the $j^{th}$ item where $i = 1, ..., l_j$ (number of categories for the $j^{th}$ item, and $j=1, ..., m$ (number of items).
+Then, we can define the SRMR to account for the categorical data by:
+
+\[SRMR = \sqrt{\frac{S}{d}}\]
+where,
+\[S = \sum_{j=1}^{m}\sum_{k=1}^{j-1}\left(\frac{s_{jk}}{\sqrt{s_{jj}s_{kk}}} -\frac{\sigma_{jk}}{\sqrt{\sigma_{jj}\sigma_{kk}}}\right)^2 + \sum_{j=1}^{m}\left(\frac{s_{jj} -\sigma_{jj}}{s_{jj}}\right)^2 + \sum_{j=1}^{m}\sum_{i=1}^{l_j}\left(p_{ij} -q_{ij}\right)^2\\
+d=m(m+3)/2 + \sum_{j=1}^{m}l_j -2m\]
+where k is simply an indicator to sum over for items.
+
+The computation of the response probabilities ($p_{ij}$) are the only major difference between the above equation for SRMR when the multilevel nature of that is accounted for.
+This is because the response probabilities for single level SRMR is
+\[P(Y_j = i) = \Phi\left(\frac{\tau_{ij}}{\sqrt{V_{jj}}}\right) - \Phi\left(\frac{\tau_{(i-1)j}}{\sqrt{V_{jj}}}\right)\]
+where $\tau_{ij}$ is the $i^{th}$ threshold of the $j^{th}$ item. 
+Note that the thresholds are: $\tau_{0j}=-\infty, \tau_{1j}=1, ..., \tau_{ij}=i, ...$.
+In the situation with multilevel data, the response probabilities account for the variance at both levels ($V_{B, jj}$ and $V_{W,jj}$).
+Therefore, the response probability becomes 
+\[P(Y_j = i) = \Phi\left(\frac{\tau_{ij}}{\sqrt{V_{B, jj}+V_{W, jj}}}\right) - \Phi\left(\frac{\tau_{(i-1)j}}{\sqrt{V_{B, jj}+V_{W, jj}}}\right)\]
+
+The more technical details of the computation of SRMRW and SRMRB in M*plus* v8.2 is described more detail in (Asparouhov & Muthén, 2018).
+
+# Conclusions for ML-CFA
+
+For SRMRW and SRMRB, We align our expectations with other methodologists on the untility of these indices in ML-CFA. 
+We expect that SRMRW will only be sensitive to misspecification of the model for the level-1 (pooled within-group) covariance matrix.
+
+While we expect SRMRB to only be sensitive to misspecification of the model for the level-2 (between-group) covariance matrix.
+However, given the very drastic difference in sample size for each of these fit indices, we expect that SRMRB will yield much more variable estimates across conditions and replications, particularly when the number of level-2 units is below 100. 
+We expect this decline in performance under smaller sample sizes due to the normalizing factor being reduced and other authors have suggested large values are plausible (Asparouhov \& Muthen, 2018).
+
+
+# References
+
+1. Asparouhov, T., & Muthén, B. (2018). SRMR in Mplus. Retrieved from http://www.statmodel.com/download/SRMR2.pdf
+2. Hu, L. T., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance structure analysis: Conventional criteria versus new alternatives. Structural Equation Modeling, 6(1), 1–55.
+3. Jöreskog, K., & Sörbom, D. (1981). LISREL V: Analysis of linear structural relationships by maximum likelihood and least squares methods. Chicago, IL: National Educational Resources.
+4. Bandalos, D. L. (2014). Relative Performance of Categorical Diagonally Weighted Least Squares and Robust Maximum Likelihood Estimation. Structural Equation Modeling, 21(1), 102–116. https://doi.org/10.1080/10705511.2014.859510
+5. Muthén, B., du Toit, S. H. C., & Spisic, D. (1997). Robust inference using weighted least squares and quadratic estimating equations in latent variable modeling with categorical and continuous outcomes.
+6. Muthén, B. (1978). Contributions to factor analysis of dichotomous variables. Psychometrika, 43(4), 551–560. https://doi.org/10.1007/BF02293813

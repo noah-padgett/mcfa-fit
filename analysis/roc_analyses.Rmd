@@ -169,11 +169,13 @@ SS_L2 <- c('ALL', 30, 50, 100, 200)
 sim_results <- filter(sim_results, Converge == 1 & Admissible == 1)
 ```
 
+# ROC Analyses
+
 ## Detecting any type of misspecification
 
 ### General overview over all conditions
 
-```{r roc-any-gen}
+```{r roc-any-gen, message=FALSE, warning=FALSE}
 ig <- 1 ## counter for roc_summary
 j <- 1 ## Which class?
 for(index in INDEX){
@@ -186,8 +188,8 @@ for(index in INDEX){
     ## Create formula
     model <- as.formula(paste0(CLASS[j], '~', index))
     ## Fit ROC curve
-    fit_roc[[key]] <-  roc(model, data=sim_results,
-                           plot =TRUE, ci=TRUE, print.auc=TRUE)
+    fit_roc[[key]] <-  roc(model, data=sim_results, quiet=TRUE,
+                           plot=TRUE, ci=TRUE, print.auc=TRUE)
     ## Create a plot of "smoothed" curve for plotting
     fit_roc_smooth[[key]] <-  smooth(roc(model, data=sim_results))
     ## Compute partial AUC for specificity .8-1
@@ -200,7 +202,8 @@ for(index in INDEX){
     roc_summary_gen[ig, 4] <- p.auc ## corrected partial AUC (.5 is no discrimination)
     roc_summary_gen[ig, 5] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
     roc_summary_gen[ig, 6:8] <- coords(fit_roc[[key]], "best", 
-                                   ret=c("threshold", "specificity", 'sensitivity'))
+                                   ret=c("threshold", "specificity", 'sensitivity'),
+                                   transpose=TRUE)
     ## print summary
     cat('\n\nSummary of ROC:\n')
     print(roc_summary_gen[ig, ])
@@ -214,7 +217,7 @@ print(xtable(roc_summary_gen[1:5,c(2:3,6:8)], digits = 3), booktabs=T,include.ro
 
 ### More fine grained information within/across conditions
 
-```{r roc-any}
+```{r roc-any, message=FALSE, warning=FALSE}
 i <- 1 ## counter for roc_summary
 j <- 1 ## Which class?
 for(index in INDEX){
@@ -222,12 +225,12 @@ for(index in INDEX){
     for(s2 in SS_L2){
       for(s1 in SS_L1){
     ## Print out which iteration so we know what we are looking at
-    cat('\n\nROC Analysis in')
-    cat('\nIndex:\t', index)
-    cat('\nClassification:\t', CLASS[j])
-    cat('\nEstimation Method:\t', est)
-    cat('\nLevel-2 Sample Size:\t', s2)
-    cat('\nLevel-1 Sample Size:\t', s1)
+    #cat('\n\nROC Analysis in')
+    #cat('\nIndex:\t', index)
+    #cat('\nClassification:\t', CLASS[j])
+    #cat('\nEstimation Method:\t', est)
+    #cat('\nLevel-2 Sample Size:\t', s2)
+    #cat('\nLevel-1 Sample Size:\t', s1)
     ## Set up iteration key
     key <- paste0(index,'.',CLASS[j],'.',est,'.', s2,'.',s1)
     # Subset data as  needed
@@ -256,8 +259,8 @@ for(index in INDEX){
     ## Create formula
     model <- as.formula(paste0(CLASS[j], '~', index))
     ## Fit ROC curve
-    fit_roc[[key]] <-  roc(model, data=mydata,
-                           plot =TRUE, ci=TRUE, print.auc=TRUE)
+    fit_roc[[key]] <-  roc(model, data=mydata, quiet=T,
+                           plot =F, ci=TRUE, print.auc=TRUE)
     ## Create a plot of "smoothed" curve for plotting
     fit_roc_smooth[[key]] <-  smooth(roc(model, data=mydata))
     ## Compute partial AUC for specificity .8-1
@@ -273,7 +276,8 @@ for(index in INDEX){
     roc_summary[i, 7] <- p.auc ## corrected partial AUC (.5 is no discrimination)
     roc_summary[i, 8] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
     roc_summary[i, 9:11] <- coords(fit_roc[[key]], "best", 
-                                   ret=c("threshold", "specificity", 'sensitivity'))
+                                   ret=c("threshold", "specificity", 'sensitivity'),
+                                   transpose=TRUE)
     
     ## add number of C and number of miss models in analysis
     n.C <- nrow(mydata[ mydata[, CLASS[j]] == 1, ])
@@ -282,8 +286,8 @@ for(index in INDEX){
     roc_summary[i, 13] <- n.M
     
     ## print summary
-    cat('\n\nSummary of ROC:\n')
-    print(roc_summary[i, ])
+    #cat('\n\nSummary of ROC:\n')
+    #print(roc_summary[i, ])
     ## add to summary iterator
     i <- i + 1
       } ## end loop around ss l1
@@ -298,7 +302,7 @@ kable(roc_summary[1:400, ], format = 'html', digits=3) %>%
 
 ### General overview over all conditions
 
-```{r roc-l1-gen}
+```{r roc-l1-gen, message=FALSE, warning=FALSE}
 j <- 2 ## Which class?
 for(index in INDEX){
     ## Print out which iteration so we know what we am looking at
@@ -310,7 +314,7 @@ for(index in INDEX){
     ## Create formula
     model <- as.formula(paste0(CLASS[j], '~', index))
     ## Fit ROC curve
-    fit_roc[[key]] <-  roc(model, data=sim_results,
+    fit_roc[[key]] <-  roc(model, data=sim_results, quiet=T,
                            plot =TRUE, ci=TRUE, print.auc=TRUE)
     ## Create a plot of "smoothed" curve for plotting
     fit_roc_smooth[[key]] <-  smooth(roc(model, data=sim_results))
@@ -324,7 +328,8 @@ for(index in INDEX){
     roc_summary_gen[ig, 4] <- p.auc ## corrected partial AUC (.5 is no discrimination)
     roc_summary_gen[ig, 5] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
     roc_summary_gen[ig, 6:8] <- coords(fit_roc[[key]], "best", 
-                                   ret=c("threshold", "specificity", 'sensitivity'))
+                                   ret=c("threshold", "specificity", 'sensitivity'),
+                                   transpose=TRUE)
     ## print summary
     cat('\n\nSummary of ROC:\n')
     print(roc_summary_gen[ig, ])
@@ -338,7 +343,7 @@ print(xtable(roc_summary_gen[1:5,c(2:3,6:8)], digits = 3), booktabs=T,include.ro
 
 ### More fine grained information within/across conditions
 
-```{r roc-l1}
+```{r roc-l1, message=FALSE, warning=FALSE}
 i <- 401
 j <- 2 ## Which class?
 for(index in INDEX){
@@ -346,12 +351,12 @@ for(index in INDEX){
     for(s2 in SS_L2){
       for(s1 in SS_L1){
     ## Print out which iteration so we know what we are looking at
-    cat('\n\nROC Analysis in')
-    cat('\nIndex:\t', index)
-    cat('\nClassification:\t', CLASS[j])
-    cat('\nEstimation Method:\t', est)
-    cat('\nLevel-2 Sample Size:\t', s2)
-    cat('\nLevel-1 Sample Size:\t', s1)
+    #cat('\n\nROC Analysis in')
+    #cat('\nIndex:\t', index)
+    #cat('\nClassification:\t', CLASS[j])
+    #cat('\nEstimation Method:\t', est)
+    #cat('\nLevel-2 Sample Size:\t', s2)
+    #cat('\nLevel-1 Sample Size:\t', s1)
     ## Set up iteration key
     key <- paste0(index,'.',CLASS[j],'.',est,'.', s2,'.',s1)
     # Subset data as  needed
@@ -380,8 +385,8 @@ for(index in INDEX){
     ## Create formula
     model <- as.formula(paste0(CLASS[j], '~', index))
     ## Fit ROC curve
-    fit_roc[[key]] <-  roc(model, data=mydata,
-                           plot =TRUE, ci=TRUE, print.auc=TRUE)
+    fit_roc[[key]] <-  roc(model, data=mydata,quiet=T,
+                           plot =F, ci=TRUE, print.auc=TRUE)
     ## Create a plot of "smoothed" curve for plotting
     fit_roc_smooth[[key]] <-  tryCatch(smooth(roc(model, data=mydata)),
                                        error = function(e) NA)
@@ -403,7 +408,8 @@ for(index in INDEX){
       roc_summary[i, 8] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
     }
     roc_summary[i, 9:11] <- coords(fit_roc[[key]], "best", 
-                                   ret=c("threshold", "specificity", 'sensitivity'))
+                                   ret=c("threshold", "specificity", 'sensitivity'),
+                                   transpose=TRUE)
     
     ## add number of C and number of miss models in analysis
     n.C <- nrow(mydata[ mydata[, CLASS[j]] == 1, ])
@@ -412,8 +418,8 @@ for(index in INDEX){
     roc_summary[i, 13] <- n.M
     
     ## print summary
-    cat('\n\nSummary of ROC:\n')
-    print(roc_summary[i, ])
+    #cat('\n\nSummary of ROC:\n')
+    #print(roc_summary[i, ])
     ## add to summary iterator
     i <- i + 1
       } ## end loop around ss l1
@@ -430,7 +436,7 @@ kable(roc_summary[401:800, ], format = 'html', digits=3) %>%
 
 ### General overview over all conditions
 
-```{r roc-l2-gen}
+```{r roc-l2-gen, message=FALSE, warning=FALSE}
 j <- 3 ## Which class?
 for(index in INDEX){
     ## Print out which iteration so we know what we am looking at
@@ -442,7 +448,7 @@ for(index in INDEX){
     ## Create formula
     model <- as.formula(paste0(CLASS[j], '~', index))
     ## Fit ROC curve
-    fit_roc[[key]] <-  roc(model, data=sim_results,
+    fit_roc[[key]] <-  roc(model, data=sim_results,quiet=T,
                            plot =TRUE, ci=TRUE, print.auc=TRUE)
     ## Create a plot of "smoothed" curve for plotting
     fit_roc_smooth[[key]] <-  smooth(roc(model, data=sim_results))
@@ -456,7 +462,8 @@ for(index in INDEX){
     roc_summary_gen[ig, 4] <- p.auc ## corrected partial AUC (.5 is no discrimination)
     roc_summary_gen[ig, 5] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
     roc_summary_gen[ig, 6:8] <- coords(fit_roc[[key]], "best", 
-                                   ret=c("threshold", "specificity", 'sensitivity'))
+                                   ret=c("threshold", "specificity", 'sensitivity'),
+                                   transpose=TRUE)
     ## print summary
     cat('\n\nSummary of ROC:\n')
     print(roc_summary_gen[ig, ])
@@ -470,19 +477,19 @@ print(xtable(roc_summary_gen[11:15,c(2:3,6:8)], digits = 3), booktabs=T,include.
 
 ### More fine grained information within/across conditions
 
-```{r roc-l2}
+```{r roc-l2, message=FALSE, warning=FALSE}
 j <- 3 ## Which class?
 for(index in INDEX){
   for(est in EST){
     for(s2 in SS_L2){
       for(s1 in SS_L1){
     ## Print out which iteration so we know what we are looking at
-    cat('\n\nROC Analysis in')
-    cat('\nIndex:\t', index)
-    cat('\nClassification:\t', CLASS[j])
-    cat('\nEstimation Method:\t', est)
-    cat('\nLevel-2 Sample Size:\t', s2)
-    cat('\nLevel-1 Sample Size:\t', s1)
+    #cat('\n\nROC Analysis in')
+    #cat('\nIndex:\t', index)
+    #cat('\nClassification:\t', CLASS[j])
+    #cat('\nEstimation Method:\t', est)
+    #cat('\nLevel-2 Sample Size:\t', s2)
+    #cat('\nLevel-1 Sample Size:\t', s1)
     ## Set up iteration key
     key <- paste0(index,'.',CLASS[j],'.',est,'.', s2,'.',s1)
     # Subset data as  needed
@@ -511,8 +518,8 @@ for(index in INDEX){
     ## Create formula
     model <- as.formula(paste0(CLASS[j], '~', index))
     ## Fit ROC curve
-    fit_roc[[key]] <-  roc(model, data=mydata,
-                           plot =TRUE, ci=TRUE, print.auc=TRUE)
+    fit_roc[[key]] <-  roc(model, data=mydata, quiet=T,
+                           plot =F, ci=TRUE, print.auc=TRUE)
     ## Create a plot of "smoothed" curve for plotting
     fit_roc_smooth[[key]] <-  smooth(roc(model, data=mydata))
     ## Compute partial AUC for specificity .8-1
@@ -528,7 +535,8 @@ for(index in INDEX){
     roc_summary[i, 7] <- p.auc ## corrected partial AUC (.5 is no discrimination)
     roc_summary[i, 8] <- fit_roc_smooth[[key]]$auc ## smoothed AUC
     roc_summary[i, 9:11] <- coords(fit_roc[[key]], "best", 
-                                   ret=c("threshold", "specificity", 'sensitivity'))
+                                   ret=c("threshold", "specificity", 'sensitivity'),
+                                   transpose=TRUE)
     
     ## add number of C and number of miss models in analysis
     n.C <- nrow(mydata[ mydata[, CLASS[j]] == 1, ])
@@ -537,8 +545,8 @@ for(index in INDEX){
     roc_summary[i, 13] <- n.M
     
     ## print summary
-    cat('\n\nSummary of ROC:\n')
-    print(roc_summary[i, ])
+    #cat('\n\nSummary of ROC:\n')
+    #print(roc_summary[i, ])
     ## add to summary iterator
     i <- i + 1
       } ## end loop around ss l1
@@ -560,12 +568,15 @@ The remaining information is left here for reference.
 ```{r roc-sum}
 c <- filter(roc_summary, Classification == "C", `Level-2 SS` != 'ALL', `Level-1 SS` == 'ALL')
 # Next make the columns the estimator factor
+c1 <- cbind(c[ c$Estimator == 'MLR', c(2,4,6,9:11)],
+            c[ c$Estimator == 'ULSMV', c(6,9:11)],
+            c[ c$Estimator == 'WLSMV', c(6,9:11)])
+kable(c1, format = 'html',digits=3, row.names = F) %>%
+  kable_styling(full_width = T) %>%
+  add_header_above(c(' '=2, 'MLR'=4, 'USLMV'=4, 'WLSMV'=4))
 c1 <- cbind(c[ c$Estimator == 'MLR', c(2,4,6,9)],
             c[ c$Estimator == 'ULSMV', c(6,9)],
             c[ c$Estimator == 'WLSMV', c(6,9)])
-kable(c1, format = 'html',digits=3, row.names = F) %>%
-  kable_styling(full_width = T) %>%
-  add_header_above(c(' '=2, 'MLR'=2, 'USLMV'=2, 'WLSMV'=2))
 print(xtable(c1, digits = 3), booktabs=T,include.rownames = F)
 ```
 
@@ -575,12 +586,15 @@ print(xtable(c1, digits = 3), booktabs=T,include.rownames = F)
 ```{r roc-sum-l1}
 c <- filter(roc_summary, Classification == "CvM1", `Level-2 SS` != 'ALL', `Level-1 SS` == 'ALL')
 # Next make the columns the estimator factor
+c1 <- cbind(c[ c$Estimator == 'MLR', c(2,4,6,9:11)],
+            c[ c$Estimator == 'ULSMV', c(6,9:11)],
+            c[ c$Estimator == 'WLSMV', c(6,9:11)])
+kable(c1, format = 'html',digits=3, row.names = F) %>%
+  kable_styling(full_width = T) %>%
+  add_header_above(c(' '=2, 'MLR'=4, 'USLMV'=4, 'WLSMV'=4))
 c1 <- cbind(c[ c$Estimator == 'MLR', c(2,4,6,9)],
             c[ c$Estimator == 'ULSMV', c(6,9)],
             c[ c$Estimator == 'WLSMV', c(6,9)])
-kable(c1, format = 'html',digits=3, row.names = F) %>%
-  kable_styling(full_width = T) %>%
-  add_header_above(c(' '=2, 'MLR'=2, 'USLMV'=2, 'WLSMV'=2))
 print(xtable(c1, digits = 3), booktabs=T,include.rownames = F)
 ```
 
@@ -590,12 +604,15 @@ print(xtable(c1, digits = 3), booktabs=T,include.rownames = F)
 ```{r roc-sum-l2}
 c <- filter(roc_summary, Classification == "CvM2", `Level-2 SS` != 'ALL', `Level-1 SS` == 'ALL')
 # Next make the columns the estimator factor
+c1 <- cbind(c[ c$Estimator == 'MLR', c(2,4,6,9:11)],
+            c[ c$Estimator == 'ULSMV', c(6,9:11)],
+            c[ c$Estimator == 'WLSMV', c(6,9:11)])
+kable(c1, format = 'html',digits=3, row.names = F) %>%
+  kable_styling(full_width = T) %>%
+  add_header_above(c(' '=2, 'MLR'=4, 'USLMV'=4, 'WLSMV'=4))
 c1 <- cbind(c[ c$Estimator == 'MLR', c(2,4,6,9)],
             c[ c$Estimator == 'ULSMV', c(6,9)],
             c[ c$Estimator == 'WLSMV', c(6,9)])
-kable(c1, format = 'html',digits=3, row.names = F) %>%
-  kable_styling(full_width = T) %>%
-  add_header_above(c(' '=2, 'MLR'=2, 'USLMV'=2, 'WLSMV'=2))
 print(xtable(c1, digits = 3), booktabs=T,include.rownames = F)
 ```
 
@@ -666,8 +683,9 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   facet_grid(Estimator~Classification) +
   scale_x_reverse() +
   scale_color_brewer(palette="Set1") +
-  guides(color=guide_legend(title="Fit Statistics"),
-         linetype=guide_legend(title="Fit Statistics"))
+  guides(color=guide_legend(title="Fit Index"),
+         linetype=guide_legend(title="Fit Index")) +
+  geom_abline(intercept = 1, slope = 1, color='dimgray' )
 p
 if(save.fig == T) ggsave('roc_plot_mis_est.pdf', plot = p, height = 6,width = 9,units = 'in')
 ```
@@ -681,8 +699,9 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   facet_grid(`Level-2 SS` ~Classification) +
   scale_x_reverse() +
   scale_color_brewer(palette="Set1") +
-  guides(color=guide_legend(title="Fit Statistics"),
-         linetype=guide_legend(title="Fit Statistics"))
+  guides(color=guide_legend(title="Fit Index"),
+         linetype=guide_legend(title="Fit Index"))+
+  geom_abline(intercept = 1, slope = 1, color='dimgray' )
 p
 if(save.fig == T) ggsave('roc_plot_mis_n2.pdf', plot = p, height = 6,width = 9, units = 'in')
 ```
@@ -698,8 +717,9 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   facet_grid(.~Classification) +
   scale_x_reverse() +
   scale_color_brewer(palette="Set1") +
-  guides(color=guide_legend(title="Fit Statistics"),
-         linetype=guide_legend(title="Fit Statistics"))
+  guides(color=guide_legend(title="Fit Index"),
+         linetype=guide_legend(title="Fit Index"))+
+  geom_abline(intercept = 1, slope = 1, color='dimgray' )
 p
 if(save.fig == T) ggsave('roc_class_all.pdf', plot = p, height = 4, width = 9, units = 'in')
 subdata <- filter(roc_smooth_data, `Level-2 SS`=='ALL', Estimator == "MLR")
@@ -708,8 +728,9 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   facet_grid(.~Classification) +
   scale_x_reverse() +
   scale_color_brewer(palette="Set1") +
-  guides(color=guide_legend(title="Fit Statistics"),
-         linetype=guide_legend(title="Fit Statistics"))
+  guides(color=guide_legend(title="Fit Index"),
+         linetype=guide_legend(title="Fit Index"))+
+  geom_abline(intercept = 1, slope = 1, color='dimgray' )
 p
 if(save.fig == T) ggsave('roc_class_mlr.pdf', plot = p, height = 4,width = 9,units = 'in')
 subdata <- filter(roc_smooth_data, `Level-2 SS`=='ALL', Estimator == "ULSMV")
@@ -718,8 +739,9 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   facet_grid(.~Classification) +
   scale_x_reverse() +
   scale_color_brewer(palette="Set1") +
-  guides(color=guide_legend(title="Fit Statistics"),
-         linetype=guide_legend(title="Fit Statistics"))
+  guides(color=guide_legend(title="Fit Index"),
+         linetype=guide_legend(title="Fit Index"))+
+  geom_abline(intercept = 1, slope = 1, color='dimgray' )
 p
 if(save.fig == T) ggsave('roc_class_ulsmv.pdf', plot = p, height = 4,width = 9,units = 'in')
 subdata <- filter(roc_smooth_data,`Level-2 SS`=='ALL',  Estimator == "WLSMV")
@@ -728,8 +750,9 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   facet_grid(.~Classification) +
   scale_x_reverse() +
   scale_color_brewer(palette="Set1") +
-  guides(color=guide_legend(title="Fit Statistics"),
-         linetype=guide_legend(title="Fit Statistics"))
+  guides(color=guide_legend(title="Fit Index"),
+         linetype=guide_legend(title="Fit Index"))+
+  geom_abline(intercept = 1, slope = 1, color='dimgray' )
 p
 if(save.fig == T) ggsave('roc_class_wlsmv.pdf', plot = p, height = 4,width = 9,units = 'in')
 ```
@@ -745,8 +768,9 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   facet_grid(.~Estimator) +
   scale_x_reverse() +
   scale_color_brewer(palette="Set1") +
-  guides(color=guide_legend(title="Fit Statistics"),
-         linetype=guide_legend(title="Fit Statistics"))
+  guides(color=guide_legend(title="Fit Index"),
+         linetype=guide_legend(title="Fit Index"))+
+  geom_abline(intercept = 1, slope = 1, color='dimgray' )
 p
 if(save.fig == T) ggsave('roc_est_c.pdf', plot = p, height = 4,width = 9,units = 'in')
 subdata <- filter(roc_smooth_data, `Level-2 SS`=='ALL', Estimator!='ALL',
@@ -756,8 +780,9 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   facet_grid(.~Estimator) +
   scale_x_reverse() +
   scale_color_brewer(palette="Set1") +
-  guides(color=guide_legend(title="Fit Statistics"),
-         linetype=guide_legend(title="Fit Statistics"))
+  guides(color=guide_legend(title="Fit Index"),
+         linetype=guide_legend(title="Fit Index"))+
+  geom_abline(intercept = 1, slope = 1, color='dimgray' )
 p
 if(save.fig == T) ggsave('roc_est_cl1.pdf', plot = p, height = 4,width = 9,units = 'in')
 subdata <- filter(roc_smooth_data,`Level-2 SS`=='ALL', Estimator!='ALL',
@@ -767,8 +792,9 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   facet_grid(.~Estimator) +
   scale_x_reverse() +
   scale_color_brewer(palette="Set1") +
-  guides(color=guide_legend(title="Fit Statistics"),
-         linetype=guide_legend(title="Fit Statistics"))
+  guides(color=guide_legend(title="Fit Index"),
+         linetype=guide_legend(title="Fit Index"))+
+  geom_abline(intercept = 1, slope = 1, color='dimgray' )
 p
 if(save.fig == T) ggsave('roc_est_cl2.pdf', plot = p, height = 4,width = 9,units = 'in')
 ```
@@ -784,8 +810,9 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   facet_grid(.~`Level-2 SS`) +
   scale_x_reverse() +
   scale_color_brewer(palette="Set1") +
-  guides(color=guide_legend(title="Fit Statistics"),
-         linetype=guide_legend(title="Fit Statistics"))
+  guides(color=guide_legend(title="Fit Index"),
+         linetype=guide_legend(title="Fit Index"))+
+  geom_abline(intercept = 1, slope = 1, color='dimgray')
 p
 if(save.fig == T) ggsave('roc_n2_c.pdf', plot = p, height = 4,width = 9,units = 'in')
 subdata <- filter(roc_smooth_data, `Level-2 SS`!='ALL', Estimator=='ALL',
@@ -795,8 +822,9 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   facet_grid(.~`Level-2 SS`) +
   scale_x_reverse() +
   scale_color_brewer(palette="Set1") +
-  guides(color=guide_legend(title="Fit Statistics"),
-         linetype=guide_legend(title="Fit Statistics"))
+  guides(color=guide_legend(title="Fit Index"),
+         linetype=guide_legend(title="Fit Index"))+
+  geom_abline(intercept = 1, slope = 1, color='dimgray' )
 p
 if(save.fig == T) ggsave('roc_n2_cl1.pdf', plot = p, height = 4,width = 9,units = 'in')
 subdata <- filter(roc_smooth_data,`Level-2 SS`!='ALL', Estimator=='ALL',  Classification == "Level-2 Mis.")
@@ -805,8 +833,9 @@ p <- ggplot(subdata, aes(x = Specificity, y=Sensitivity, group = Index)) +
   facet_grid(.~`Level-2 SS`) +
   scale_x_reverse() +
   scale_color_brewer(palette="Set1") +
-  guides(color=guide_legend(title="Fit Statistics"),
-         linetype=guide_legend(title="Fit Statistics"))
+  guides(color=guide_legend(title="Fit Index"),
+         linetype=guide_legend(title="Fit Index"))+
+  geom_abline(intercept = 1, slope = 1, color='dimgray' )
 p
 if(save.fig == T) ggsave('roc_n2_cl2.pdf', plot = p, height = 4,width = 9,units = 'in')
 ```

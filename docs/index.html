@@ -415,7 +415,7 @@ div.section {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -424,7 +424,7 @@ div.section {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -433,10 +433,10 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-09-29
+<strong>Last updated:</strong> 2019-10-18
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 1 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>mcfa-fit/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -452,22 +452,22 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree6457362e585461b9bb81e577c9c8488b482c1707targetblank6457362a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/noah-padgett/mcfa-fit/tree/6457362e585461b9bb81e577c9c8488b482c1707" target="_blank">6457362</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittreeb534b90c4bb07188e5fa1f5ec2e9ea788daee665targetblankb534b90a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/noah-padgett/mcfa-fit/tree/b534b90c4bb07188e5fa1f5ec2e9ea788daee665" target="_blank">b534b90</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree6457362e585461b9bb81e577c9c8488b482c1707targetblank6457362a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittreeb534b90c4bb07188e5fa1f5ec2e9ea788daee665targetblankb534b90a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -478,6 +478,20 @@ Ignored files:
     Ignored:    .RDataTmp
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  analysis/est_ulsmv.Rmd
+    Untracked:  analysis/est_wlsmv.Rmd
+
+Unstaged changes:
+    Modified:   analysis/est_mlr.Rmd
+    Modified:   analysis/fit_boxplots.Rmd
+    Modified:   analysis/index.Rmd
+    Modified:   analysis/index_cfi.Rmd
+    Modified:   analysis/index_rmsea.Rmd
+    Modified:   analysis/index_srmr.Rmd
+    Modified:   analysis/index_tli.Rmd
+    Modified:   analysis/roc_analyses.Rmd
 
 </code></pre>
 <p>
@@ -516,6 +530,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/noah-padgett/mcfa-fit/b534b90c4bb07188e5fa1f5ec2e9ea788daee665/docs/index.html" target="_blank">b534b90</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-09-29
+</td>
+<td>
+updated publish
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -863,8 +894,8 @@ Start workflowr project.
 </div>
 </div>
 </div>
-<p>Welcome to our research website. This site contains the results of our Monte Carlo simulation study that compares fit statistics across robust estimation methods in multilevel confirmatory factor analysis (ML-CFA) models. There are few studies that have examined these complex models and even fewer that have focused on the performance of fit staitistcs.</p>
-<p>Below contains various pages for the different aspects of the output. The pages are broken up into what we considered logical sections of the results. Not all of the results shown here are reported in the manuscript. This limitation is mostly due to space restrictions in the actual manuscript.</p>
+<p>Welcome to our research website. This site contains the results of our Monte Carlo simulation study that compares fit indices across robust estimation methods in multilevel confirmatory factor analysis (ML-CFA) models. There are few studies that have examined these complex models and even fewer that have focused on the performance of fit indices.</p>
+<p>Below contains various pages for the different aspects of the project. The pages are broken up into what we considered logical sections of the results. Not all of the results shown here are reported in the manuscript. This limitation is mostly due to space restrictions in the actual manuscript.</p>
 <div id="study-results" class="section level1">
 <h1>Study Results</h1>
 <p>*<a href="summary_stats_tables.html">Convergence and Admissibility</a></p>
@@ -877,12 +908,7 @@ Start workflowr project.
 </div>
 <div id="fit-index-information" class="section level1">
 <h1>Fit Index Information</h1>
-<p>Below are links to pages that give more technical details on each of the fit indices investigatedin our study. We have tried to include much of the information that we could not include in the actual manuscript given the space limitations specified by the journal. Each page goes through the following information.</p>
-<ol style="list-style-type: decimal">
-<li><p>A description of the fit index in the conventional case of single-level SEM. This will include the basic information about how each index is computed and what features are known to have an effect on the performance of the index from single-level perspective.</p></li>
-<li><p>A detailed explanation of which parts of the computation of the index changes in a multilevel scenario. This part will necessary have to discuss the impact of the estimation method chosen because the choice of estimation method will affect the impact the index in different ways.</p></li>
-<li><p>A quick conclusion as to the expected utility of the index in multilevel settings.</p></li>
-</ol>
+<p>Below are links to pages that give more technical details on each of the fit indices investigatedin our study. We have tried to include much of the information that we could not include in the actual manuscript given the space limitations specified by the journal. Each page goes through the how the index designed and a basic description of what conclusion we expected for the utility of the index in multilevel settings.</p>
 <p>*<a href="index_cfi.html">Comparative Fit Index (CFI)</a></p>
 <p>*<a href="index_tli.html">Comparative Fit Index (TLI)</a></p>
 <p>*<a href="index_rmsea.html">Root Mean Square Error of Approximation (RMSEA)</a></p>
@@ -892,13 +918,8 @@ Start workflowr project.
 <h1>Estimation Method Technical Details</h1>
 <p>One downside of writing this article from a practicioner oriented perspective is that many of the technical details on estimation were severely glossed over in the actual manuscript. We know many readers of SEM will find interest in a deeper discussion of this part of the research which we did not dive deeply into in this paper. In the following pages, we will outline more of the technical details of each of the estimation methods chosen and discuss what potential benefits/limitations each has on the fit indices investigated. We try to treat this part as rigorously as possible, but understand that this is a very complex topic and we try to break down each estimation method to the major differences for discussion purposes.</p>
 <p>*<a href="est_mlr.html">Maximum Likelihood (MLR)</a></p>
-<!-- In general, All models were estimated using M\textit{plus} v8.2 [@Muthen2017]. -->
-<!-- Researchers have the choice of many potential estimation methods in M\textit{plus}, and each was initially developed to solve a particular estimation limitation of another estimation methods.  -->
-<!-- A full list of the available estimation methods for models in M\textit{plus} can be found in the User's Guide [@Muthen2017].  -->
-<!-- In this project, we focused on ordered categorical responses, for which the maximum likelihood with robust standard errors (MLR) and weighted least squares mean and variance adjusted (WLSMV) estimation methods have been tested for ML-CFA models. -->
-<!-- However, for single level CFAs with categorical data, there is evidence that unweighted least squares (ULS) performs well [@Forero2009].  -->
-<!-- But, the ULS estimation method is not available for multilevel models in M\textit{plus}, so instead, we used the unweighted least squares mean and variance adjusted (ULSMV) method. -->
-<!-- Therefore, we investigated three estimation methods (MLR, WLSMV, and ULSMV). -->
+<p>*<a href="est_wlsmv.html">Weighted Least Squares Mean and Variance Adjusted (WLSMV)</a></p>
+<p>*<a href="est_ulsmv.html">Unweighted Least Squares Mean and Variance Adjusted (ULSMV)</a></p>
 </div>
 
 

@@ -1,7 +1,9 @@
 ---
-title: "Fit Statistics Investigated"
-date: "2019-05-08"
-output: workflowr::wflow_html
+title: "Fit Index: RMSEA"
+site: workflowr::wflow_site
+output:
+  workflowr::wflow_html:
+    toc: true
 editor_options:
   chunk_output_type: console
 ---
@@ -13,7 +15,7 @@ The root mean square error of approximation (RMSEA) is a measure of lack of fit 
 The RMSEA describes how well the hypothesized model is represented in the observed data.
 The comparison is accomplished by a measure of the deviation of what is observed
 \[
-RMSEA = \sqrt{\frac{\mathrm{max} \left(  \chi^2 - df,\ 0 \right)}{ df (N-1) }}
+RMSEA = \sqrt{\frac{\mathrm{max} \left(  \chi^2 - df,\ 0 \right)}{ df (N)}}
 \]
 The RMSEA has a known population distribution.
 Because the distribution is known based on a noncentral F-distribution, a confidence interval can be constructed.

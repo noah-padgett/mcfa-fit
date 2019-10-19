@@ -1,0 +1,30 @@
+---
+title: 'Estimation: ULSMV'
+site: workflowr::wflow_site
+output:
+  workflowr::wflow_html:
+    toc: true
+editor_options:
+  chunk_output_type: console
+---
+
+MUCH TO ADD HERE (NOT FINISHED)
+
+The ULSMV fit function has been shown to be:
+
+\[F_{ULSMV} = {\left(s - \sigma(\hat\theta)\right)}^{\prime}\mathrm{I}{\left(s - \sigma(\hat\theta)\right)}\\
+\ \ \ \ \ \ \ \ \ \ \ \ = {\left(s - \sigma(\hat\theta)\right)}^{\prime}{\left(s - \sigma(\hat\theta)\right)}\]
+
+which is a special case of the WLS estimation method when $W = \mathrm{I}$where the interested reader is refered to Muthen (1978) for information on the WLS estimation method more generally, and Muthen (1994)  for the general ML-CFA model formulation but to (include references to two-level estimation with WLSMV).
+
+
+## Other Notes
+
+ULSMV takes approximately the same length of time as WLSMV.
+
+# References
+
+
+1. Muthén, B. (1978). Contributions to factor analysis of dichotomous variables. Psychometrika, 43(4), 551–560. https://doi.org/10.1007/BF02293813
+
+2. Muthén, B. O. (1994). Multilevel Covariance Structure Analysis. Sociological Methods & Research, 22(3), 376–398. https://doi.org/10.1177/0049124194022003006

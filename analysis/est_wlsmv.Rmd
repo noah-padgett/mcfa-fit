@@ -1,0 +1,28 @@
+---
+title: 'Estimation: WLSMV'
+site: workflowr::wflow_site
+output:
+  workflowr::wflow_html:
+    toc: true
+editor_options:
+  chunk_output_type: console
+---
+
+MUCH TO ADD HERE (NOT FINISHED)
+
+The WLSMV fit function has been shown to be:
+
+\[F_{WLSMV}= {\left(s - \sigma(\hat\theta)\right)}^{\prime}W^{-1}{\left(s - \sigma(\hat\theta)\right)}\]
+
+where the interested reader is refered to Muthen (1978) for information on the WLS estimation method more generally, and Muthen (1994)  for the general ML-CFA model formulation but to (include references to two-level estimation with WLSMV).
+
+
+## Other Notes
+
+WLSMV takes significantly longer than MLR (i.e., WLSMV was 2-5 minutes per replication compared to MLR which converged in no more than a second or two).
+
+
+# References
+
+
+1. Muthén, B. O. (1994). Multilevel Covariance Structure Analysis. Sociological Methods & Research, 22(3), 376–398. https://doi.org/10.1177/0049124194022003006

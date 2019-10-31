@@ -417,7 +417,7 @@ div.section {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -426,7 +426,7 @@ div.section {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -438,7 +438,7 @@ div.section {
 <strong>Last updated:</strong> 2019-10-31
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>mcfa-fit/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -454,12 +454,12 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown is untracked by Git. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
 </div>
 </div>
 </div>
@@ -526,10 +526,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree3524c6948e4c30cdda7de180ead1f5a2f4d056b6targetblank3524c69a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/noah-padgett/mcfa-fit/tree/3524c6948e4c30cdda7de180ead1f5a2f4d056b6" target="_blank">3524c69</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree42016639b99e035037780f5e2cc8990ce808bdf9targetblank4201663a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/noah-padgett/mcfa-fit/tree/42016639b99e035037780f5e2cc8990ce808bdf9" target="_blank">4201663</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree3524c6948e4c30cdda7de180ead1f5a2f4d056b6targetblank3524c69a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree42016639b99e035037780f5e2cc8990ce808bdf9targetblank4201663a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -540,10 +540,6 @@ Ignored files:
     Ignored:    .RDataTmp
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-
-Untracked files:
-    Untracked:  analysis/fit_boxplots_shiny-app.Rmd
-    Untracked:  code/fit-dist-app/
 
 </code></pre>
 <p>
@@ -556,9 +552,86 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <hr>
 </div>
 <div id="versions" class="tab-pane fade">
+
 <p>
-There are no past versions. Publish this analysis with <code>wflow_publish()</code> to start tracking its development.
+These are the previous versions of the R Markdown and HTML files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view them.
 </p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/42016639b99e035037780f5e2cc8990ce808bdf9/analysis/fit_boxplots_shiny-app.Rmd" target="_blank">4201663</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-10-31
+</td>
+<td>
+Updated shiny-app with new dimensions
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/af053b2a6d766b828aea0a1d173f3f86f28a1de8/analysis/fit_boxplots_shiny-app.Rmd" target="_blank">af053b2</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-10-31
+</td>
+<td>
+updated homepage
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/noah-padgett/mcfa-fit/af053b2a6d766b828aea0a1d173f3f86f28a1de8/docs/fit_boxplots_shiny-app.html" target="_blank">af053b2</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-10-31
+</td>
+<td>
+updated homepage
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
@@ -570,13 +643,13 @@ There are no past versions. Publish this analysis with <code>wflow_publish()</co
 <div id="set-up" class="section level1">
 <h1>Set-Up</h1>
 <pre class="r"><code>##Chunk iptions
-knitr::opts_chunk$set(out.width = &quot;225%&quot;)</code></pre>
+knitr::opts_chunk$set(out.width = &quot;150%&quot;)</code></pre>
 </div>
 <div id="shiny-app" class="section level1">
 <h1>Shiny App</h1>
 <pre class="r"><code>knitr::include_app(&quot;https://noah-padgett.shinyapps.io/fit-dist-app/&quot;, 
-  height = &quot;700px&quot;)</code></pre>
-<iframe src="https://noah-padgett.shinyapps.io/fit-dist-app/?showcase=0" width="225%" height="700px">
+  height = &quot;600px&quot;)</code></pre>
+<iframe src="https://noah-padgett.shinyapps.io/fit-dist-app/?showcase=0" width="150%" height="600px">
 </iframe>
 <br>
 <p>
@@ -605,9 +678,10 @@ attached base packages:
 loaded via a namespace (and not attached):
  [1] workflowr_1.4.0 Rcpp_1.0.1      digest_0.6.19   rprojroot_1.3-2
  [5] backports_1.1.4 git2r_0.26.1    magrittr_1.5    evaluate_0.14  
- [9] highr_0.8       stringi_1.4.3   fs_1.3.1        rmarkdown_1.13 
-[13] tools_3.6.0     stringr_1.4.0   glue_1.3.1      xfun_0.7       
-[17] yaml_2.2.0      compiler_3.6.0  htmltools_0.3.6 knitr_1.23     </code></pre>
+ [9] highr_0.8       stringi_1.4.3   fs_1.3.1        whisker_0.3-2  
+[13] rmarkdown_1.13  tools_3.6.0     stringr_1.4.0   glue_1.3.1     
+[17] xfun_0.7        yaml_2.2.0      compiler_3.6.0  htmltools_0.3.6
+[21] knitr_1.23     </code></pre>
 </div>
 </div>
 

@@ -23,11 +23,13 @@ This limitation is mostly due to space restrictions in the actual manuscript.
 
 *[Fit Index Descriptive Statistics](fit_index_stats.html)
 
-*[Fit Statistic Distribution](fit_boxplots.html)
+*[Fit Index Distribution](fit_boxplots.html)
 
 *[ANOVA Results](anova.html)
 
 *[ROC Analysis Results](roc_analyses.html)
+
+*[Fit Index Shiny Application](fit_boxplots_shiny-app.html)
 
 <!-- *[Publication Figures](publication_figures.html) -->
 

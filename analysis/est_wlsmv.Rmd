@@ -26,3 +26,12 @@ WLSMV takes significantly longer than MLR (i.e., WLSMV was 2-5 minutes per repli
 
 
 1. Muthén, B. O. (1994). Multilevel Covariance Structure Analysis. Sociological Methods & Research, 22(3), 376–398. https://doi.org/10.1177/0049124194022003006
+
+# Shiny Demo
+
+```{r shiny}
+
+knitr::include_app("https://noah-padgett.shinyapps.io/shiny-demo/", 
+  height = "600px")
+
+```

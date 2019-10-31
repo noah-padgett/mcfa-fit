@@ -14,8 +14,7 @@ Purpose of this file:
 
 ```{r set-up, tidy=T}
 ##Chunk iptions
-knitr::opts_chunk$set(out.width = "225%")
-
+knitr::opts_chunk$set(out.width = "150%")
 
 ```
 
@@ -24,6 +23,6 @@ knitr::opts_chunk$set(out.width = "225%")
 ```{r shiny}
 
 knitr::include_app("https://noah-padgett.shinyapps.io/fit-dist-app/", 
-  height = "700px")
+  height = "600px")
 
 ```

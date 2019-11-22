@@ -9,16 +9,17 @@ editor_options:
 
 This study is a continuation from R. Noah Padgett's Master's Thesis. 
 The project is generally about the performance of commonly used fit statistics in multilevel CFA models.
-The work is part of a large simulation study that will be reported in multiple manuscripts throughout the next year.
-This study is solely on the FIT statistis.
+The work is part of a large simulation study that will be reported in multiple manuscripts throughout the next year (at least that is the hope).
+This study is related solely to how the *fit indices* varied across conditions and estimation methods.
 
 # Abstract
 
-The ability of commonly used fit statistics to discriminate between a correctly specified model and misspecified models was investigated within a multilevel factor analysis context.
-Performance of fit statistics was investigated with receiver-operating-characteristics (ROC) analyses. 
-Combining ROC analyses with traditional methods of investigating fit statistic performance resulted in converging evidence for the utility of the investigated fit statistics. 
-Optimal thresholds were identified and found to vary across different robust estimation methods (i.e., MLR, ULSMV, and WLSMV).
-Estimation method and sample size were found to influence the performance of common fit statistic to detect misspecification of the level-1 model, while all fit statistics investigated performed poorly for detecting misspecification of the level-2 model.
-Recommendations were given for which commonly reported fit statistics to use, cut-off criteria to use for which estimators, and cautions about the use of the suggested cut-off criteria.
+Within a multilevel confirmatory factor analysis framework, we investigated the ability of commonly used fit indices to discriminate between correctly specified models and misspecified models.
+Receiver operating characteristics (ROC) analyses were used to evaluate the performance of fit indices. 
+Combining ROC analyses with checks of the convergence rates across Monte Carlo replications and ANOVA for investigating the variation in fit scores across replications, we found converging evidence for the utility of the investigated fit indices.  
+Optimal thresholds based on maximizing sensitivity and specificity for detection of the true model were identified by the highest sensitivity and specificity and found to vary across different robust estimation methods (i.e., MLR, ULSMV, and WLSMV). 
+The estimation method and sample size influenced the performance of common fit indices to detect misspecification of the level-1 model. 
+All fit indices investigated performed poorly for detecting misspecification of the level-2 model when the level-2 sample size was below 100. 
+We offer recommendations of commonly reported fit indices to use (and not use), cut-off criteria to use for specific estimation methods, and cautions about the use of recommended cut-off criteria for ML-CFA.
 
 

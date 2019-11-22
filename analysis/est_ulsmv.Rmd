@@ -8,7 +8,6 @@ editor_options:
   chunk_output_type: console
 ---
 
-MUCH TO ADD HERE (NOT FINISHED)
 
 The ULSMV fit function has been shown to be:
 

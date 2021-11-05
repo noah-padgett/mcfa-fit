@@ -1,11 +1,10 @@
 # ============================= #
-#           Padgett
+# Padgett ML-CFA Study Models
 # ============================= #
 # Data Created: 10/15/2018    
 # By: R. Noah Padgett           
-# ============================= #
-# Project for SERA 2019       
-# Conditions 1-9
+# ============================= #   
+# Conditions 1-72
 # ============================= #
 library(MplusAutomation)
 createModels("mcfa_create_script_datagen.txt")

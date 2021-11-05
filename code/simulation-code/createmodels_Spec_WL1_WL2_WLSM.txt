@@ -1,0 +1,62 @@
+[[init]]iterators = cond repnum;
+cond = 1:72;
+repnum = 1;filename = Spec_WL1_WL2_WLSM_condition_[[cond]]_rep_[[repnum]].inp;outputDirectory = Conditions/Condition[[cond]];[[/init]]DATA: 	
+	FILE IS mcfa_condition[[cond]]_rep[[repnum]].dat;
+VARIABLE:
+  	NAMES = u1-u10 clust; 
+  	USEVARIABLES = u1-u10;
+	CATEGORICAL = u1-u10;
+  	CLUSTER = clust;
+
+ANALYSIS:	
+  	TYPE = TWOLEVEL;
+	ESTIMATOR = WLSM;
+	PARAMETERIZATION = THETA;
+
+MODEL:
+
+    ! LEVEL 1
+    %Within%
+        ! Measurement Model Specification Level 1
+    	f1w BY 	u1* (f1)
+    	    	u2  (f2)
+    		u3  (f3)
+    		u4  (f4)
+                u5  (f5)
+;
+        ! Factor 2
+        f2w BY 	u6* (f6b)
+                u7  (f7)
+                u8  (f8)
+                u9  (f9)
+                u10 (f10);
+	! (Co)Variances
+    	f1w@1;
+        f2w@1;
+        f1w WITH f2w ;
+        
+   ! LEVEL 2
+   %Between%
+        ! Measurement Model Specification Level 2
+    	f1b BY 	u1* (f1)
+    	    	u2  (f2)
+    		u3  (f3)
+    		u4  (f4)
+                u5  (f5);
+        ! Factor 2
+        f2b BY 	u6* (f6b)
+                u7  (f7)
+                u8  (f8)
+                u9  (f9)
+                u10 (f10);
+   	! (Co)Variances
+    	f1b ;
+        f2b ;
+        f1b WITH f2b;
+        u1-u10;
+    
+OUTPUT: 
+    SAMPSTAT tech1 standardized;
+
+SAVEDATA:   
+    RESULTS are results_spec_WL1_WL2_WLSM_condition[[cond]]_rep[[repnum]].dat;

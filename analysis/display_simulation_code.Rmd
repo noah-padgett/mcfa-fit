@@ -1,0 +1,43 @@
+---
+title: "Simulation Code"
+author: "R. Noah Padgett"
+date: '2022-06-17'
+output: html_document
+---
+
+The following page displays the .txt files used for creating the Mplus files used in the simulation.
+The page is broken up into two pages
+
+1. The .txt files used
+2. the .R file used in conjunction with the .txt files
+
+
+
+```{r}
+
+writeLines(readLines("code/simulation-code/mcfa_create_script_datagen.txt"))
+
+```
+
+
+Next, the .R file
+
+```{r}
+
+writeLines(readLines("code/simulation-code/mcfa_sim_run.R"))
+
+```
+
+
+# Example of the code for generating the Mplus .inp files
+
+
+```{r}
+
+writeLines(readLines("code/simulation-code/createmodels_Spec_CL1_CL2_MLR.txt"))
+writeLines(readLines("code/simulation-code/createmodels_Spec_CL1_WL2_MLR.txt"))
+writeLines(readLines("code/simulation-code/createmodels_Spec_WL1_CL2_MLR.txt"))
+writeLines(readLines("code/simulation-code/createmodels_Spec_WL1_WL2_MLR.txt"))
+
+```
+

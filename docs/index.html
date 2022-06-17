@@ -1,24 +1,34 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
 <title>Home</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
@@ -26,12 +36,26 @@
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
-<style type="text/css">code{white-space: pre;}</style>
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
 <style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
+div.section {
+  padding-top: 12px;
+}
 </style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -44,32 +68,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 
 
@@ -80,13 +80,8 @@ h6 {
   margin-left: auto;
   margin-right: auto;
 }
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
-}
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -100,40 +95,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -161,7 +132,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -173,7 +144,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -184,10 +155,23 @@ $(document).ready(function () {
   var menuAnchor = $('a[href="' + href + '"]');
 
   // mark it active
-  menuAnchor.parent().addClass('active');
+  menuAnchor.tab('show');
 
   // if it's got a parent navbar menu mark it active as well
   menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -199,7 +183,6 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
@@ -235,6 +218,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -247,48 +231,9 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -302,6 +247,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -357,7 +308,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -371,7 +322,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -397,14 +348,7 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<!-- Add a small amount of space between sections. -->
-<style type="text/css">
-div.section {
-  padding-top: 12px;
-}
-</style>
-
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -415,7 +359,9 @@ div.section {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -424,7 +370,9 @@ div.section {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -433,17 +381,27 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-10-31
+<strong>Last updated:</strong> 2022-06-17
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 1
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 1
 </p>
 <p>
-<strong>Knit directory:</strong> <code>mcfa-fit/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+<strong>Knit directory:</strong> <code>mcfa-fit/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
 </p>
 <p>
-This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.4.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -452,40 +410,74 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree3524c6948e4c30cdda7de180ead1f5a2f4d056b6targetblank3524c69a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/noah-padgett/mcfa-fit/tree/3524c6948e4c30cdda7de180ead1f5a2f4d056b6" target="_blank">3524c69</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree5f09db8f5f46053be2cba7a1d3f5580516d03b82targetblank5f09db8a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/noah-padgett/mcfa-fit/tree/5f09db8f5f46053be2cba7a1d3f5580516d03b82" target="_blank">5f09db8</a>
+</a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree3524c6948e4c30cdda7de180ead1f5a2f4d056b6targetblank3524c69a" class="panel-collapse collapse">
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomnoahpadgettmcfafittree5f09db8f5f46053be2cba7a1d3f5580516d03b82targetblank5f09db8a"
+class="panel-collapse collapse">
 <div class="panel-body">
 <p>
-Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/noah-padgett/mcfa-fit/tree/5f09db8f5f46053be2cba7a1d3f5580516d03b82" target="_blank">5f09db8</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
 </p>
 <pre><code>
 Ignored files:
-    Ignored:    .RData
-    Ignored:    .RDataTmp
-    Ignored:    .Rhistory
     Ignored:    .Rproj.user/
 
 Untracked files:
-    Untracked:  analysis/fit_boxplots_shiny-app.Rmd
-    Untracked:  code/fit-dist-app/
+    Untracked:  analysis/display_simulation_code.Rmd
+
+Unstaged changes:
+    Modified:   analysis/index.Rmd
+    Modified:   code/simulation-code/mcfa_sim_run.R
 
 </code></pre>
 <p>
-Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
 </p>
 </div>
 </div>
@@ -496,7 +488,11 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the R Markdown and HTML files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view them.
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/index.Rmd</code>) and HTML
+(<code>docs/index.html</code>) files. If you’ve configured a remote Git
+repository (see <code>?wflow_git_remote</code>), click on the hyperlinks
+in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -520,6 +516,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/noah-padgett/mcfa-fit/344cfb657929cc43c8619e30a559d93ca3ce9e60/docs/index.html" target="_blank">344cfb6</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-10-31
+</td>
+<td>
+new shiny app
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -548,7 +561,7 @@ html
 noah-padgett
 </td>
 <td>
-2019-10-19
+2019-10-18
 </td>
 <td>
 Build site.
@@ -641,6 +654,23 @@ wflow_git_commit(all = T)
 </tr>
 <tr>
 <td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/noah-padgett/mcfa-fit/blob/982c8f193f55feaf39a421df93b9f860a65ec367/analysis/index.Rmd" target="_blank">982c8f1</a>
+</td>
+<td>
+noah-padgett
+</td>
+<td>
+2019-05-18
+</td>
+<td>
+roc analyses completed
+</td>
+</tr>
+<tr>
+<td>
 html
 </td>
 <td>
@@ -667,7 +697,7 @@ Rmd
 noah-padgett
 </td>
 <td>
-2019-05-10
+2019-05-09
 </td>
 <td>
 fixed index page and updated roc file
@@ -704,7 +734,9 @@ noah-padgett
 2019-05-09
 </td>
 <td>
-Merge branch ‘master’ of <a href="https://github.com/noah-padgett/mcfa-fit" class="uri">https://github.com/noah-padgett/mcfa-fit</a>
+Merge branch ‘master’ of <a
+href="https://github.com/noah-padgett/mcfa-fit"
+class="uri">https://github.com/noah-padgett/mcfa-fit</a>
 </td>
 </tr>
 <tr>
@@ -715,7 +747,7 @@ Rmd
 <a href="https://github.com/noah-padgett/mcfa-fit/blob/f6f9e9136046109cb5966031a948d37e8630478f/analysis/index.Rmd" target="_blank">f6f9e91</a>
 </td>
 <td>
-noah-padgett
+GitHub
 </td>
 <td>
 2019-05-09
@@ -766,7 +798,7 @@ html
 <a href="https://rawcdn.githack.com/noah-padgett/mcfa-fit/a65ec991552149960d36aaef13244b49d8cb189a/docs/index.html" target="_blank">a65ec99</a>
 </td>
 <td>
-noah-padgett
+GitHub
 </td>
 <td>
 2019-05-09
@@ -837,7 +869,7 @@ html
 noah-padgett
 </td>
 <td>
-2019-05-08
+2019-05-07
 </td>
 <td>
 Build site.
@@ -854,7 +886,7 @@ Rmd
 noah-padgett
 </td>
 <td>
-2019-05-08
+2019-05-07
 </td>
 <td>
 summary tables recreated
@@ -952,39 +984,82 @@ Start workflowr project.
 </div>
 </div>
 </div>
-<p>Welcome to our research website. This site contains the results of our Monte Carlo simulation study that compares fit indices across robust estimation methods in multilevel confirmatory factor analysis (ML-CFA) models. There are few studies that have examined these complex models and even fewer that have focused on the performance of fit indices.</p>
-<p>Below contains various pages for the different aspects of the project. The pages are broken up into what we considered logical sections of the results. Not all of the results shown here are reported in the manuscript. This limitation is mostly due to space restrictions in the actual manuscript.</p>
+<p>Welcome to our research website. This site contains the results of
+our Monte Carlo simulation study that compares fit indices across robust
+estimation methods in multilevel confirmatory factor analysis (ML-CFA)
+models. There are few studies that have examined these complex models
+and even fewer that have focused on the performance of fit indices.</p>
+<p>Below contains various pages for the different aspects of the
+project. The pages are broken up into what we considered logical
+sections of the results. Not all of the results shown here are reported
+in the manuscript. This limitation is mostly due to space restrictions
+in the actual manuscript.</p>
+<div id="simulation-code" class="section level1">
+<h1>Simulation Code</h1>
+<p>The following page displays the .txt and .R file used in the data
+generation and simulation study.</p>
+<ul>
+<li><p><a href="display_simulation_code.html">Code for
+Simulation</a></p></li>
+<li><p><a
+href="https://github.com/noah-padgett/mcfa-fit/tree/master/code/simulation-code">Link
+to Github Subdirectory for files</a></p></li>
+</ul>
+</div>
 <div id="study-results" class="section level1">
 <h1>Study Results</h1>
-<p>*<a href="summary_stats_tables.html">Convergence and Admissibility</a></p>
-<p>*<a href="fit_index_stats.html">Fit Index Descriptive Statistics</a></p>
+<p>*<a href="summary_stats_tables.html">Convergence and
+Admissibility</a></p>
+<p>*<a href="fit_index_stats.html">Fit Index Descriptive
+Statistics</a></p>
 <p>*<a href="fit_boxplots.html">Fit Index Distribution</a></p>
 <p>*<a href="anova.html">ANOVA Results</a></p>
 <p>*<a href="roc_analyses.html">ROC Analysis Results</a></p>
-<p>*<a href="fit_boxplots_shiny-app.html">Fit Index Shiny Application</a></p>
+<p>*<a href="fit_boxplots_shiny-app.html">Fit Index Shiny
+Application</a></p>
 <!-- *[Publication Figures](publication_figures.html) -->
 <!-- *[Publication Tables](publication_tabless.html) -->
 </div>
 <div id="fit-index-information" class="section level1">
 <h1>Fit Index Information</h1>
-<p>Below are links to pages that give more technical details on each of the fit indices investigatedin our study. We have tried to include much of the information that we could not include in the actual manuscript given the space limitations specified by the journal. Each page goes through the how the index designed and a basic description of what conclusion we expected for the utility of the index in multilevel settings.</p>
+<p>Below are links to pages that give more technical details on each of
+the fit indices investigatedin our study. We have tried to include much
+of the information that we could not include in the actual manuscript
+given the space limitations specified by the journal. Each page goes
+through the how the index designed and a basic description of what
+conclusion we expected for the utility of the index in multilevel
+settings.</p>
 <p>*<a href="index_cfi.html">Comparative Fit Index (CFI)</a></p>
 <p>*<a href="index_tli.html">Comparative Fit Index (TLI)</a></p>
-<p>*<a href="index_rmsea.html">Root Mean Square Error of Approximation (RMSEA)</a></p>
-<p>*<a href="index_srmr.html">Standardized Root Mean Square Residual (SRMR)</a></p>
+<p>*<a href="index_rmsea.html">Root Mean Square Error of Approximation
+(RMSEA)</a></p>
+<p>*<a href="index_srmr.html">Standardized Root Mean Square Residual
+(SRMR)</a></p>
 </div>
 <div id="estimation-method-technical-details" class="section level1">
 <h1>Estimation Method Technical Details</h1>
-<p>One downside of writing this article from a practicioner oriented perspective is that many of the technical details on estimation were severely glossed over in the actual manuscript. We know many readers of SEM will find interest in a deeper discussion of this part of the research which we did not dive deeply into in this paper. In the following pages, we will outline more of the technical details of each of the estimation methods chosen and discuss what potential benefits/limitations each has on the fit indices investigated. We try to treat this part as rigorously as possible, but understand that this is a very complex topic and we try to break down each estimation method to the major differences for discussion purposes.</p>
+<p>One downside of writing this article from a practicioner oriented
+perspective is that many of the technical details on estimation were
+severely glossed over in the actual manuscript. We know many readers of
+SEM will find interest in a deeper discussion of this part of the
+research which we did not dive deeply into in this paper. In the
+following pages, we will outline more of the technical details of each
+of the estimation methods chosen and discuss what potential
+benefits/limitations each has on the fit indices investigated. We try to
+treat this part as rigorously as possible, but understand that this is a
+very complex topic and we try to break down each estimation method to
+the major differences for discussion purposes.</p>
 <p>*<a href="est_mlr.html">Maximum Likelihood (MLR)</a></p>
-<p>*<a href="est_wlsmv.html">Weighted Least Squares Mean and Variance Adjusted (WLSMV)</a></p>
-<p>*<a href="est_ulsmv.html">Unweighted Least Squares Mean and Variance Adjusted (ULSMV)</a></p>
+<p>*<a href="est_wlsmv.html">Weighted Least Squares Mean and Variance
+Adjusted (WLSMV)</a></p>
+<p>*<a href="est_ulsmv.html">Unweighted Least Squares Mean and Variance
+Adjusted (ULSMV)</a></p>
 </div>
 
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
 TeX fonts only; see
-http://docs.mathjax.org/en/latest/configuration.html.  This will make
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
 the presentation more consistent at the cost of the webpage sometimes
 taking slightly longer to load. Note that this only works because the
 footer is added to webpages before the MathJax javascript. -->
@@ -993,6 +1068,8 @@ footer is added to webpages before the MathJax javascript. -->
     "HTML-CSS": { availableFonts: ["TeX"] }
   });
 </script>
+
+
 
 
 </div>
@@ -1004,13 +1081,59 @@ footer is added to webpages before the MathJax javascript. -->
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

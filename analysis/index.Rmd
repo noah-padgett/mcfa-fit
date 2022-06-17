@@ -17,6 +17,14 @@ The pages are broken up into what we considered logical sections of the results.
 Not all of the results shown here are reported in the manuscript.
 This limitation is mostly due to space restrictions in the actual manuscript.
 
+# Simulation Code
+
+The following page displays the .txt and .R file used in the data generation and simulation study.
+
+* [Code for Simulation](display_simulation_code.html)
+
+* [Link to Github Subdirectory for files](https://github.com/noah-padgett/mcfa-fit/tree/master/code/simulation-code)
+
 # Study Results
 
 *[Convergence and Admissibility](summary_stats_tables.html)
